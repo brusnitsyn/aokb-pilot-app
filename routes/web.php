@@ -13,12 +13,18 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/workspace', function () {
+    return Inertia::render('Workspace');
+})->name('workspace');
+
+Route::get('/request', function () {
+    return Inertia::render('Request/Create');
+})->name('request.create');
+
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+
 });
