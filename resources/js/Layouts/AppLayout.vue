@@ -73,21 +73,23 @@ const logout = () => {
                     </NFlex>
                 </NLayoutSider>
                 <NLayout :native-scrollbar="false" :content-class="(menuCollapsed && isLargeScreen) ? 'p-7 pl-14' : 'p-4 lg:p-7'" class="!bg-transparent">
-                    <main>
-                        <NFlex v-if="$slots.header || $slots.headermore" justify="space-between" align="center"
-                               class="mb-5">
-                            <NH1 v-if="$slots.header" :class="headerClass">
-                                <slot name="header"/>
-                            </NH1>
-                            <NSpace>
-                                <slot name="headermore"/>
-                            </NSpace>
-                        </NFlex>
-                        <NP v-if="$slots.subheader">
-                            <slot name="subheader"/>
-                        </NP>
-                        <slot/>
-                    </main>
+                    <Transition name="fade" mode="out-in" appear>
+                        <main>
+                            <NFlex v-if="$slots.header || $slots.headermore" justify="space-between" align="center"
+                                   class="mb-5">
+                                <NH1 v-if="$slots.header" :class="headerClass">
+                                    <slot name="header"/>
+                                </NH1>
+                                <NSpace>
+                                    <slot name="headermore"/>
+                                </NSpace>
+                            </NFlex>
+                            <NP v-if="$slots.subheader">
+                                <slot name="subheader"/>
+                            </NP>
+                            <slot/>
+                        </main>
+                    </Transition>
                 </NLayout>
             </NLayout>
             <NLayoutFooter
@@ -102,3 +104,15 @@ const logout = () => {
         </NLayout>
     </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    @apply duration-200 transition-all;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    @apply opacity-0 scale-90 translate-y-10;
+}
+</style>
