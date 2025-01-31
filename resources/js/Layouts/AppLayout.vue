@@ -1,10 +1,13 @@
 <script setup>
 import { ref } from 'vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import {Head, Link, router, usePage} from '@inertiajs/vue3';
+import DepartmentModal from "@/Components/DepartmentModal.vue";
 
 defineProps({
     title: String,
 });
+
+const departments = ref(usePage().props.departments)
 
 const showingNavigationDropdown = ref(false);
 
@@ -28,13 +31,11 @@ const logout = () => {
         <NLayout position="absolute" class="!bg-transparent">
             <NLayoutHeader class="p-4 h-[74px]" bordered>
                 <NFlex justify="space-between" align="center" class="h-full">
-                    <NFlex class="h-full" align="center" :size="30">
+                    <NFlex class="h-full" align="center" :wrap="false" :size="30">
                         <Link :href="route('workspace')" class="h-full">
                             <img src="/assets/svg/logo.svg" class="h-full" alt="logo"/>
                         </Link>
-                        <NH2 class="!my-0">
-                            ФАП Подрядин
-                        </NH2>
+                        <DepartmentModal :departments="departments" />
                     </NFlex>
                     <NSpace class="-m-5 -mr-[24px]" :size="0">
                         <NDropdown v-if="user && isLargeScreen" trigger="click" placement="top-end" :options="userOptions" @select="(key, option) => option.onClick()">

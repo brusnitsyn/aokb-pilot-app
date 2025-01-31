@@ -11,7 +11,7 @@ import { IconCirclePlus, IconTableDashed, IconDoorExit } from '@tabler/icons-vue
                 <NCard hoverable class="cursor-pointer">
                     <template  #header>
                         <div class="text-[#18A058]">
-                            Создать запрос
+                            Создать запрос на транспортировку
                         </div>
                     </template>
                     <template #header-extra>

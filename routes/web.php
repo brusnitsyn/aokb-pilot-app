@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Department;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,7 +15,9 @@ Route::get('/', function () {
 });
 
 Route::get('/workspace', function () {
-    return Inertia::render('Workspace');
+    return Inertia::render('Workspace', [
+        'departments' => Department::all(),
+    ]);
 })->name('workspace');
 
 Route::get('/request', function () {
