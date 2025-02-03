@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import {Head, Link, router, usePage} from '@inertiajs/vue3';
-import DepartmentModal from "@/Components/DepartmentModal.vue";
+import DepartmentModal from "@/Components/Department/DepartmentModal.vue";
+import AppLogo from "@/Components/App/AppLogo.vue";
+import {isSmallScreen} from "@/Utils/mediaQuery.js";
 
 defineProps({
     title: String,
@@ -31,9 +33,9 @@ const logout = () => {
         <NLayout position="absolute" class="!bg-transparent">
             <NLayoutHeader class="p-4 h-[74px]" bordered>
                 <NFlex justify="space-between" align="center" class="h-full">
-                    <NFlex class="h-full" align="center" :wrap="false" :size="30">
+                    <NFlex class="h-full" align="center" :wrap="false" :size="isSmallScreen ? 16 : 30">
                         <Link :href="route('workspace')" class="h-full">
-                            <img src="/assets/svg/logo.svg" class="h-full" alt="logo"/>
+                            <AppLogo />
                         </Link>
                         <DepartmentModal :departments="departments" />
                     </NFlex>
