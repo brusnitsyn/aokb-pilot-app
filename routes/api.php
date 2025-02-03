@@ -8,7 +8,10 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::prefix('v1')->group(function () {
-    Route::get('/departments', [\App\Http\Controllers\Api\v1\DepartmentController::class, 'index']);
+    Route::prefix('departments')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\v1\DepartmentController::class, 'index']);
+        Route::post('/search', [\App\Http\Controllers\Api\v1\DepartmentController::class, 'search']);
+    });
     Route::middleware([\Illuminate\Session\Middleware\StartSession::class, \App\Http\Middleware\HandleInertiaRequests::class])->group(function () {
         Route::prefix('user')->group(function () {
             Route::post('/department', [\App\Http\Controllers\Api\v1\DepartmentController::class, 'userStore']);
