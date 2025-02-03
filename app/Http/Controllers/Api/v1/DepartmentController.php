@@ -21,13 +21,28 @@ class DepartmentController extends Controller
         return response()->json($departments);
     }
 
+    // TODO: Проверить работу
     public function userStore(Request $request)
     {
         $responses = $request->all();
         $department = Department::find($responses['id'])->toArray();
 
-//        dd($request->session());
         $request->session()->put('activeDepartment', $department);
+    }
 
+    public function search(Request $request)
+    {
+        $searchValue = $request->input('search');
+        $departments = Department::with('region')->where('name', 'ilike', '%' . $searchValue . '%')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'region' => $item->region->shortName
+                ];
+        });
+
+        return response()->json($departments);
     }
 }
