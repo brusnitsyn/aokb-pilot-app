@@ -1,0 +1,5 @@
+export const SMScreen = '(max-width: 575.98px)'
+export const MDScreen = '(min-width: 768px) and (max-width: 991.98px)'
+export const LGScreen = '(min-width: 992px) and (max-width: 1199.98px)'
+export const XLScreen = '(min-width: 1200px)'
+export const XXLScreen = '(min-width: 1400px)'
