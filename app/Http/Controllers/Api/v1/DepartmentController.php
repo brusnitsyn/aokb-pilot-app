@@ -21,13 +21,16 @@ class DepartmentController extends Controller
         return response()->json($departments);
     }
 
-    // TODO: Проверить работу
-    public function userStore(Request $request)
+    public function update(Request $request)
     {
         $responses = $request->all();
-        $department = Department::find($responses['id'])->toArray();
+        $department = Department::with('region')->find($responses['id']);
 
-        $request->session()->put('activeDepartment', $department);
+        return response('')->cookie('activeDepartment', json_encode([
+            'id' => $department->id,
+            'name' => $department->name,
+            'region' => $department->region->shortName
+        ]), config('session.lifetime'));
     }
 
     public function search(Request $request)
