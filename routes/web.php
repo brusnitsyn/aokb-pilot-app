@@ -17,12 +17,17 @@ Route::get('/', function () {
 Route::get('/workspace', function () {
     return Inertia::render('Workspace', [
         'departments' => Department::all(),
+        'activeDepartment' => json_decode(\request()->cookie('activeDepartment')),
     ]);
 })->name('workspace');
 
+Route::post('/user/department/update', [\App\Http\Controllers\Api\v1\DepartmentController::class, 'update'])
+    ->name('user.department.update');
+
 Route::get('/request', function () {
     return Inertia::render('Request/Create');
-})->name('request.create');
+})->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
+    ->name('request.create');
 
 Route::middleware([
     'auth:sanctum',
