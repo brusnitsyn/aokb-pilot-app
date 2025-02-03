@@ -1,26 +1,24 @@
 <script setup>
 import DepartmentSelectRegion from "@/Components/Department/DepartmentSelectRegion.vue";
 import DepartmentSelectDepartment from "@/Components/Department/DepartmentSelectDepartment.vue";
-import {useCookies} from "@vueuse/integrations/useCookies";
 import DepartmentInputSearch from "@/Components/Department/DepartmentInputSearch.vue";
 import DepartmentListSearchResult from "@/Components/Department/DepartmentListSearchResult.vue";
 import {isExtraLargeScreen, isLargeScreen, isMediumScreen, isSmallScreen} from "@/Utils/mediaQuery.js";
-import DepartmentList from "@/Components/Department/DepartmentList.vue";
+import {router, usePage} from "@inertiajs/vue3";
 
 const departments = ref([])
 
 axios.get('/api/v1/departments').then(res => {
     departments.value = res.data
-    selectedRegion.value = departmentCookie.get('activeDepartment') ? {
-        key: departmentCookie.get('activeDepartment').region,
-        children: departments.value[departmentCookie.get('activeDepartment').region]
+    selectedRegion.value = usePage().props.activeDepartment ? {
+        key: usePage().props.activeDepartment.region,
+        children: departments.value[usePage().props.activeDepartment.region]
     } : {
         key: '',
         children: null,
     }
 })
 
-const departmentCookie = useCookies(['activeDepartment'])
 const hasShowModal = ref(false)
 const hasLoading = ref(false)
 const selectedRegion = ref({
@@ -29,15 +27,15 @@ const selectedRegion = ref({
 })
 const departmentActive = computed({
     get() {
-        return departmentCookie.get('activeDepartment')
+        return usePage().props.activeDepartment
     },
     async set(value) {
         hasLoading.value = true
-        await axios.post('/api/v1/user/department', {
+        await axios.post(route('user.department.update'), {
             ...value
         }).then(() => {
-            departmentCookie.set('activeDepartment', value)
             hasShowModal.value = false
+            router.reload()
         }).finally(() => {
             hasLoading.value = false
         })
@@ -62,8 +60,12 @@ const modalTitle = computed(() => {
     }
 })
 
+const hasWorkspacePage = computed(() => usePage().url.includes('workspace'))
+
 const departmentActiveClass = computed(() => {
     return [
+        '!my-0',
+        hasWorkspacePage.value ? 'cursor-pointer hover:text-green-500' : '',
         isSmallScreen.value ? '!text-base !leading-5' : '',
         isMediumScreen.value ? '!text-lg' : '',
         isLargeScreen.value
@@ -73,7 +75,8 @@ const departmentActiveClass = computed(() => {
 
 
 function onClickTitle() {
-    hasShowModal.value = true
+    if (hasWorkspacePage.value)
+        hasShowModal.value = true
 }
 
 function onGetSearchResult(options) {
@@ -86,7 +89,7 @@ function onLeaveModal() {
 </script>
 
 <template>
-    <NH2 class="!my-0 cursor-pointer hover:text-green-500" :class="departmentActiveClass" @click="onClickTitle">
+    <NH2 :class="departmentActiveClass" @click="onClickTitle">
         {{ departmentActive ? departmentActive.name : 'Выберите МО' }}
     </NH2>
     <NModal @afterLeave="onLeaveModal"
