@@ -32,7 +32,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            'activeDepartment' => session('activeDepartment'),
+            'activeDepartment' => json_decode($request->cookie('activeDepartment')),
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
