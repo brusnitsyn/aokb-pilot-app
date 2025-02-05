@@ -4,6 +4,7 @@ import {Head, Link, router, usePage} from '@inertiajs/vue3';
 import DepartmentModal from "@/Components/Department/DepartmentModal.vue";
 import AppLogo from "@/Components/App/AppLogo.vue";
 import {isSmallScreen} from "@/Utils/mediaQuery.js";
+import NaiveProvider from "@/Layouts/NaiveProvider.vue";
 
 defineProps({
     title: String,
@@ -27,9 +28,8 @@ const logout = () => {
 </script>
 
 <template>
-    <div>
-        <Head :title="title" />
-
+    <Head :title="title" />
+    <NaiveProvider>
         <NLayout position="absolute" class="!bg-transparent">
             <NLayoutHeader class="p-4 h-[74px]" bordered>
                 <NFlex justify="space-between" align="center" class="h-full">
@@ -105,7 +105,7 @@ const logout = () => {
                 2025
             </NLayoutFooter>
         </NLayout>
-    </div>
+    </NaiveProvider>
 </template>
 
 <style scoped>
