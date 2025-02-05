@@ -17,4 +17,10 @@ class Department extends Model
     {
         return $this->belongsTo(Region::class, 'regionId', 'id');
     }
+
+    public function answers(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(DepartmentAnswer::class, 'department_answer_departments')
+            ->withPivot('score');
+    }
 }

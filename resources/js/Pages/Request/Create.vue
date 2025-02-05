@@ -1,40 +1,162 @@
 <script setup>
-import AppLayout from "@/Layouts/AppLayout.vue";
-import { IconArrowLeft, IconArrowRight, IconHome } from "@tabler/icons-vue";
-import {Link} from "@inertiajs/vue3";
-const carousel = ref()
-const checkboxGroupValue = ref(null)
-const checkboxGroupValue2 = ref(null)
-const checkboxGroupValue3 = ref(null)
-function nextSlide() {
-    if (checkboxGroupValue.value === '1') {
-        toSlide(2)
-    } else {
-        toSlide(1)
+import AppLayout from "@/Layouts/AppLayout.vue"
+import { IconArrowLeft, IconArrowRight, IconHome } from "@tabler/icons-vue"
+import {Link, router, usePage} from "@inertiajs/vue3"
+const props = defineProps({
+    diagnoses: Array,
+    patientQuestions: Array,
+    organizationQuestions: Array,
+    medicalOrganizations: Array,
+    selectedDiagnosisId: Number,
+});
+
+const selectedDiagnosisId = ref(props.selectedDiagnosisId);
+const selectedMedicalOrganizationId = ref(usePage().props.activeDepartment.id);
+const patientResponses = ref({});
+const organizationResponses = ref({});
+const stage = ref('organization'); // Текущий этап: 'organization' или 'patient'
+
+// Фильтрация видимых вопросов для пациента
+const visiblePatientQuestions = computed(() => {
+    return props.patientQuestions.filter(question => {
+        if (!question.depends_on_answer_id) return true; // Если вопрос не зависит от ответа
+        return Object.values(patientResponses.value).includes(question.depends_on_answer_id) !== false;
+    });
+});
+
+// Фильтрация видимых вопросов для МО
+const visibleDepartmentQuestions = computed(() => {
+    console.log(organizationResponses.value[1])
+    return props.organizationQuestions.filter(question => {
+        if (!question.depends_on_answer_id) return true; // Если вопрос не зависит от ответа
+        return Object.values(organizationResponses.value).includes(question.depends_on_answer_id) !== false;
+    });
+});
+
+// Индексы текущих вопросов
+const currentOrganizationIndex = ref(0);
+const currentPatientIndex = ref(0);
+
+// Текущий вопрос для медицинской организации
+const currentOrganizationQuestion = computed(() => {
+    return visibleDepartmentQuestions.value[currentOrganizationIndex.value];
+});
+
+// Текущий вопрос для пациента
+const currentPatientQuestion = computed(() => {
+    return props.patientQuestions[currentPatientIndex.value];
+});
+
+// Проверка, является ли текущий вопрос последним для медицинской организации
+const isLastOrganizationQuestion = computed(() => {
+    return currentOrganizationIndex.value === visibleDepartmentQuestions.value.length - 1;
+});
+
+// Проверка, является ли текущий вопрос последним для пациента
+const isLastPatientQuestion = computed(() => {
+    return currentPatientIndex.value === visiblePatientQuestions.value.length - 1;
+});
+
+// Прогресс для медицинской организации
+const organizationProgress = computed(() => {
+    const answered = Object.keys(organizationResponses.value).length;
+    const total = visibleDepartmentQuestions.value.length;
+    const result = (answered / total) * 100
+    return result.toLocaleString(undefined, {
+        maximumFractionDigits: 0
+    });
+});
+
+// Прогресс для пациента
+const patientProgress = computed(() => {
+    const answered = Object.keys(patientResponses.value).length;
+    const total = visiblePatientQuestions.value.length;
+    const result = (answered / total) * 100
+    return result.toLocaleString(undefined, {
+        maximumFractionDigits: 0
+    });
+});
+
+// Переход к предыдущему вопросу для медицинской организации
+const prevOrganizationQuestion = () => {
+    if (currentOrganizationIndex.value > 0) {
+        currentOrganizationIndex.value--;
     }
-}
-function nextSlide2() {
-    carousel?.value.next()
-}
-function nextSlide3() {
-    carousel?.value.next()
-}
-function prevSlide() {
-    carousel?.value.prev()
-}
-function prevSlide2() {
-    carousel?.value.prev()
-}
-function prevSlide3() {
-    if (checkboxGroupValue.value === '1') {
-        toSlide(0)
-    } else {
-        carousel?.value.prev()
+};
+
+// Переход к следующему вопросу для медицинской организации
+const nextOrganizationQuestion = () => {
+    if (!organizationResponses.value[currentOrganizationQuestion.value.id]) {
+        message.error('Пожалуйста, выберите ответ на текущий вопрос.');
+        return;
     }
-}
-function toSlide(index) {
-    carousel?.value.to(index)
-}
+
+    if (isLastOrganizationQuestion.value) {
+        stage.value = 'patient'; // Переход к вопросам для пациента
+    } else {
+        currentOrganizationIndex.value++;
+    }
+};
+
+// Переход к предыдущему вопросу для пациента
+const prevPatientQuestion = () => {
+    if (currentPatientIndex.value > 0) {
+        currentPatientIndex.value--;
+    }
+};
+
+// Переход к следующему вопросу для пациента
+const nextPatientQuestion = () => {
+    if (!patientResponses.value[currentPatientQuestion.value.id]) {
+        message.error('Пожалуйста, выберите ответ на текущий вопрос.');
+        return;
+    }
+
+    if (isLastPatientQuestion.value) {
+        submit(); // Завершение опроса
+    } else {
+        currentPatientIndex.value++;
+    }
+};
+
+// Переход к следующему этапу
+const nextStage = () => {
+    if (stage.value === 'organization') {
+        if (Object.keys(organizationResponses.value).length < props.organizationQuestions.length) {
+            window.$message.error('Пожалуйста, ответьте на все вопросы медицинской организации.');
+            return;
+        }
+        stage.value = 'patient'; // Переход к вопросам для пациента
+    } else {
+        submit(); // Завершение опроса
+    }
+};
+
+const submit = () => {
+    if (!selectedMedicalOrganizationId.value) {
+        window.$message.error('Пожалуйста, выберите медицинскую организацию.');
+        return;
+    }
+
+    if (Object.keys(patientResponses.value).length < visiblePatientQuestions.value.length) {
+        window.$message.error('Пожалуйста, ответьте на все вопросы пациента.');
+        return;
+    }
+
+    router.post(route('request.store'), {
+        diagnosis_id: selectedDiagnosisId.value,
+        medical_organization_id: selectedMedicalOrganizationId.value,
+        patient_responses: patientResponses.value,
+        organization_responses: organizationResponses.value,
+    }, {
+        onSuccess: () => {
+            window.$message.success('Ответы успешно отправлены!');
+        },
+        onError: () => {
+            window.$message.error('Произошла ошибка при отправке ответов.');
+        }
+    })
+};
 </script>
 <template>
     <AppLayout>
@@ -47,117 +169,134 @@ function toSlide(index) {
                     Домой
                 </NButton>
             </Link>
-            <NCarousel
-                ref="carousel"
-                :touchable="false"
-                :loop="false"
-                style="width: 100%; height: 100%"
-            >
-                <NCard>
+
+            <!-- Вопросы для медицинской организации -->
+            <transition name="fade" mode="out-in">
+                <NCard v-if="stage === 'organization'" key="organization">
                     <template #header>
-                        <div>
-                            1. Возможность эвакуации собственными силами
-                        </div>
+                        {{ currentOrganizationQuestion.text }}
                     </template>
-                    <NRadioGroup v-model:value="checkboxGroupValue">
-                        <NSpace vertical>
-                            <NRadio value="1">
-                                Имеется
-                            </NRadio>
-                            <NRadio value="2">
-                                Отсутствует
-                            </NRadio>
-                        </NSpace>
-                    </NRadioGroup>
+                    <template #cover>
+                        <NProgress
+                            type="line"
+                            :percentage="organizationProgress"
+                            :indicator-placement="'inside'"
+                            status="success"
+                            border-radius="0 0 3px 3px"
+                            fill-border-radius="3px"
+                        />
+                    </template>
+                    <NForm>
+                        <NFormItem
+                            :key="currentOrganizationQuestion.id"
+                            :show-label="false"
+                            :show-feedback="false"
+                        >
+                            <NRadioGroup class="flex flex-col gap-y-2" v-model:value="organizationResponses[currentOrganizationQuestion.id]">
+                                <NRadio
+                                    v-for="answer in currentOrganizationQuestion.answers"
+                                    :key="answer.id"
+                                    :value="answer.id"
+                                    :label="answer.text"
+                                />
+                            </NRadioGroup>
+                        </NFormItem>
+                    </NForm>
                     <template #action>
-                        <NGrid cols="2">
-                            <NGi>
-                            </NGi>
-                            <NGi class="flex justify-end">
-                                <NButton type="primary" secondary icon-placement="right" :disabled="checkboxGroupValue === null" @click="nextSlide">
-                                    <template #icon>
-                                        <NIcon :component="IconArrowRight" />
-                                    </template>
-                                    Следующий вопрос
-                                </NButton>
-                            </NGi>
-                        </NGrid>
+                        <NButtonGroup class="flex justify-end">
+                            <NButton secondary
+                                     :disabled="currentOrganizationIndex === 0"
+                                     @click="prevOrganizationQuestion">
+                                <template #icon>
+                                    <NIcon :component="IconArrowLeft" />
+                                </template>
+                                Назад
+                            </NButton>
+                            <NButton
+                                type="primary"
+                                secondary
+                                :disabled="!organizationResponses[currentOrganizationQuestion.id]"
+                                @click="nextOrganizationQuestion"
+                                icon-placement="right"
+                            >
+                                <template #icon>
+                                    <NIcon :component="IconArrowRight" />
+                                </template>
+                                Далее
+                            </NButton>
+                        </NButtonGroup>
                     </template>
                 </NCard>
-                <NCard>
+            </transition>
+
+            <!-- Вопросы для пациента -->
+            <transition name="fade" mode="out-in">
+                <NCard v-if="stage === 'patient'" key="patient">
                     <template #header>
-                        <div>
-                            Возможность посадки вертолета
-                        </div>
+                        {{ currentPatientQuestion.text }}
                     </template>
-                    <NRadioGroup v-model:value="checkboxGroupValue2">
-                        <NSpace vertical>
-                            <NRadio value="1">
-                                Имеется
-                            </NRadio>
-                            <NRadio value="2">
-                                Затруднительна
-                            </NRadio>
-                            <NRadio value="3">
-                                Отсутствует
-                            </NRadio>
-                        </NSpace>
-                    </NRadioGroup>
+                    <template #cover>
+                        <NProgress
+                            type="line"
+                            :percentage="patientProgress"
+                            :indicator-placement="'inside'"
+                            status="success"
+                            border-radius="0 0 3px 3px"
+                            fill-border-radius="3px"
+                        />
+                    </template>
+                    <NForm>
+                        <NFormItem
+                            :key="currentPatientQuestion.id"
+                            :show-label="false"
+                            :show-feedback="false"
+                        >
+                            <NRadioGroup class="flex flex-col gap-y-2" v-model:value="patientResponses[currentPatientQuestion.id]">
+                                <NRadio
+                                    v-for="answer in currentPatientQuestion.answers"
+                                    :key="answer.id"
+                                    :value="answer.id"
+                                    :label="answer.text"
+                                />
+                            </NRadioGroup>
+                        </NFormItem>
+                    </NForm>
                     <template #action>
-                        <NGrid cols="2">
-                            <NGi>
-                                <NButton secondary @click="prevSlide">
-                                    <template #icon>
-                                        <NIcon :component="IconArrowLeft" />
-                                    </template>
-                                    Предыдущий вопрос
-                                </NButton>
-                            </NGi>
-                            <NGi class="flex justify-end">
-                                <NButton type="primary" secondary icon-placement="right" :disabled="checkboxGroupValue2 === null" @click="nextSlide2">
-                                    <template #icon>
-                                        <NIcon :component="IconArrowRight" />
-                                    </template>
-                                    Следующий вопрос
-                                </NButton>
-                            </NGi>
-                        </NGrid>
+                        <NButtonGroup class="flex justify-end">
+                            <NButton secondary :disabled="currentPatientIndex === 0" @click="prevPatientQuestion">
+                                <template #icon>
+                                    <NIcon :component="IconArrowLeft" />
+                                </template>
+                                Назад
+                            </NButton>
+                            <NButton
+                                type="primary"
+                                secondary
+                                icon-placement="right"
+                                :disabled="!patientResponses[currentPatientQuestion.id]"
+                                @click="nextPatientQuestion"
+                            >
+                                <template #icon>
+                                    <NIcon :component="IconArrowRight" />
+                                </template>
+                                {{ isLastPatientQuestion ? 'Завершить' : 'Далее' }}
+                            </NButton>
+                        </NButtonGroup>
                     </template>
                 </NCard>
-                <NCard>
-                    <template #header>
-                        <div>
-                            2. Труднодоступность
-                        </div>
-                    </template>
-                    <NRadioGroup v-model:value="checkboxGroupValue3">
-                        <NSpace vertical>
-                            <NRadio value="1">
-                                Да
-                            </NRadio>
-                            <NRadio value="2">
-                                Нет
-                            </NRadio>
-                        </NSpace>
-                    </NRadioGroup>
-                    <template #action>
-                        <NGrid cols="2" >
-                            <NGi>
-                                <NButton secondary @click="prevSlide3">
-                                    <template #icon>
-                                        <NIcon :component="IconArrowLeft" />
-                                    </template>
-                                    Предыдущий вопрос
-                                </NButton>
-                            </NGi>
-                            <NGi>
-                            </NGi>
-                        </NGrid>
-                    </template>
-                </NCard>
-            </NCarousel>
+            </transition>
         </NSpace>
     </AppLayout>
 </template>
+
 <style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
 </style>

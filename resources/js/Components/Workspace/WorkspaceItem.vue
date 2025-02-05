@@ -57,7 +57,7 @@ const iconClass = computed(() => {
 
 <template>
     <div class="relative overflow-clip">
-        <Link :href="href">
+        <Link v-if="href" :href="href">
             <NCard hoverable class="cursor-pointer">
                 <template #header>
                     <div v-bind:class="headerClass">
@@ -69,6 +69,16 @@ const iconClass = computed(() => {
                 </template>
             </NCard>
         </Link>
+        <NCard v-else hoverable class="cursor-pointer">
+            <template #header>
+                <div v-bind:class="headerClass">
+                    {{ header }}
+                </div>
+            </template>
+            <template #header-extra>
+                <NIcon :component="icon" size="28" :class="iconClass" />
+            </template>
+        </NCard>
         <div v-if="disabled" class="absolute inset-0 bg-black bg-opacity-10 backdrop-blur-[4px] rounded-[3px]">
             <div class="flex items-center justify-center h-full">
                 <NSpace vertical :size="0" item-class="flex" align="center" inline justify="center">
