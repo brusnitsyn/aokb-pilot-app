@@ -22,7 +22,7 @@ axios.get('/api/v1/departments').then(res => {
         children: null,
     }
 })
-
+const hasActiveDepartment = computed(() => usePage().props.activeDepartment !== null)
 const hasShowModal = ref(false)
 const hasLoading = ref(false)
 const selectedRegion = ref({
@@ -101,7 +101,8 @@ function onLeaveModal() {
         <NH2 :class="departmentActiveClass" @click="onClickTitle">
             {{ departmentActive ? departmentActive.name : 'Выберите МО' }}
         </NH2>
-        <NButton ghost
+        <NButton v-if="hasActiveDepartment"
+                 ghost
                  @click="onShowDrawer"
                  :disabled="!hasWorkspacePage">
             <template #icon>
