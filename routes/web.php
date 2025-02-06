@@ -15,13 +15,8 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/workspace', function () {
-    return Inertia::render('Workspace', [
-        'diagnosis' => Diagnosis::all(),
-        'departments' => Department::all(),
-        'activeDepartment' => json_decode(\request()->cookie('activeDepartment')),
-    ]);
-})->name('workspace');
+Route::get('/workspace', [\App\Http\Controllers\WorkspaceController::class, 'show'])->name('workspace');
+Route::post('/workspace', [\App\Http\Controllers\WorkspaceController::class, 'update'])->name('workspace.post');
 
 Route::post('/user/department/update', [\App\Http\Controllers\Api\v1\DepartmentController::class, 'update'])
     ->name('user.department.update');

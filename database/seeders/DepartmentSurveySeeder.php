@@ -18,17 +18,17 @@ class DepartmentSurveySeeder extends Seeder
         DepartmentAnswer::truncate();
 
         $questions = [
-            [ 'text' => 'Оснащение', 'depends_on_answer_id' => null ], // 1
+            [ 'text' => 'Оснащение', 'depends_on_answer_id' => null, 'type' => 'single' ], // 1
 
-            [ 'text' => 'Не в полном объеме (отсутствуют позиции)', 'depends_on_answer_id' => 2 ], // 2
+            [ 'text' => 'Не в полном объеме (отсутствуют позиции)', 'depends_on_answer_id' => 2, 'type' => 'multiple' ], // 2
 
-            [ 'text' => 'Возможность эвакуации собственными силами', 'depends_on_answer_id' => null ], // 3
+            [ 'text' => 'Возможность эвакуации собственными силами', 'depends_on_answer_id' => null, 'type' => 'single' ], // 3
 
-            [ 'text' => 'Возможность посадки воздушного судна', 'depends_on_answer_id' => 8 ], // 4
+            [ 'text' => 'Возможность посадки воздушного судна', 'depends_on_answer_id' => 8, 'type' => 'single' ], // 4
 
-            [ 'text' => 'Возможность оказания помощи на месте', 'depends_on_answer_id' => null ], // 5
+            [ 'text' => 'Возможность оказания помощи на месте', 'depends_on_answer_id' => null, 'type' => 'single' ], // 5
 
-            [ 'text' => 'Отсутствие специалистов', 'depends_on_answer_id' => null ], // 6
+            [ 'text' => 'Отсутствие специалистов', 'depends_on_answer_id' => null, 'type' => 'multiple' ], // 6
         ];
 
         $answers = [

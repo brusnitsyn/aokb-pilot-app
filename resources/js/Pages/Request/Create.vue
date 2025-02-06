@@ -14,7 +14,7 @@ const selectedDiagnosisId = ref(props.selectedDiagnosisId);
 const selectedMedicalOrganizationId = ref(usePage().props.activeDepartment.id);
 const patientResponses = ref({});
 const organizationResponses = ref({});
-const stage = ref('organization'); // Текущий этап: 'organization' или 'patient'
+const stage = ref('patient'); // Текущий этап: 'organization' или 'patient'
 
 // Фильтрация видимых вопросов для пациента
 const visiblePatientQuestions = computed(() => {
@@ -171,63 +171,63 @@ const submit = () => {
             </Link>
 
             <!-- Вопросы для медицинской организации -->
-            <transition name="fade" mode="out-in">
-                <NCard v-if="stage === 'organization'" key="organization">
-                    <template #header>
-                        {{ currentOrganizationQuestion.text }}
-                    </template>
-                    <template #cover>
-                        <NProgress
-                            type="line"
-                            :percentage="organizationProgress"
-                            :indicator-placement="'inside'"
-                            status="success"
-                            border-radius="0 0 3px 3px"
-                            fill-border-radius="3px"
-                        />
-                    </template>
-                    <NForm>
-                        <NFormItem
-                            :key="currentOrganizationQuestion.id"
-                            :show-label="false"
-                            :show-feedback="false"
-                        >
-                            <NRadioGroup class="flex flex-col gap-y-2" v-model:value="organizationResponses[currentOrganizationQuestion.id]">
-                                <NRadio
-                                    v-for="answer in currentOrganizationQuestion.answers"
-                                    :key="answer.id"
-                                    :value="answer.id"
-                                    :label="answer.text"
-                                />
-                            </NRadioGroup>
-                        </NFormItem>
-                    </NForm>
-                    <template #action>
-                        <NButtonGroup class="flex justify-end">
-                            <NButton secondary
-                                     :disabled="currentOrganizationIndex === 0"
-                                     @click="prevOrganizationQuestion">
-                                <template #icon>
-                                    <NIcon :component="IconArrowLeft" />
-                                </template>
-                                Назад
-                            </NButton>
-                            <NButton
-                                type="primary"
-                                secondary
-                                :disabled="!organizationResponses[currentOrganizationQuestion.id]"
-                                @click="nextOrganizationQuestion"
-                                icon-placement="right"
-                            >
-                                <template #icon>
-                                    <NIcon :component="IconArrowRight" />
-                                </template>
-                                Далее
-                            </NButton>
-                        </NButtonGroup>
-                    </template>
-                </NCard>
-            </transition>
+<!--            <transition name="fade" mode="out-in">-->
+<!--                <NCard v-if="stage === 'organization'" key="organization">-->
+<!--                    <template #header>-->
+<!--                        {{ currentOrganizationQuestion.text }}-->
+<!--                    </template>-->
+<!--                    <template #cover>-->
+<!--                        <NProgress-->
+<!--                            type="line"-->
+<!--                            :percentage="organizationProgress"-->
+<!--                            :indicator-placement="'inside'"-->
+<!--                            status="success"-->
+<!--                            border-radius="0 0 3px 3px"-->
+<!--                            fill-border-radius="3px"-->
+<!--                        />-->
+<!--                    </template>-->
+<!--                    <NForm>-->
+<!--                        <NFormItem-->
+<!--                            :key="currentOrganizationQuestion.id"-->
+<!--                            :show-label="false"-->
+<!--                            :show-feedback="false"-->
+<!--                        >-->
+<!--                            <NRadioGroup class="flex flex-col gap-y-2" v-model:value="organizationResponses[currentOrganizationQuestion.id]">-->
+<!--                                <NRadio-->
+<!--                                    v-for="answer in currentOrganizationQuestion.answers"-->
+<!--                                    :key="answer.id"-->
+<!--                                    :value="answer.id"-->
+<!--                                    :label="answer.text"-->
+<!--                                />-->
+<!--                            </NRadioGroup>-->
+<!--                        </NFormItem>-->
+<!--                    </NForm>-->
+<!--                    <template #action>-->
+<!--                        <NButtonGroup class="flex justify-end">-->
+<!--                            <NButton secondary-->
+<!--                                     :disabled="currentOrganizationIndex === 0"-->
+<!--                                     @click="prevOrganizationQuestion">-->
+<!--                                <template #icon>-->
+<!--                                    <NIcon :component="IconArrowLeft" />-->
+<!--                                </template>-->
+<!--                                Назад-->
+<!--                            </NButton>-->
+<!--                            <NButton-->
+<!--                                type="primary"-->
+<!--                                secondary-->
+<!--                                :disabled="!organizationResponses[currentOrganizationQuestion.id]"-->
+<!--                                @click="nextOrganizationQuestion"-->
+<!--                                icon-placement="right"-->
+<!--                            >-->
+<!--                                <template #icon>-->
+<!--                                    <NIcon :component="IconArrowRight" />-->
+<!--                                </template>-->
+<!--                                Далее-->
+<!--                            </NButton>-->
+<!--                        </NButtonGroup>-->
+<!--                    </template>-->
+<!--                </NCard>-->
+<!--            </transition>-->
 
             <!-- Вопросы для пациента -->
             <transition name="fade" mode="out-in">

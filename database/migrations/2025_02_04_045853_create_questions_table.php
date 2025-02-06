@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('text');
             $table->foreignIdFor( \App\Models\Answer::class, 'depends_on_answer_id')
                 ->nullable();
+            $table->string('type')->default('single');
             $table->timestamps();
         });
     }

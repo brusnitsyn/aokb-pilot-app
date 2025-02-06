@@ -8,7 +8,8 @@ class Question extends Model
 {
     protected $fillable = [
         'text',
-        'depends_on_answer_id'
+        'depends_on_answer_id',
+        'type'
     ];
 
     public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany

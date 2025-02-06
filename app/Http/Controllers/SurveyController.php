@@ -43,28 +43,48 @@ class SurveyController extends Controller
             'diagnosis_id' => 'required|exists:diagnoses,id',
             'medical_organization_id' => 'required|exists:departments,id',
             'patient_responses' => 'required|array',
-            'organization_responses' => 'required|array',
+//            'organization_responses' => 'required|array',
         ]);
 
         $selectedDiagnosisId = $request->input('diagnosis_id');
         $patientResponses = $request->input('patient_responses', []);
-        $organizationResponses = $request->input('organization_responses', []);
+        $organizationResponses = json_decode($request->cookie('organizationResponses', []));
         $medicalOrganizationId = $request->input('medical_organization_id');
 
         // Подсчет баллов пациента
         $patientScore = 0;
-        foreach ($patientResponses as $questionId => $answerId) {
-            $answer = Answer::find($answerId);
-            $patientScore += $answer->score;
+        foreach ($patientResponses as $questionId => $answerIds) {
+            if (is_array($answerIds)) {
+                foreach ($answerIds as $answerId) {
+                    $answer = Answer::find($answerId);
+                    if ($answer) {
+                        $patientScore += $answer->score;
+                    }
+                }
+            } else {
+                $answer = Answer::find($answerIds);
+                $patientScore += $answer->score;
+            }
         }
 
         // Подсчет баллов медицинской организации (ответы на вопросы)
         $organizationScore = 0;
-        foreach ($organizationResponses as $questionId => $answerId) {
-            $answer = DepartmentAnswer::find($answerId);
-            //$score = $answer->departments->find($medicalOrganizationId)->pivot->score;
-            $score = $answer->score;
-            $organizationScore += $score;
+        foreach ($organizationResponses as $questionId => $answerIds) {
+            if (is_array($answerIds)) {
+                foreach ($answerIds as $answerId) {
+                    $answer = DepartmentAnswer::find($answerId);
+                    if ($answer) {
+                        $score = $answer->score;
+                        $organizationScore += $score;
+                    }
+                }
+            } else {
+                $answer = DepartmentAnswer::find($answerIds);
+                if ($answer) {
+                    $score = $answer->score;
+                    $organizationScore += $score;
+                }
+            }
         }
 
         // Добавляем фиксированные баллы медицинской организации

@@ -1,11 +1,15 @@
 <script setup>
-import DepartmentSelectRegion from "@/Components/Department/DepartmentSelectRegion.vue";
-import DepartmentSelectDepartment from "@/Components/Department/DepartmentSelectDepartment.vue";
-import DepartmentInputSearch from "@/Components/Department/DepartmentInputSearch.vue";
-import DepartmentListSearchResult from "@/Components/Department/DepartmentListSearchResult.vue";
-import {isExtraLargeScreen, isLargeScreen, isMediumScreen, isSmallScreen} from "@/Utils/mediaQuery.js";
-import {router, usePage} from "@inertiajs/vue3";
+import DepartmentSelectRegion from "@/Components/Department/DepartmentSelectRegion.vue"
+import DepartmentSelectDepartment from "@/Components/Department/DepartmentSelectDepartment.vue"
+import DepartmentInputSearch from "@/Components/Department/DepartmentInputSearch.vue"
+import DepartmentListSearchResult from "@/Components/Department/DepartmentListSearchResult.vue"
+import {isExtraLargeScreen, isLargeScreen, isMediumScreen, isSmallScreen} from "@/Utils/mediaQuery.js"
+import {router, usePage} from "@inertiajs/vue3"
+import {IconSettings} from '@tabler/icons-vue'
 
+const emits = defineEmits([
+    'clickOnShowMoParameters'
+])
 const departments = ref([])
 
 axios.get('/api/v1/departments').then(res => {
@@ -79,6 +83,10 @@ function onClickTitle() {
         hasShowModal.value = true
 }
 
+function onShowDrawer() {
+    emits('clickOnShowMoParameters')
+}
+
 function onGetSearchResult(options) {
     searchedOptions.value = options
 }
@@ -89,9 +97,19 @@ function onLeaveModal() {
 </script>
 
 <template>
-    <NH2 :class="departmentActiveClass" @click="onClickTitle">
-        {{ departmentActive ? departmentActive.name : 'Выберите МО' }}
-    </NH2>
+    <NFlex align="center" inline>
+        <NH2 :class="departmentActiveClass" @click="onClickTitle">
+            {{ departmentActive ? departmentActive.name : 'Выберите МО' }}
+        </NH2>
+        <NButton ghost
+                 @click="onShowDrawer"
+                 :disabled="!hasWorkspacePage">
+            <template #icon>
+                <NIcon :component="IconSettings" />
+            </template>
+            Параметры МО
+        </NButton>
+    </NFlex>
     <NModal @afterLeave="onLeaveModal"
             :mask-closable="false"
             display-directive="if"

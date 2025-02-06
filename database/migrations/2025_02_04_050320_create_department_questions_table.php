@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('text'); // Текст вопроса
             $table->foreignIdFor(\App\Models\DepartmentAnswer::class, 'depends_on_answer_id')
                 ->nullable(); // Зависимость от ответа
+            $table->string('type')->default('single');
             $table->timestamps();
         });
     }
