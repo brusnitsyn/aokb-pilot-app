@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignIdFor( \App\Models\Answer::class, 'depends_on_answer_id')
                 ->nullable();
             $table->string('type')->default('single');
+            $table->boolean('requires_confirmation')->default(false); // Требуется ли подтверждение
+            $table->boolean('requires')->default(true); // Обязательна ли проверка на наличие значения
             $table->timestamps();
         });
     }
