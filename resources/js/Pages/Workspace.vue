@@ -117,6 +117,21 @@ watch(responses.value, (newResponses) => {
     <AppLayout title="Dashboard" @show-mo-parameters="isOpenDrawer = true">
         <NFlex align="center" class="max-w-xl mx-auto h-full">
             <NGrid cols="1 s:2" x-gap="16" y-gap="16" responsive="screen">
+                <NGi span="2">
+                    <WorkspaceItem header="Выбранный диагноз"
+                                   image-url="/assets/svg/illustrations/diagnosis.svg">
+                        <template #header>
+                            <NSpace vertical :size="3">
+                                <div class="max-w-[240px] text-base leading-6 select-none">
+                                    Выбранный диагноз: <b>I20.0</b>
+                                </div>
+                                <div class="max-w-[420px] leading-4 select-none">
+                                    Нестабильная стенокардия (впервые возникшая, прогрессирующая)
+                                </div>
+                            </NSpace>
+                        </template>
+                    </WorkspaceItem>
+                </NGi>
                 <NGi>
                     <WorkspaceItem header="Создать запрос на транспортировку"
                                    :disabled="hasSelectDepartment === null || organizationResponses === null"

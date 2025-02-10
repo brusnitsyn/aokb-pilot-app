@@ -25,6 +25,7 @@
         "@tabler/icons-vue": "^3.29.0",
         "@vueuse/core": "^12.5.0",
         "@vueuse/integrations": "^12.5.0",
+        "motion-v": "^0.10.0-beta.1",
         "universal-cookie": "^7.2.2",
         "unplugin-auto-import": "^19.0.0",
         "unplugin-vue-components": "^28.0.0"

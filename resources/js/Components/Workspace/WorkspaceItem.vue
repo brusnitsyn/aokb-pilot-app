@@ -1,6 +1,7 @@
 <script setup>
 import {IconLock} from "@tabler/icons-vue"
 import {Link} from '@inertiajs/vue3'
+import { Motion } from 'motion-v'
 const props = defineProps({
     href: {
         type: String,
@@ -57,17 +58,19 @@ const iconClass = computed(() => {
 </script>
 
 <template>
-    <div class="relative border transition-colors overflow-clip rounded-3xl bg-white drop-shadow-sm" :class="{'hover:border-[#EC6608] cursor-pointer': !disabled}">
+    <Motion :hover="{ scale: 1.05 }" class="relative border transition-colors overflow-clip rounded-3xl bg-white drop-shadow-sm" :class="{'hover:border-[#EC6608] cursor-pointer': !disabled}">
         <Link v-if="href" :href="href">
             <div class="p-4 px-5 relative bg-no-repeat bg-right-bottom h-[140px] overflow-clip">
-                <div class="w-[160px] text-lg font-semibold leading-6 select-none">
+                <slot v-if="$slots.header" name="header" />
+                <div v-else class="w-[160px] text-base font-semibold leading-6 select-none">
                     {{ header }}
                 </div>
                 <div class="w-[140px] h-[120px] absolute -right-6 -bottom-6 select-none bg-no-repeat bg-cover" :style="`background-image: url(${imageUrl})`" />
             </div>
         </Link>
         <div v-else class="p-4 px-5 relative bg-no-repeat bg-right-bottom h-[140px] overflow-clip">
-            <div class="w-[160px] text-lg font-semibold leading-6 select-none">
+            <slot v-if="$slots.header" name="header" />
+            <div v-else class="w-[160px] text-base font-semibold leading-5 select-none">
                 {{ header }}
             </div>
             <div class="w-[140px] h-[120px] absolute -right-6 -bottom-6 select-none bg-no-repeat bg-cover" :style="`background-image: url(${imageUrl})`" />
@@ -82,7 +85,7 @@ const iconClass = computed(() => {
                 </NSpace>
             </div>
         </div>
-    </div>
+    </Motion>
 </template>
 
 <style scoped>
