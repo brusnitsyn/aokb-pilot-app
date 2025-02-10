@@ -69,7 +69,7 @@ const hasWorkspacePage = computed(() => usePage().url.includes('workspace'))
 const departmentActiveClass = computed(() => {
     return [
         '!my-0',
-        hasWorkspacePage.value ? 'cursor-pointer hover:text-green-500' : '',
+        hasWorkspacePage.value ? 'cursor-pointer hover:text-[#EC6608]' : '',
         isSmallScreen.value ? '!text-base !leading-5' : '',
         isMediumScreen.value ? '!text-lg' : '',
         isLargeScreen.value
@@ -102,7 +102,8 @@ function onLeaveModal() {
             {{ departmentActive ? departmentActive.name : 'Выберите МО' }}
         </NH2>
         <NButton v-if="hasActiveDepartment"
-                 ghost
+                 round
+                 secondary
                  @click="onShowDrawer"
                  :disabled="!hasWorkspacePage">
             <template #icon>

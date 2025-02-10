@@ -69,7 +69,7 @@ function clickOnShowMoParameters() {
                     </NSpace>
                 </NFlex>
             </NLayoutHeader>
-            <NLayout has-sider position="absolute" class="!bg-transparent" style="top: 73px; bottom: 54px">
+            <NLayout has-sider position="absolute" class="!bg-gray-50" style="top: 73px; bottom: 54px">
                 <NLayoutSider v-if="isLargeScreen" collapse-mode="width" :collapsed-width="0" width="240" :collapsed="menuCollapsed"
                               show-trigger @collapse="menuCollapsed = true"
                               @expand="menuCollapsed = false"
@@ -83,9 +83,9 @@ function clickOnShowMoParameters() {
                         </NSpace>
                     </NFlex>
                 </NLayoutSider>
-                <NLayout :native-scrollbar="false" :content-class="(menuCollapsed && isLargeScreen) ? 'p-7 pl-14' : 'p-4 lg:p-7'" class="!bg-transparent">
+                <NLayout :native-scrollbar="false" :content-class="(menuCollapsed && isLargeScreen) ? 'p-7 pl-14' : 'p-4 lg:p-7 h-full'" class="!bg-transparent h-full">
                     <Transition name="fade" mode="out-in" appear>
-                        <main>
+                        <main class="h-full">
                             <NFlex v-if="$slots.header || $slots.headermore" justify="space-between" align="center"
                                    class="mb-5">
                                 <NH1 v-if="$slots.header" :class="headerClass">
@@ -106,7 +106,7 @@ function clickOnShowMoParameters() {
             <NLayoutFooter
                 bordered
                 position="absolute"
-                class="p-4 px-[24px]"
+                class="p-4 md:px-[24px]"
             >
                 &copy;
                 <Link href="https://aokb28.su">Амурская областная клиническая больница</Link>

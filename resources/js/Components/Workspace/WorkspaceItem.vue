@@ -21,7 +21,8 @@ const props = defineProps({
     },
     disabledReason: {
         type: String
-    }
+    },
+    imageUrl: String
 })
 
 const headerClass = computed(() => {
@@ -56,34 +57,26 @@ const iconClass = computed(() => {
 </script>
 
 <template>
-    <div class="relative overflow-clip">
+    <div class="relative border transition-colors overflow-clip rounded-3xl bg-white drop-shadow-sm" :class="{'hover:border-[#EC6608] cursor-pointer': !disabled}">
         <Link v-if="href" :href="href">
-            <NCard hoverable class="cursor-pointer">
-                <template #header>
-                    <div v-bind:class="headerClass">
-                        {{ header }}
-                    </div>
-                </template>
-                <template #header-extra>
-                    <NIcon :component="icon" size="28" :class="iconClass" />
-                </template>
-            </NCard>
-        </Link>
-        <NCard v-else hoverable class="cursor-pointer">
-            <template #header>
-                <div v-bind:class="headerClass">
+            <div class="p-4 px-5 relative bg-no-repeat bg-right-bottom h-[140px] overflow-clip">
+                <div class="w-[160px] text-lg font-semibold leading-6 select-none">
                     {{ header }}
                 </div>
-            </template>
-            <template #header-extra>
-                <NIcon :component="icon" size="28" :class="iconClass" />
-            </template>
-        </NCard>
+                <div class="w-[140px] h-[120px] absolute -right-6 -bottom-6 select-none bg-no-repeat bg-cover" :style="`background-image: url(${imageUrl})`" />
+            </div>
+        </Link>
+        <div v-else class="p-4 px-5 relative bg-no-repeat bg-right-bottom h-[140px] overflow-clip">
+            <div class="w-[160px] text-lg font-semibold leading-6 select-none">
+                {{ header }}
+            </div>
+            <div class="w-[140px] h-[120px] absolute -right-6 -bottom-6 select-none bg-no-repeat bg-cover" :style="`background-image: url(${imageUrl})`" />
+        </div>
         <div v-if="disabled" class="absolute inset-0 bg-black bg-opacity-10 backdrop-blur-[4px] rounded-[3px]">
             <div class="flex items-center justify-center h-full">
                 <NSpace vertical :size="0" item-class="flex" align="center" inline justify="center">
                     <NIcon :component="IconLock" size="28" />
-                    <NText strong>
+                    <NText strong class="select-none">
                       {{ disabledReason }}
                     </NText>
                 </NSpace>

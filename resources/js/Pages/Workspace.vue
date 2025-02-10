@@ -35,6 +35,13 @@ const visibleDepartmentQuestions = computed(() => {
 const isAnsweredQuestions = computed(() => {
     for (const questionId in responses.value) {
         const answer = responses.value[questionId]
+        const question = props.organizationQuestions.find(itm => itm.id === Number(questionId))
+
+        // Проверка, если вопрос не обязателен
+        if (question.requires === false) {
+            continue
+        }
+
         // Проверка, если ответ — это массив
         if (Array.isArray(answer)) {
             if (answer.length === 0) {
@@ -47,7 +54,9 @@ const isAnsweredQuestions = computed(() => {
         }
     }
 
-    return visibleDepartmentQuestions.value.length === Object.keys(responses.value).length; // Все ответы заполнены
+    const requireQuestions = visibleDepartmentQuestions.value.filter(itm => itm.requires === true)
+
+    return requireQuestions.every(item => responses.value.hasOwnProperty(item.id))//requireQuestions.length === Object.keys(responses.value).includes(); // Все ответы заполнены
 });
 
 function onSubmit() {
@@ -72,6 +81,27 @@ function onShowPrepareModal() {
       hasShowPrepareModal.value = true
 }
 
+const handlePositiveClick = (question, answer) => {
+    if (question.type === 'single') {
+        responses.value[question.id] = answer.id
+    } else {
+        if (!responses.value[question.id]) {
+            responses.value[question.id] = []
+        }
+        if (responses.value[question.id].includes(answer.id) === false)
+            responses.value[question.id].push(answer.id)
+        else {
+            const index = responses.value[question.id].indexOf(answer.id);
+            if (index !== -1) {
+                responses.value[question.id].splice(index, 1);
+            }
+        }
+    }
+}
+const handleNegativeClick = (question, answer) => {
+
+}
+
 // Отслеживаем изменения ответов на вопросы
 watch(responses.value, (newResponses) => {
     // Удаляем ответы на зависимые вопросы, если изменился ответ на предыдущий вопрос
@@ -85,20 +115,28 @@ watch(responses.value, (newResponses) => {
 
 <template>
     <AppLayout title="Dashboard" @show-mo-parameters="isOpenDrawer = true">
-        <NFlex vertical :size="20" class="max-w-xl mx-auto h-full" justify="space-between">
-            <WorkspaceItem header="Создать запрос на транспортировку"
-                           :icon="IconCirclePlus"
-                           :disabled="hasSelectDepartment === null || organizationResponses === null"
-                           disabled-reason="Выберите МО и настройте параметры"
-                           @click="onShowPrepareModal"
-            />
-            <WorkspaceItem header="Мои запросы"
-                           :icon="IconTableDashed"
-            />
-            <WorkspaceItem header="Выход"
-                           :icon="IconDoorExit"
-                           type="error"
-            />
+        <NFlex align="center" class="max-w-xl mx-auto h-full">
+            <NGrid cols="1 s:2" x-gap="16" y-gap="16" responsive="screen">
+                <NGi>
+                    <WorkspaceItem header="Создать запрос на транспортировку"
+                                   :disabled="hasSelectDepartment === null || organizationResponses === null"
+                                   disabled-reason="Выберите МО и настройте параметры"
+                                   image-url="/assets/svg/illustrations/request.svg"
+                                   @click="onShowPrepareModal"
+                    />
+                </NGi>
+                <NGi>
+                    <WorkspaceItem header="Мои запросы"
+                                   image-url="/assets/svg/illustrations/my-requests.svg"
+                    />
+                </NGi>
+                <NGi span="2">
+                    <WorkspaceItem header="Выход"
+                                   image-url="/assets/svg/illustrations/exit.svg"
+                                   type="error"
+                    />
+                </NGi>
+            </NGrid>
         </NFlex>
         <NModal :mask-closable="false"
                 display-directive="if"
@@ -133,7 +171,22 @@ watch(responses.value, (newResponses) => {
                         <NRadioGroup v-if="question.type === 'single'"
                                      class="flex flex-col gap-y-2"
                                      v-model:value="responses[question.id]">
-                            <NRadio
+                            <template v-if="question.requires_confirmation"
+                                      v-for="answer in question.answers"
+                                      :key="`confirmed-${answer.id}`">
+                                <NPopconfirm
+                                    @positive-click="handlePositiveClick(question, answer)"
+                                    @negative-click="handleNegativeClick(question, answer)"
+                                >
+                                    <template #trigger>
+                                        <NRadio :value="answer.id"
+                                                :label="answer.text"
+                                        />
+                                    </template>
+                                    Подтвердите изменение
+                                </NPopconfirm>
+                            </template>
+                            <NRadio v-else
                                 v-for="answer in question.answers"
                                 :key="answer.id"
                                 :value="answer.id"
@@ -142,10 +195,26 @@ watch(responses.value, (newResponses) => {
                         </NRadioGroup>
                         <NCheckboxGroup
                             v-else
-                            v-model:value="responses[question.id]"
+                            :value="responses[question.id]"
                             class="flex flex-col gap-y-2"
                         >
+                            <template v-if="question.requires_confirmation"
+                                      v-for="answer in question.answers"
+                                      :key="`confirmed-${answer.id}`">
+                                <NPopconfirm
+                                    @positive-click="handlePositiveClick(question, answer)"
+                                    @negative-click="handleNegativeClick(question, answer)"
+                                >
+                                    <template #trigger>
+                                        <NCheckbox :value="answer.id"
+                                                :label="answer.text"
+                                        />
+                                    </template>
+                                    Подтвердите изменение варианта ответа
+                                </NPopconfirm>
+                            </template>
                             <NCheckbox
+                                v-else
                                 v-for="answer in question.answers"
                                 :key="answer.id"
                                 :value="answer.id"

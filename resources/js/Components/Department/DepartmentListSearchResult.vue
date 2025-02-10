@@ -18,7 +18,7 @@ function onSelect(key, option) {
         <NScrollbar class="max-h-[300px]">
             <ul>
                 <li v-for="(option, key) in options" :key="option.id"
-                    class="py-3 px-4 cursor-pointer rounded leading-4 transition-colors hover:text-green-500"
+                    class="py-3 px-4 cursor-pointer rounded leading-4 transition-colors hover:text-[#EC6608]"
                     @click="onSelect(key, option)">
                     {{ option.name }}
                 </li>

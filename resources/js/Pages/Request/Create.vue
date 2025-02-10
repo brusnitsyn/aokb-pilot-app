@@ -132,6 +132,10 @@ const nextStage = () => {
     }
 };
 
+const handleAnswerClick = (answer) => {
+
+}
+
 const submit = () => {
     if (!selectedMedicalOrganizationId.value) {
         window.$message.error('Пожалуйста, выберите медицинскую организацию.');
@@ -257,6 +261,7 @@ const submit = () => {
                                     :key="answer.id"
                                     :value="answer.id"
                                     :label="answer.text"
+                                    @click="handleAnswerClick(answer)"
                                 />
                             </NRadioGroup>
                         </NFormItem>
