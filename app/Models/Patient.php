@@ -14,4 +14,9 @@ class Patient extends Model
         'total_score',
         'diagnosis_id'
     ];
+
+    public function diagnosis()
+    {
+        return $this->belongsTo(Diagnosis::class);
+    }
 }

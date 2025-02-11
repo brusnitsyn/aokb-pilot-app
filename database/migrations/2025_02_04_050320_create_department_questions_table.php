@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('type')->default('single');
             $table->boolean('requires_confirmation')->default(false); // Требуется ли подтверждение
             $table->boolean('requires')->default(true); // Обязательна ли проверка на наличие значения
+            $table->json('default_answers')->nullable(); // Значения по умолчанию для множественного выбора
+            $table->integer('default_answer')->nullable(); // Значения по умолчанию для одиночного выбора
             $table->timestamps();
         });
     }

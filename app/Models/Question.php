@@ -9,7 +9,11 @@ class Question extends Model
     protected $fillable = [
         'text',
         'depends_on_answer_id',
-        'type'
+        'type',
+        'requires_confirmation',
+        'requires',
+        'default_answers',
+        'default_answer'
     ];
 
     public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany

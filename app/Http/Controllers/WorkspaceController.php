@@ -6,6 +6,7 @@ use App\Models\Department;
 use App\Models\DepartmentAnswer;
 use App\Models\DepartmentQuestion;
 use App\Models\Diagnosis;
+use App\Models\DiagnosisGroup;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,7 +14,7 @@ class WorkspaceController extends Controller
 {
     public function show(Request $request)
     {
-        $diagnosis = Diagnosis::all();
+        $diagnosisGroups = DiagnosisGroup::with('diagnoses')->get();
         $departments = Department::all();
 
         // Вопросы для медицинской организации
@@ -22,13 +23,20 @@ class WorkspaceController extends Controller
         // Cookie
         $activeDepartment = json_decode(\request()->cookie('activeDepartment'));
         $organizationResponses = json_decode(\request()->cookie('organizationResponses'));
+        $selectedDiagnosis = json_decode(\request()->cookie('selectDiagnosis'));
+
+        // Группа диагноза и сам диагноз
+        $selectedDiagnosisGroup = isset($selectedDiagnosis->diagnosisGroupId) ? DiagnosisGroup::with('diagnoses')->find($selectedDiagnosis->diagnosisGroupId) : null;
+        $selectedDiagnosis = isset($selectedDiagnosis->diagnosisId) ? Diagnosis::find($selectedDiagnosis->diagnosisId) : null;
 
         return Inertia::render('Workspace', [
-            'diagnosis' => $diagnosis,
+            'diagnosisGroups' => $diagnosisGroups,
             'departments' => $departments,
             'activeDepartment' => $activeDepartment,
             'organizationQuestions' => $organizationQuestions,
-            'organizationResponses' => $organizationResponses
+            'organizationResponses' => $organizationResponses,
+            'selectedDiagnosisGroup' => $selectedDiagnosisGroup,
+            'selectedDiagnosis' => $selectedDiagnosis,
         ]);
     }
 
@@ -45,6 +53,23 @@ class WorkspaceController extends Controller
         return response('')
             ->cookie('organizationResponses',
                 json_encode($organizationResponses),
+                config('session.lifetime')
+            );
+    }
+
+    public function setDiagnosis(Request $request)
+    {
+        $request->validate([
+            'diagnosisGroupId' => 'required|numeric',
+            'diagnosisId' => 'required|numeric',
+        ]);
+
+        $diagnosisGroup = DiagnosisGroup::findOrFail($request->input('diagnosisGroupId'));
+        $diagnosis = Diagnosis::findOrFail($request->input('diagnosisId'));
+
+        return response('')
+            ->cookie('selectDiagnosis',
+                json_encode(['diagnosisGroupId' => $diagnosisGroup->id, 'diagnosisId' => $diagnosis->id]),
                 config('session.lifetime')
             );
     }

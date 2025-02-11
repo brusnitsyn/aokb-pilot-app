@@ -8,8 +8,11 @@ defineProps({
 
 <template>
     <AppLayout>
-        Результат
-        {{ totalScore }}
+        <NFlex align="center" class="max-w-xl mx-auto h-full">
+            <NStatistic label="Результат" tabular-nums>
+                <NNumberAnimation :from="0" :to="totalScore" />
+            </NStatistic>
+        </NFlex>
     </AppLayout>
 </template>
 

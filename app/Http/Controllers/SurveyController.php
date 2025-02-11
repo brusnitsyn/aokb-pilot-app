@@ -128,6 +128,8 @@ class SurveyController extends Controller
 
     public function result()
     {
-
+        return Inertia::render('Request/Result', [
+            'totalScore' => 13,
+        ]);
     }
 }

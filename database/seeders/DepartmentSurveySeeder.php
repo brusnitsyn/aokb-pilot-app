@@ -23,42 +23,54 @@ class DepartmentSurveySeeder extends Seeder
                 'depends_on_answer_id' => null,
                 'type' => 'single',
                 'requires_confirmation' => false,
-                'requires' => true
+                'requires' => true,
+                'default_answers' => null,
+                'default_answer' => 3
             ], // 1
             [
                 'text' => 'Не в полном объеме (отсутствуют позиции)',
                 'depends_on_answer_id' => 2,
                 'type' => 'multiple',
                 'requires_confirmation' => true,
-                'requires' => true
+                'requires' => true,
+                'default_answers' => null,
+                'default_answer' => null
             ], // 2
             [
                 'text' => 'Возможность эвакуации собственными силами',
                 'depends_on_answer_id' => null,
                 'type' => 'single',
                 'requires_confirmation' => false,
-                'requires' => true
+                'requires' => true,
+                'default_answers' => null,
+                'default_answer' => null
             ], // 3
             [
                 'text' => 'Возможность посадки воздушного судна',
                 'depends_on_answer_id' => 8,
                 'type' => 'single',
                 'requires_confirmation' => false,
-                'requires' => true
+                'requires' => true,
+                'default_answers' => null,
+                'default_answer' => null
             ], // 4
             [
                 'text' => 'Возможность оказания помощи на месте',
                 'depends_on_answer_id' => null,
                 'type' => 'single',
                 'requires_confirmation' => false,
-                'requires' => true
+                'requires' => true,
+                'default_answers' => null,
+                'default_answer' => null
             ], // 5
             [
                 'text' => 'Отсутствие специалистов',
                 'depends_on_answer_id' => null,
                 'type' => 'multiple',
                 'requires_confirmation' => true,
-                'requires' => false
+                'requires' => false,
+                'default_answers' => null,
+                'default_answer' => null
             ], // 6
         ];
 

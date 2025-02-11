@@ -5,7 +5,7 @@ import DepartmentInputSearch from "@/Components/Department/DepartmentInputSearch
 import DepartmentListSearchResult from "@/Components/Department/DepartmentListSearchResult.vue"
 import {isExtraLargeScreen, isLargeScreen, isMediumScreen, isSmallScreen} from "@/Utils/mediaQuery.js"
 import {router, usePage} from "@inertiajs/vue3"
-import {IconSettings} from '@tabler/icons-vue'
+import {IconMapPin, IconSettings} from '@tabler/icons-vue'
 
 const emits = defineEmits([
     'clickOnShowMoParameters'
@@ -66,6 +66,12 @@ const modalTitle = computed(() => {
 
 const hasWorkspacePage = computed(() => usePage().url.includes('workspace'))
 
+// Проверка, выбраны ли группа и диагноз
+const hasSelectedDiagnosis = computed(() => {
+    return usePage().props.selectedDiagnosisGroup !== null && usePage().props.selectedDiagnosis !== null
+})
+
+
 const departmentActiveClass = computed(() => {
     return [
         '!my-0',
@@ -98,19 +104,24 @@ function onLeaveModal() {
 
 <template>
     <NFlex align="center" inline>
-        <NH2 :class="departmentActiveClass" @click="onClickTitle">
-            {{ departmentActive ? departmentActive.name : 'Выберите МО' }}
-        </NH2>
-        <NButton v-if="hasActiveDepartment"
-                 round
-                 secondary
-                 @click="onShowDrawer"
-                 :disabled="!hasWorkspacePage">
-            <template #icon>
-                <NIcon :component="IconSettings" />
-            </template>
-            Параметры МО
-        </NButton>
+        <NButtonGroup>
+            <NButton round type="primary" secondary @click="onClickTitle" :disabled="(!hasWorkspacePage || !hasSelectedDiagnosis)">
+                <template #icon>
+                    <NIcon :component="IconMapPin" />
+                </template>
+                {{ departmentActive ? departmentActive.name : 'Выберите МО' }}
+            </NButton>
+            <NButton v-if="hasActiveDepartment"
+                     round
+                     type="info"
+                     secondary
+                     @click="onShowDrawer"
+                     :disabled="(!hasWorkspacePage || !hasSelectedDiagnosis)">
+                <template #icon>
+                    <NIcon :component="IconSettings" />
+                </template>
+            </NButton>
+        </NButtonGroup>
     </NFlex>
     <NModal @afterLeave="onLeaveModal"
             :mask-closable="false"

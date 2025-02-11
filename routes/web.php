@@ -17,6 +17,7 @@ Route::get('/', function () {
 
 Route::get('/workspace', [\App\Http\Controllers\WorkspaceController::class, 'show'])->name('workspace');
 Route::post('/workspace', [\App\Http\Controllers\WorkspaceController::class, 'update'])->name('workspace.post');
+Route::post('/workspace/diagnosis', [\App\Http\Controllers\WorkspaceController::class, 'setDiagnosis'])->name('workspace.diagnosis.post');
 
 Route::post('/user/department/update', [\App\Http\Controllers\Api\v1\DepartmentController::class, 'update'])
     ->name('user.department.update');
@@ -26,6 +27,14 @@ Route::get('/request', [\App\Http\Controllers\SurveyController::class, 'show'])-
 
 Route::post('/request', [\App\Http\Controllers\SurveyController::class, 'store'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
     ->name('request.store');
+
+Route::get('/request/result', [\App\Http\Controllers\SurveyController::class, 'result'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
+    ->name('request.result');
+
+Route::prefix('my')->group(function () {
+    Route::get('/requests', [\App\Http\Controllers\MyController::class, 'requests'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
+        ->name('my.request');
+});
 
 Route::middleware([
     'auth:sanctum',

@@ -13,4 +13,14 @@ class PatientResult extends Model
         'department_score',
         'total_score',
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class);
+    }
 }

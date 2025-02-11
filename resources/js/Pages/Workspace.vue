@@ -1,27 +1,47 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { IconCirclePlus, IconTableDashed, IconDoorExit } from '@tabler/icons-vue'
 import WorkspaceItem from "@/Components/Workspace/WorkspaceItem.vue";
 import {router, usePage} from "@inertiajs/vue3";
+import FormSelectDiagnosis from "@/Components/Workspace/Diagnosis/FormSelectDiagnosis.vue";
+import FormConfirmDiagnosis from "@/Components/Workspace/Diagnosis/FormConfirmDiagnosis.vue";
 
 const props = defineProps({
     diagnosis: Array,
+    diagnosisGroups: Array,
     organizationResponses: Array,
-    organizationQuestions: Array
+    organizationQuestions: Array,
+    selectedDiagnosisGroup: Object,
+    selectedDiagnosis: Object
 })
 
 const showMoParameters = inject('showMoParameters')
 
 const page = usePage()
-const hasSelectDepartment = computed(() => page.props.activeDepartment)
 const hasShowPrepareModal = ref(false)
+const hasShowDiagnosesModal = ref(false)
 const diagnosisId = ref(null)
+
 const isOpenDrawer = ref(false)
 const hasOpenDrawer = computed(() => {
     if ((hasSelectDepartment.value && props.organizationResponses === null) || isOpenDrawer.value === true) return true
     else return false
 })
 const responses = ref(props.organizationResponses ?? {})
+
+// Инициализация ответов со значениями по умолчанию
+const initializeResponses = () => {
+    props.organizationQuestions.forEach((question) => {
+        if (question.type === 'multiple' && question.default_answers) {
+            responses.value[question.id] = question.default_answers;
+        }
+
+        if (question.type === 'single' && question.default_answer) {
+            responses.value[question.id] = question.default_answer;
+        }
+    });
+}
+
+initializeResponses()
 
 // Фильтрация видимых вопросов для МО
 const visibleDepartmentQuestions = computed(() => {
@@ -56,14 +76,28 @@ const isAnsweredQuestions = computed(() => {
 
     const requireQuestions = visibleDepartmentQuestions.value.filter(itm => itm.requires === true)
 
-    return requireQuestions.every(item => responses.value.hasOwnProperty(item.id))//requireQuestions.length === Object.keys(responses.value).includes(); // Все ответы заполнены
+    return requireQuestions.every(item => responses.value.hasOwnProperty(item.id))
 });
 
-function onSubmit() {
-    router.get(route('request.create'), {
-        diagnosis_id: diagnosisId.value
-    })
-}
+// Проверка, выбраны ли группа и диагноз
+const hasSelectedDiagnosis = computed(() => {
+    return props.selectedDiagnosisGroup !== null && props.selectedDiagnosis !== null
+})
+
+// Проверка, выбрано ли МО
+const hasSelectDepartment = computed(() => {
+    return page.props.activeDepartment !== null
+})
+
+// Проверка, заполнены ли параметры МО
+const hasFilledDepartmentResponses = computed(() => {
+    return props.organizationResponses !== null
+})
+
+const disabledMessage = computed(() => {
+    if (hasSelectedDiagnosis.value === false) return 'Установите диагноз'
+    if (hasSelectDepartment.value === false || hasFilledDepartmentResponses.value === false) return 'Выберите МО и настройте параметры'
+})
 
 async function onSubmitDrawer() {
     await axios.post(route('workspace.post'), {
@@ -77,8 +111,12 @@ async function onSubmitDrawer() {
 }
 
 function onShowPrepareModal() {
-    if (hasSelectDepartment.value)
+    if (hasSelectedDiagnosis.value && (hasSelectDepartment.value && hasFilledDepartmentResponses.value))
       hasShowPrepareModal.value = true
+}
+
+function onShowDiagnosesModal() {
+    hasShowDiagnosesModal.value = true
 }
 
 const handlePositiveClick = (question, answer) => {
@@ -98,8 +136,15 @@ const handlePositiveClick = (question, answer) => {
         }
     }
 }
-const handleNegativeClick = (question, answer) => {
 
+const handleNegativeClick = (question, answer) => {
+    if (question.type === 'single') {
+        responses.value[question.id] = null
+    } else {
+        if (!responses.value[question.id]) {
+            responses.value[question.id] = []
+        }
+    }
 }
 
 // Отслеживаем изменения ответов на вопросы
@@ -114,28 +159,32 @@ watch(responses.value, (newResponses) => {
 </script>
 
 <template>
-    <AppLayout title="Dashboard" @show-mo-parameters="isOpenDrawer = true">
+    <AppLayout title="Рабочая область" @show-mo-parameters="isOpenDrawer = true">
         <NFlex align="center" class="max-w-xl mx-auto h-full">
             <NGrid cols="1 s:2" x-gap="16" y-gap="16" responsive="screen">
                 <NGi span="2">
                     <WorkspaceItem header="Выбранный диагноз"
-                                   image-url="/assets/svg/illustrations/diagnosis.svg">
+                                   image-url="/assets/svg/illustrations/diagnosis.svg"
+                                   @click="onShowDiagnosesModal">
                         <template #header>
-                            <NSpace vertical :size="3">
-                                <div class="max-w-[240px] text-base leading-6 select-none">
-                                    Выбранный диагноз: <b>I20.0</b>
+                            <NSpace v-if="hasSelectedDiagnosis" vertical :size="3">
+                                <div class="max-w-[240px] text-base leading-6 select-none font-semibold">
+                                    {{ selectedDiagnosisGroup.name }}
                                 </div>
                                 <div class="max-w-[420px] leading-4 select-none">
-                                    Нестабильная стенокардия (впервые возникшая, прогрессирующая)
+                                    {{ selectedDiagnosis.code }} {{ selectedDiagnosis.name }}
                                 </div>
                             </NSpace>
+                            <div v-else class="max-w-[240px] text-base leading-6 select-none font-semibold">
+                                Установите группу и диагноз
+                            </div>
                         </template>
                     </WorkspaceItem>
                 </NGi>
                 <NGi>
                     <WorkspaceItem header="Создать запрос на транспортировку"
-                                   :disabled="hasSelectDepartment === null || organizationResponses === null"
-                                   disabled-reason="Выберите МО и настройте параметры"
+                                   :disabled="!hasSelectedDiagnosis || (!hasSelectDepartment || !hasFilledDepartmentResponses)"
+                                   :disabled-reason="disabledMessage"
                                    image-url="/assets/svg/illustrations/request.svg"
                                    @click="onShowPrepareModal"
                     />
@@ -143,6 +192,9 @@ watch(responses.value, (newResponses) => {
                 <NGi>
                     <WorkspaceItem header="Мои запросы"
                                    image-url="/assets/svg/illustrations/my-requests.svg"
+                                   :disabled="!hasSelectedDiagnosis || (!hasSelectDepartment || !hasFilledDepartmentResponses)"
+                                   :disabled-reason="disabledMessage"
+                                   :href="route('my.request')"
                     />
                 </NGi>
                 <NGi span="2">
@@ -157,21 +209,17 @@ watch(responses.value, (newResponses) => {
                 display-directive="if"
                 v-model:show="hasShowPrepareModal"
                 preset="card"
-                class="max-w-screen-md"
-                title="Подготовка к запросу">
-            <NForm @submit.prevent="onSubmit">
-                <NFormItem label="Выберите диагноз">
-                    <NSelect
-                        v-model:value="diagnosisId"
-                        :options="diagnosis"
-                        label-field="name"
-                        value-field="id"
-                    />
-                </NFormItem>
-                <NButton type="primary" attr-type="submit" :disabled="diagnosisId === null">
-                    Создать запрос
-                </NButton>
-            </NForm>
+                class="max-w-xl"
+                title="Подтверждение диагноза">
+            <FormConfirmDiagnosis />
+        </NModal>
+        <NModal :mask-closable="false"
+                display-directive="if"
+                v-model:show="hasShowDiagnosesModal"
+                preset="card"
+                class="max-w-xl"
+                title="Установка диагноза">
+            <FormSelectDiagnosis @close="hasShowDiagnosesModal = false" />
         </NModal>
         <NDrawer :show="hasOpenDrawer" :width="480">
             <NDrawerContent title="Настройка параметров МО">
@@ -192,6 +240,9 @@ watch(responses.value, (newResponses) => {
                                 <NPopconfirm
                                     @positive-click="handlePositiveClick(question, answer)"
                                     @negative-click="handleNegativeClick(question, answer)"
+                                    @clickoutside="handleNegativeClick(question, answer)"
+                                    :negative-text="null"
+                                    placement="top-start"
                                 >
                                     <template #trigger>
                                         <NRadio :value="answer.id"
@@ -219,6 +270,9 @@ watch(responses.value, (newResponses) => {
                                 <NPopconfirm
                                     @positive-click="handlePositiveClick(question, answer)"
                                     @negative-click="handleNegativeClick(question, answer)"
+                                    @clickoutside="handleNegativeClick(question, answer)"
+                                    :negative-text="null"
+                                    placement="top-start"
                                 >
                                     <template #trigger>
                                         <NCheckbox :value="answer.id"
