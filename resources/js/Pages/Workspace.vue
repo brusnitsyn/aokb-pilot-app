@@ -209,7 +209,7 @@ watch(responses.value, (newResponses) => {
                 display-directive="if"
                 v-model:show="hasShowPrepareModal"
                 preset="card"
-                class="max-w-xl"
+                class="max-w-xl !rounded-3xl"
                 title="Подтверждение диагноза">
             <FormConfirmDiagnosis />
         </NModal>
@@ -217,7 +217,7 @@ watch(responses.value, (newResponses) => {
                 display-directive="if"
                 v-model:show="hasShowDiagnosesModal"
                 preset="card"
-                class="max-w-xl"
+                class="max-w-xl !rounded-3xl"
                 title="Установка диагноза">
             <FormSelectDiagnosis @close="hasShowDiagnosesModal = false" />
         </NModal>

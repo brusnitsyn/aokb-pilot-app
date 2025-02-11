@@ -49,6 +49,7 @@ const searchedOptions = ref([])
 
 const modalClass = computed(() => {
     return [
+        '!rounded-3xl',
         isSmallScreen.value === true ? 'h-screen' : '',
         isMediumScreen.value === true
         || isLargeScreen.value === true

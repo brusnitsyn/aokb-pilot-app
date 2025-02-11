@@ -13,7 +13,10 @@ const themeOverrides = {
         // borderRadiusMedium: '24px',
     },
     Dialog: {
-        // borderRadius: '24px'
+        borderRadius: '24px'
+    },
+    Modal: {
+
     }
 }
 </script>

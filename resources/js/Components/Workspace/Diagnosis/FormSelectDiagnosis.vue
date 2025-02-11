@@ -47,7 +47,7 @@ const onSubmit = async () => {
                 value-field="id"
             />
         </NFormItem>
-        <NButton type="primary" attr-type="submit" :disabled="diagnosisId === null">
+        <NButton type="primary" attr-type="submit" round :disabled="diagnosisId === null">
             Установить
         </NButton>
     </NForm>
