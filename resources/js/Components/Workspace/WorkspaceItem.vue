@@ -79,7 +79,13 @@ const iconClass = computed(() => {
             </div>
         </div>
     </div>
-    <Motion v-else :hover="{ scale: 1.05 }" as="div" class="relative border transition-colors overflow-clip rounded-3xl bg-white drop-shadow-sm" :class="{'hover:border-[#EC6608] cursor-pointer': !disabled}">
+    <Motion v-else
+            :transition="{ duration: 0.1, }"
+            :hover="{ scale: 1.05 }"
+            :initial="{ scale: 1 }"
+            as="div"
+            class="relative border transition-colors overflow-clip rounded-3xl bg-white drop-shadow-sm"
+            :class="{'hover:border-[#EC6608] cursor-pointer': !disabled}">
         <Link v-if="href" :href="href">
             <div class="p-4 px-5 relative bg-no-repeat bg-right-bottom h-[140px] overflow-clip">
                 <slot v-if="$slots.header" name="header" />
