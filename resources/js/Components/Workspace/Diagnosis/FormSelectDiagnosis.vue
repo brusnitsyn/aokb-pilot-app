@@ -17,7 +17,17 @@ const diagnosis = computed({
             })
     }
 })
-
+const selectDiagnosisGroup = computed({
+    get() {
+        return diagnosisGroupId.value
+    },
+    set(value) {
+        if (diagnosisGroupId.value !== value) {
+            diagnosisGroupId.value = value
+            diagnosisId.value = null
+        }
+    }
+})
 const onSubmit = async () => {
     await axios.post(route('workspace.diagnosis.post'), {
         diagnosisGroupId: diagnosisGroupId.value,
@@ -33,7 +43,7 @@ const onSubmit = async () => {
     <NForm @submit.prevent="onSubmit">
         <NFormItem label="Выберите группу диагнозов">
             <NSelect
-                v-model:value="diagnosisGroupId"
+                v-model:value="selectDiagnosisGroup"
                 :options="page.props.diagnosisGroups"
                 label-field="name"
                 value-field="id"
