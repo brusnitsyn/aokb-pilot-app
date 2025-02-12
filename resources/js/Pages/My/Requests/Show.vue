@@ -1,5 +1,7 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
+import {IconHome} from "@tabler/icons-vue";
+import {Link} from "@inertiajs/vue3";
 defineProps({
     patients: Array
 })
@@ -21,7 +23,15 @@ const columns = [
 
 <template>
     <AppLayout>
-        <NFlex align="center" class="max-w-5xl mx-auto h-full">
+        <NFlex align="center" class="max-w-5xl mx-auto">
+            <Link :href="route('workspace')" class="h-full">
+                <NButton secondary round>
+                    <template #icon>
+                        <NIcon :component="IconHome" />
+                    </template>
+                    Вернуться на рабочую область
+                </NButton>
+            </Link>
             <NDataTable :columns="columns" :data="patients" />
         </NFlex>
     </AppLayout>
