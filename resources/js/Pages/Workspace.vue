@@ -221,7 +221,7 @@ watch(responses.value, (newResponses) => {
                 title="Установка диагноза">
             <FormSelectDiagnosis @close="hasShowDiagnosesModal = false" />
         </NModal>
-        <NDrawer :show="hasOpenDrawer" :width="480">
+        <NDrawer :show="hasOpenDrawer" class="!w-screen lg:!w-[480px]">
             <NDrawerContent title="Настройка параметров МО">
                 <NForm class="flex flex-col gap-y-3">
                     <NFormItem
