@@ -44,7 +44,7 @@ const currentOrganizationQuestion = computed(() => {
 
 // Текущий вопрос для пациента
 const currentPatientQuestion = computed(() => {
-    return props.patientQuestions[currentPatientIndex.value];
+    return visiblePatientQuestions.value[currentPatientIndex.value];
 });
 
 // Проверка, является ли текущий вопрос последним для медицинской организации
@@ -72,9 +72,9 @@ const patientProgress = computed(() => {
     const answered = Object.keys(patientResponses.value).length;
     const total = visiblePatientQuestions.value.length;
     const result = (answered / total) * 100
-    return result.toLocaleString(undefined, {
+    return Number(result.toLocaleString(undefined, {
         maximumFractionDigits: 0
-    });
+    }))
 });
 
 // Переход к предыдущему вопросу для медицинской организации
@@ -108,7 +108,7 @@ const prevPatientQuestion = () => {
 // Переход к следующему вопросу для пациента
 const nextPatientQuestion = () => {
     if (!patientResponses.value[currentPatientQuestion.value.id]) {
-        message.error('Пожалуйста, выберите ответ на текущий вопрос.');
+        window.$message.error('Пожалуйста, выберите ответ на текущий вопрос.');
         return;
     }
 
@@ -161,16 +161,26 @@ const submit = () => {
         }
     })
 };
+
+// Отслеживаем изменения ответов на вопросы
+watch(patientResponses.value, (newResponses) => {
+    // Удаляем ответы на зависимые вопросы, если изменился ответ на предыдущий вопрос
+    props.patientQuestions.forEach((question) => {
+        if (question.depends_on_answer_id && Object.values(newResponses).includes(question.depends_on_answer_id) === false) {
+            delete patientResponses.value[question.id];
+        }
+    });
+}, { deep: true });
 </script>
 <template>
     <AppLayout>
-        <NSpace vertical size="large" class="max-w-4xl mx-auto h-full">
+        <NSpace vertical size="large" class="max-w-xl mx-auto h-full">
             <Link :href="route('workspace')" class="h-full">
-                <NButton secondary>
+                <NButton secondary round>
                     <template #icon>
                         <NIcon :component="IconHome" />
                     </template>
-                    Домой
+                    Вернуться на рабочую область
                 </NButton>
             </Link>
 
@@ -235,7 +245,10 @@ const submit = () => {
 
             <!-- Вопросы для пациента -->
             <transition name="fade" mode="out-in">
-                <NCard v-if="stage === 'patient'" key="patient">
+                <NCard v-if="stage === 'patient'"
+                       key="patient"
+                       class="!rounded-3xl drop-shadow-sm"
+                >
                     <template #header>
                         {{ currentPatientQuestion.text }}
                     </template>
@@ -245,8 +258,9 @@ const submit = () => {
                             :percentage="patientProgress"
                             :indicator-placement="'inside'"
                             status="success"
-                            border-radius="0 0 3px 3px"
-                            fill-border-radius="3px"
+                            height="24px"
+                            border-radius="24px 24px 0px 0px"
+                            :fill-border-radius="patientProgress >= 100 ? '0px 24px 0px 0px' : '0px 24px 24px 0px'"
                         />
                     </template>
                     <NForm>
@@ -268,7 +282,10 @@ const submit = () => {
                     </NForm>
                     <template #action>
                         <NButtonGroup class="flex justify-end">
-                            <NButton secondary :disabled="currentPatientIndex === 0" @click="prevPatientQuestion">
+                            <NButton secondary
+                                     :disabled="currentPatientIndex === 0"
+                                     round
+                                     @click="prevPatientQuestion">
                                 <template #icon>
                                     <NIcon :component="IconArrowLeft" />
                                 </template>
@@ -276,6 +293,7 @@ const submit = () => {
                             </NButton>
                             <NButton
                                 type="primary"
+                                round
                                 secondary
                                 icon-placement="right"
                                 :disabled="!patientResponses[currentPatientQuestion.id]"
@@ -295,6 +313,9 @@ const submit = () => {
 </template>
 
 <style scoped>
+:deep(.n-card__action) {
+    @apply rounded-b-3xl py-4 px-6;
+}
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.2s ease;
