@@ -28,6 +28,9 @@ Route::get('/request', [\App\Http\Controllers\SurveyController::class, 'show'])-
 Route::post('/request', [\App\Http\Controllers\SurveyController::class, 'store'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
     ->name('request.store');
 
+Route::delete('/request', [\App\Http\Controllers\SurveyController::class, 'deleteResult'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
+    ->name('request.delete');
+
 Route::get('/request/result', [\App\Http\Controllers\SurveyController::class, 'result'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
     ->name('request.result');
 

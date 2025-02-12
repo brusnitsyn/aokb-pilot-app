@@ -108,17 +108,19 @@ class SurveyController extends Controller
         );
 
         // Сохранение результата
-        PatientResult::create([
+        $patientResult = PatientResult::create([
             'patient_id' => $patient->id,
             'department_id' => $medicalOrganizationId,
             'patient_score' => $patientScore,
             'department_score' => $organizationScore,
             'total_score' => $totalScore,
+            'patient_responses' => $patientResponses,
+            'department_responses' => $organizationResponses,
         ]);
 
-        return Inertia::render('Request/Result', [
-            'totalScore' => $totalScore,
-        ]);
+        return redirect(route('request.result', [
+            'patient_id' => $patient->id
+        ]))->cookie('selectDiagnosis', null, config('session.lifetime'));
 
 //        return redirect()->route('survey.result')->with([
 //            'totalScore' => $totalScore,
@@ -126,10 +128,34 @@ class SurveyController extends Controller
 //        ]);
     }
 
-    public function result()
+    public function result(Request $request)
     {
-        return Inertia::render('Request/Result', [
-            'totalScore' => 13,
+        $request->validate([
+            'patient_id' => 'required|exists:patients,id',
         ]);
+
+        $patientResult = PatientResult::find($request->input('patient_id'))->load(['department', 'patient']);
+        $diagnosisGroupId = $patientResult->patient->diagnosis->diagnosis_group_id;
+
+        $departmentQuestions = DepartmentQuestion::with('answers.departments')
+            ->where('depends_on_diagnosis_group_id', $diagnosisGroupId)
+            ->orWhere('depends_on_diagnosis_group_id', null)
+            ->get();
+
+        return Inertia::render('Request/Result', [
+            'totalScore' => $patientResult->total_score,
+            'patientResult' => $patientResult,
+            'departmentQuestions' => $departmentQuestions,
+        ]);
+    }
+
+    public function deleteResult(Request $request)
+    {
+        $request->validate([
+            'patient_result_id'
+        ]);
+
+        $patientResult = PatientResult::find($request->input('patient_result_id'))->delete();
+        return redirect(route('my.request'));
     }
 }

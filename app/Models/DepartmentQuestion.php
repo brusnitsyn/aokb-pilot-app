@@ -9,6 +9,7 @@ class DepartmentQuestion extends Model
 {
     protected $fillable = [
         'text',
+        'depends_on_diagnosis_group_id',
         'depends_on_answer_id',
         'type',
         'requires_confirmation',
@@ -25,6 +26,11 @@ class DepartmentQuestion extends Model
     public function dependsOnAnswer(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(DepartmentAnswer::class, 'depends_on_answer_id');
+    }
+
+    public function dependsOnDiagnosisGroup(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(DiagnosisGroup::class, 'depends_on_diagnosis_group_id');
     }
 
     protected function casts(): array

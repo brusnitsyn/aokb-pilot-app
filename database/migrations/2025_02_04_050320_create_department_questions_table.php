@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             // $table->foreignIdFor(\App\Models\Department::class, 'department_id'); // Связь с медицинской организацией
             $table->string('text'); // Текст вопроса
+            $table->foreignIdFor(\App\Models\DiagnosisGroup::class, 'depends_on_diagnosis_group_id')
+                ->nullable(); // Зависимость от группы диагноза
             $table->foreignIdFor(\App\Models\DepartmentAnswer::class, 'depends_on_answer_id')
                 ->nullable(); // Зависимость от ответа
             $table->string('type')->default('single');

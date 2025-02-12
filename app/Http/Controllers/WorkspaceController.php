@@ -17,9 +17,6 @@ class WorkspaceController extends Controller
         $diagnosisGroups = DiagnosisGroup::with('diagnoses')->get();
         $departments = Department::all();
 
-        // Вопросы для медицинской организации
-        $organizationQuestions = DepartmentQuestion::with('answers.departments')->get();
-
         // Cookie
         $activeDepartment = json_decode(\request()->cookie('activeDepartment'));
         $organizationResponses = json_decode(\request()->cookie('organizationResponses'));
@@ -28,6 +25,12 @@ class WorkspaceController extends Controller
         // Группа диагноза и сам диагноз
         $selectedDiagnosisGroup = isset($selectedDiagnosis->diagnosisGroupId) ? DiagnosisGroup::with('diagnoses')->find($selectedDiagnosis->diagnosisGroupId) : null;
         $selectedDiagnosis = isset($selectedDiagnosis->diagnosisId) ? Diagnosis::find($selectedDiagnosis->diagnosisId) : null;
+
+        // Вопросы для медицинской организации
+        $organizationQuestions = $selectedDiagnosisGroup ? DepartmentQuestion::with('answers.departments')
+            ->where('depends_on_diagnosis_group_id', $selectedDiagnosisGroup->id)
+            ->orWhere('depends_on_diagnosis_group_id', null)
+            ->get() : [];
 
         return Inertia::render('Workspace', [
             'diagnosisGroups' => $diagnosisGroups,
@@ -71,6 +74,6 @@ class WorkspaceController extends Controller
             ->cookie('selectDiagnosis',
                 json_encode(['diagnosisGroupId' => $diagnosisGroup->id, 'diagnosisId' => $diagnosis->id]),
                 config('session.lifetime')
-            );
+            )->cookie('organizationResponses', null, config('session.lifetime'));
     }
 }

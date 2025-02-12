@@ -58,7 +58,7 @@ const isAnsweredQuestions = computed(() => {
         const question = props.organizationQuestions.find(itm => itm.id === Number(questionId))
 
         // Проверка, если вопрос не обязателен
-        if (question.requires === false) {
+        if (question?.requires === false) {
             continue
         }
 
@@ -117,6 +117,9 @@ function onShowPrepareModal() {
 
 function onShowDiagnosesModal() {
     hasShowDiagnosesModal.value = true
+}
+const handleClick = (question, answer) => {
+    handlePositiveClick(question, answer)
 }
 
 const handlePositiveClick = (question, answer) => {
@@ -190,9 +193,9 @@ watch(responses.value, (newResponses) => {
                     />
                 </NGi>
                 <NGi>
-                    <WorkspaceItem header="Мои запросы"
+                    <WorkspaceItem header="Запросы МО"
                                    image-url="/assets/svg/illustrations/my-requests.svg"
-                                   :disabled="!hasSelectedDiagnosis || (!hasSelectDepartment || !hasFilledDepartmentResponses)"
+                                   :disabled="!hasSelectDepartment || !hasFilledDepartmentResponses"
                                    :disabled-reason="disabledMessage"
                                    :href="route('my.request')"
                     />
@@ -233,14 +236,13 @@ watch(responses.value, (newResponses) => {
                     >
                         <NRadioGroup v-if="question.type === 'single'"
                                      class="flex flex-col gap-y-2"
-                                     v-model:value="responses[question.id]">
+                                     :value="responses[question.id]">
                             <template v-if="question.requires_confirmation"
                                       v-for="answer in question.answers"
-                                      :key="`confirmed-${answer.id}`">
+                                      :key="`confirmed-${answer.id}-single`">
                                 <NPopconfirm
                                     @positive-click="handlePositiveClick(question, answer)"
                                     @negative-click="handleNegativeClick(question, answer)"
-                                    @clickoutside="handleNegativeClick(question, answer)"
                                     :negative-text="null"
                                     placement="top-start"
                                 >
@@ -253,10 +255,11 @@ watch(responses.value, (newResponses) => {
                                 </NPopconfirm>
                             </template>
                             <NRadio v-else
-                                v-for="answer in question.answers"
-                                :key="answer.id"
-                                :value="answer.id"
-                                :label="answer.text"
+                                    v-for="answer in question.answers"
+                                    :key="answer.id"
+                                    @click="handleClick(question, answer)"
+                                    :value="answer.id"
+                                    :label="answer.text"
                             />
                         </NRadioGroup>
                         <NCheckboxGroup
@@ -279,7 +282,7 @@ watch(responses.value, (newResponses) => {
                                                 :label="answer.text"
                                         />
                                     </template>
-                                    Подтвердите изменение варианта ответа
+                                    Подтвердите изменение
                                 </NPopconfirm>
                             </template>
                             <NCheckbox

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->double('patient_score'); // Баллы пациента
             $table->double('department_score'); // Баллы медицинской организации
             $table->double('total_score'); // Общий результат
+            $table->json('patient_responses')->nullable(); // Выбранные ответы на вопросы пациента
+            $table->json('department_responses')->nullable(); // Выбранные ответы на вопросы МО
             $table->timestamps();
         });
     }

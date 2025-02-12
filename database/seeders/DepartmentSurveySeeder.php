@@ -21,8 +21,9 @@ class DepartmentSurveySeeder extends Seeder
             [
                 'text' => 'Оснащение',
                 'depends_on_answer_id' => null,
+                'depends_on_diagnosis_group_id' => null,
                 'type' => 'single',
-                'requires_confirmation' => false,
+                'requires_confirmation' => true,
                 'requires' => true,
                 'default_answers' => null,
                 'default_answer' => 3
@@ -30,6 +31,7 @@ class DepartmentSurveySeeder extends Seeder
             [
                 'text' => 'Не в полном объеме (отсутствуют позиции)',
                 'depends_on_answer_id' => 2,
+                'depends_on_diagnosis_group_id' => 1,
                 'type' => 'multiple',
                 'requires_confirmation' => true,
                 'requires' => true,
@@ -39,6 +41,7 @@ class DepartmentSurveySeeder extends Seeder
             [
                 'text' => 'Возможность эвакуации собственными силами',
                 'depends_on_answer_id' => null,
+                'depends_on_diagnosis_group_id' => null,
                 'type' => 'single',
                 'requires_confirmation' => false,
                 'requires' => true,
@@ -48,6 +51,7 @@ class DepartmentSurveySeeder extends Seeder
             [
                 'text' => 'Возможность посадки воздушного судна',
                 'depends_on_answer_id' => 8,
+                'depends_on_diagnosis_group_id' => null,
                 'type' => 'single',
                 'requires_confirmation' => false,
                 'requires' => true,
@@ -57,6 +61,7 @@ class DepartmentSurveySeeder extends Seeder
             [
                 'text' => 'Возможность оказания помощи на месте',
                 'depends_on_answer_id' => null,
+                'depends_on_diagnosis_group_id' => null,
                 'type' => 'single',
                 'requires_confirmation' => false,
                 'requires' => true,
@@ -66,6 +71,7 @@ class DepartmentSurveySeeder extends Seeder
             [
                 'text' => 'Отсутствие специалистов',
                 'depends_on_answer_id' => null,
+                'depends_on_diagnosis_group_id' => 1,
                 'type' => 'multiple',
                 'requires_confirmation' => true,
                 'requires' => false,

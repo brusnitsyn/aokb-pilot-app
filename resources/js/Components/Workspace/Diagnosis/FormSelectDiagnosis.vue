@@ -34,7 +34,9 @@ const onSubmit = async () => {
         diagnosisId: diagnosisId.value,
     }).then(() => {
         emits('close')
-        router.reload()
+        router.visit(route('workspace'), {
+            preserveState: false
+        })
     })
 }
 </script>

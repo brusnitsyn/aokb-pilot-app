@@ -150,8 +150,7 @@ const submit = () => {
     router.post(route('request.store'), {
         diagnosis_id: selectedDiagnosisId.value,
         medical_organization_id: selectedMedicalOrganizationId.value,
-        patient_responses: patientResponses.value,
-        organization_responses: organizationResponses.value,
+        patient_responses: patientResponses.value
     }, {
         onSuccess: () => {
             window.$message.success('Ответы успешно отправлены!');
@@ -245,7 +244,7 @@ watch(patientResponses.value, (newResponses) => {
 
             <!-- Вопросы для пациента -->
             <transition name="fade" mode="out-in">
-                <NCard v-if="stage === 'patient'"
+                <NCard v-if="stage === 'patient' && patientQuestions.length > 0"
                        key="patient"
                        class="!rounded-3xl drop-shadow-sm"
                 >
@@ -306,6 +305,11 @@ watch(patientResponses.value, (newResponses) => {
                             </NButton>
                         </NButtonGroup>
                     </template>
+                </NCard>
+                <NCard v-else
+                       class="!rounded-3xl drop-shadow-sm"
+                >
+                    Для выбранного диагноза еще не подготовлены вопросы
                 </NCard>
             </transition>
         </NSpace>
