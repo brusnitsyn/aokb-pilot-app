@@ -19,17 +19,17 @@ for (const departmentResponse in props.patientResult.department_responses) {
         answer: null
     }
 
-    const answerId = props.patientResult.department_responses[departmentResponse]
-    if (Array.isArray(answerId)) {
+    const answers = props.patientResult.department_responses[departmentResponse]
+    if (Array.isArray(answers)) {
         const answerModel = []
-        for (const answer in answerId) {
-            answerModel.push(props.departmentQuestions.find(itm => itm.id === Number(departmentResponse)).answers[Number(answer)])
+        for (const answer in answers) {
+            answerModel.push(props.departmentQuestions.find(itm => itm.id === Number(departmentResponse)).answers.find(itm => itm.id === Number(answers[answer])))
         }
         model.answer = answerModel
         model.question = props.departmentQuestions.find(itm => itm.id === Number(departmentResponse))
     } else {
         model.question = props.departmentQuestions.find(itm => itm.id === Number(departmentResponse))
-        model.answer = props.departmentQuestions.find(itm => itm.id === Number(departmentResponse)).answers.find(itm => itm.id === answerId)
+        model.answer = props.departmentQuestions.find(itm => itm.id === Number(departmentResponse)).answers.find(itm => itm.id === answers)
     }
 
     responsesAnswers.value.push(model)
