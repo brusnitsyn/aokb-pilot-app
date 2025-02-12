@@ -1,6 +1,7 @@
 <script setup>
 import {ruRU, dateRuRU} from 'naive-ui'
 import NMessageContent from "@/Components/Naive/NMessageContent.vue";
+import NDialogContent from "@/Components/Naive/NDialogContent.vue";
 
 const themeOverrides = {
     common: {
@@ -22,12 +23,14 @@ const themeOverrides = {
 </script>
 
 <template>
-    <NDialogProvider />
 
     <NConfigProvider :locale="ruRU" :date-locale="dateRuRU" :theme-overrides="themeOverrides">
         <NMessageProvider keep-alive-on-hover>
             <NMessageContent />
         </NMessageProvider>
+        <NDialogProvider>
+            <NDialogContent />
+        </NDialogProvider>
         <slot />
     </NConfigProvider>
 </template>
