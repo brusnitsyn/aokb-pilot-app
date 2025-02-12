@@ -18,7 +18,8 @@ class DiagnosisSeeder extends Seeder
         Diagnosis::truncate();
 
         $groups = [
-            [ 'name' => 'Острый коронарный синдром', 'shortname' => 'ОКС' ]
+            [ 'name' => 'Острый коронарный синдром', 'shortname' => 'ОКС' ],
+            [ 'name' => 'Хирургия', 'shortname' => 'ХИР' ]
         ];
 
         $diagnosis = [
@@ -31,6 +32,9 @@ class DiagnosisSeeder extends Seeder
             [ 'code' => 'I22.0', 'name' => 'Повторный инфаркт передней стенки миокарда', 'diagnosis_group_id' => 1 ],
             [ 'code' => 'I22.1', 'name' => 'Повторный инфаркт нижней стенки миокарда', 'diagnosis_group_id' => 1 ],
             [ 'code' => 'I22.8', 'name' => 'Повторный инфаркт миокарда другой уточненной локализации', 'diagnosis_group_id' => 1 ],
+
+            [ 'code' => 'R10.0', 'name' => 'Острый живот', 'diagnosis_group_id' => 2 ],
+            [ 'code' => 'K35', 'name' => 'Острый аппендицит', 'diagnosis_group_id' => 2 ],
         ];
 
         DiagnosisGroup::insert($groups);
