@@ -213,7 +213,7 @@ watch(responses.value, (newResponses) => {
                 v-model:show="hasShowPrepareModal"
                 preset="card"
                 class="max-w-xl !rounded-3xl"
-                title="Подтверждение диагноза">
+                :title="`Подтверждение диагноза ${selectedDiagnosisGroup.shortname}`">
             <FormConfirmDiagnosis />
         </NModal>
         <NModal :mask-closable="false"
