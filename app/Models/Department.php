@@ -23,4 +23,9 @@ class Department extends Model
         return $this->belongsToMany(DepartmentAnswer::class, 'department_answer_departments')
             ->withPivot('score');
     }
+
+    public function params(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(DepartmentParam::class, 'department_id', 'id');
+    }
 }
