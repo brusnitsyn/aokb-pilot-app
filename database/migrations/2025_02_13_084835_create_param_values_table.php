@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\Param::class, 'param_id');
             $table->string('value_name'); // Наименование значения параметра
-            $table->double('score')->nullable(); // Баллы за значение параметра
+            $table->double('score')->default(0.0); // Балл за назначение параметра
             $table->timestamps();
         });
     }
