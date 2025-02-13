@@ -134,7 +134,14 @@ class SurveyController extends Controller
             'patient_id' => 'required|exists:patients,id',
         ]);
 
-        $patientResult = PatientResult::find($request->input('patient_id'))->load(['department', 'patient']);
+        $patientResult = PatientResult::find($request->input('patient_id'))
+            ->load([
+                'department',
+                'department.params',
+                'department.params.param',
+                'department.params.paramValue',
+                'patient'
+            ]);
         $diagnosisGroupId = $patientResult->patient->diagnosis->diagnosis_group_id;
 
         $departmentQuestions = DepartmentQuestion::with('answers.departments')

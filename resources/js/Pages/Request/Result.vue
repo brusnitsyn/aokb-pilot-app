@@ -108,36 +108,51 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                     <template #header>
                         {{ patientResult.department.name }} - параметры
                     </template>
-                    <NList>
-                        <template #header>
-                            <div class="font-semibold">
-                                Изменяемые параметры
-                            </div>
-                        </template>
-                        <NListItem v-for="response in responsesAnswers">
-                            <NSpace vertical :size="2" v-if="Array.isArray(response.answer)">
-                                <div>
-                                    {{ response.question.text }}
-                                </div>
-                                <NFlex wrap size="small">
-                                    <NTag v-for="answer in response.answer"
-                                          round
-                                          type="info">
-                                        {{ answer.text }}
-                                    </NTag>
-                                </NFlex>
-                            </NSpace>
-                            <NFlex v-else justify="space-between" align="center">
-                                <div>
-                                    {{ response.question.text }}
-                                </div>
-                                <NTag round
-                                      type="info">
-                                    {{ response.answer.text }}
-                                </NTag>
-                            </NFlex>
-                        </NListItem>
-                    </NList>
+                    <NTabs type="segment" animated>
+                        <NTabPane name="responses" tab="Изменяемые параметры">
+                            <NList>
+                                <NListItem v-for="response in responsesAnswers">
+                                    <NSpace vertical :size="2" v-if="Array.isArray(response.answer)">
+                                        <div>
+                                            {{ response.question.text }}
+                                        </div>
+                                        <NFlex wrap size="small">
+                                            <NTag v-for="answer in response.answer"
+                                                  round
+                                                  type="info">
+                                                {{ answer.text }}
+                                            </NTag>
+                                        </NFlex>
+                                    </NSpace>
+                                    <NFlex v-else justify="space-between" align="center">
+                                        <div>
+                                            {{ response.question.text }}
+                                        </div>
+                                        <NTag round
+                                              type="info">
+                                            {{ response.answer.text }}
+                                        </NTag>
+                                    </NFlex>
+                                </NListItem>
+                            </NList>
+                        </NTabPane>
+                        <NTabPane name="params" tab="Неизменяемые параметры">
+                            <NList v-if="patientResult.department.params.length > 0">
+                                <NListItem v-for="param in patientResult.department.params">
+                                    <NFlex justify="space-between" align="center">
+                                        <div>
+                                            {{ param.param.name }}
+                                        </div>
+                                        <NTag round
+                                              type="info">
+                                            {{ param.param_value.value_name }}
+                                        </NTag>
+                                    </NFlex>
+                                </NListItem>
+                            </NList>
+                            <NEmpty v-else />
+                        </NTabPane>
+                    </NTabs>
                 </NCard>
             </NGi>
         </NGrid>
@@ -147,5 +162,11 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
 <style scoped>
 :deep(.n-list__header) {
     @apply !p-0 !pb-3;
+}
+:deep(.n-tabs-rail) {
+    @apply !rounded-3xl;
+}
+:deep(.n-tabs-capsule) {
+    @apply !rounded-3xl;
 }
 </style>
