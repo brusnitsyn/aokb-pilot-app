@@ -3,10 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class Patient extends Model
 {
+    protected static function booted(): void
+    {
+        static::creating(function ($model) {
+            $yearNow = Carbon::now()->year;
+            $monthNow = Carbon::now()->month;
+
+            $count = Patient::whereYear('created_at', $yearNow)
+                ->whereMonth('created_at', $monthNow)
+                ->count();
+
+            $now = Carbon::now()->format('Ym');
+            $count = $count + 1;
+
+            $model->number = "$now/$count";
+        });
+    }
+
     protected $fillable = [
+        'number',
         'first_name',
         'last_name',
         'middle_name',
