@@ -43,12 +43,20 @@ const rowOptions = [
 
 const columns = [
     {
+        title: '№ п/п',
+        key: 'patient.number'
+    },
+    {
         title: 'ФИО',
         key: 'full_name'
     },
     {
         title: 'Диагноз',
         key: 'patient.diagnosis.code'
+    },
+    {
+        title: 'Сценарий',
+        key: 'scenario.name'
     },
     {
         title: 'Результат',

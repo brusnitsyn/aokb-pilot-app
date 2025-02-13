@@ -22,7 +22,7 @@ class SurveyController extends Controller
 
         // Вопросы для пациента (фильтруем по диагнозу)
         $patientQuestions = $selectedDiagnosisId
-            ? Diagnosis::find($selectedDiagnosisId)->questions()->with('answers')->get()
+            ? Diagnosis::find($selectedDiagnosisId)->questions()->with('answers.scenario')->get()
             : collect();
 
         // Вопросы для медицинской организации
@@ -51,6 +51,9 @@ class SurveyController extends Controller
         $organizationResponses = json_decode($request->cookie('organizationResponses', []));
         $medicalOrganizationId = $request->input('medical_organization_id');
 
+        // Сценарий
+        $scenarioId = null;
+        $scenarioScore = 0.0; // Баллы сценария
         // Подсчет баллов пациента
         $patientScore = 0;
         foreach ($patientResponses as $questionId => $answerIds) {
@@ -62,7 +65,12 @@ class SurveyController extends Controller
                     }
                 }
             } else {
-                $answer = Answer::find($answerIds);
+                $answer = Answer::find($answerIds)->load(['scenario']);
+                // Обработка ответа со сценарием
+                if (!is_null($answer->scenario)) {
+                    $scenarioId = $answer->scenario->id;
+                    $scenarioScore = $answer->scenario->score;
+                }
                 $patientScore += $answer->score;
             }
         }
@@ -94,7 +102,7 @@ class SurveyController extends Controller
         }
 
         // Общий результат
-        $totalScore = $patientScore + $organizationScore;
+        $totalScore = $patientScore + $organizationScore + $scenarioScore;
 
         // Определение диагноза (если не был выбран)
         $diagnosis = Diagnosis::find($selectedDiagnosisId);
@@ -116,6 +124,8 @@ class SurveyController extends Controller
             'total_score' => $totalScore,
             'patient_responses' => $patientResponses,
             'department_responses' => $organizationResponses,
+            'scenario_id' => $scenarioId,
+            'scenario_score' => $scenarioScore,
         ]);
 
         return redirect(route('request.result', [
@@ -140,6 +150,7 @@ class SurveyController extends Controller
                 'department.params',
                 'department.params.param',
                 'department.params.paramValue',
+                'scenario',
                 'patient'
             ]);
         $diagnosisGroupId = $patientResult->patient->diagnosis->diagnosis_group_id;

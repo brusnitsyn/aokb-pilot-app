@@ -15,6 +15,7 @@ const selectedMedicalOrganizationId = ref(usePage().props.activeDepartment.id);
 const patientResponses = ref({});
 const organizationResponses = ref({});
 const stage = ref('patient'); // Текущий этап: 'organization' или 'patient'
+const currentScenario = ref(null)
 
 // Фильтрация видимых вопросов для пациента
 const visiblePatientQuestions = computed(() => {
@@ -133,7 +134,9 @@ const nextStage = () => {
 };
 
 const handleAnswerClick = (answer) => {
-
+    if (answer.scenario !== null) {
+        currentScenario.value = answer.scenario
+    }
 }
 
 const submit = () => {
@@ -166,6 +169,9 @@ watch(patientResponses.value, (newResponses) => {
     // Удаляем ответы на зависимые вопросы, если изменился ответ на предыдущий вопрос
     props.patientQuestions.forEach((question) => {
         if (question.depends_on_answer_id && Object.values(newResponses).includes(question.depends_on_answer_id) === false) {
+            if (question.answers.find(itm => itm.scenario_id !== null)) {
+                currentScenario.value = null
+            }
             delete patientResponses.value[question.id];
         }
     });
@@ -255,6 +261,7 @@ watch(patientResponses.value, (newResponses) => {
                         <NProgress
                             type="line"
                             :percentage="patientProgress"
+                            color="#EC6608"
                             :indicator-placement="'inside'"
                             status="success"
                             height="24px"
@@ -311,6 +318,13 @@ watch(patientResponses.value, (newResponses) => {
                 >
                     Для выбранного диагноза еще не подготовлены вопросы
                 </NCard>
+            </transition>
+            <transition name="fade" mode="out-in">
+                <NAlert v-if="currentScenario !== null" class="!rounded-3xl drop-shadow-sm" type="info">
+                    <div class="leading-5">
+                        Текущий сценарий &mdash; <span class="font-medium">{{ currentScenario.name }}</span>
+                    </div>
+                </NAlert>
             </transition>
         </NSpace>
     </AppLayout>

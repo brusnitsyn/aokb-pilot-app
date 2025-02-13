@@ -45,12 +45,12 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
             <NGi>
                 <NFlex align="center">
                     <NButtonGroup>
-                        <NButton @click="router.visit(route('workspace'))" secondary round>
-                            <template #icon>
-                                <NIcon :component="IconHome" />
-                            </template>
-                            Вернуться на рабочую область
-                        </NButton>
+<!--                        <NButton @click="router.visit(route('workspace'))" secondary round>-->
+<!--                            <template #icon>-->
+<!--                                <NIcon :component="IconHome" />-->
+<!--                            </template>-->
+<!--                            Вернуться на рабочую область-->
+<!--                        </NButton>-->
                         <NButton @click="router.visit(route('my.request'))" secondary round>
                             <template #icon>
                                 <NIcon :component="IconListDetails" />
@@ -59,21 +59,35 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                         </NButton>
                     </NButtonGroup>
 
-                    <NCard class="!rounded-3xl drop-shadow-sm">
-                        <template #header>
-                            Предложенный сценарий
-                        </template>
-                        Текст сценария
-                    </NCard>
+                    <NAlert class="!rounded-3xl drop-shadow-sm w-full" type="info">
+                        <div class="leading-5">
+                            Предложенный сценарий &mdash; <span class="font-medium">{{ patientResult.scenario.name }}</span>
+                        </div>
+                    </NAlert>
 
                     <NCard class="!rounded-3xl drop-shadow-sm">
                         <template #header>
                             Результат опроса
                         </template>
-                        <NGrid cols="4" x-gap="6">
+                        <NGrid cols="4" x-gap="6" y-gap="6">
                             <NGi>
                                 <NStatistic label="Общий балл" tabular-nums>
                                     <NNumberAnimation :from="0.0" :to="totalScore" :precision="1" locale="en-US" :duration="1000" />
+                                </NStatistic>
+                            </NGi>
+                            <NGi>
+                                <NStatistic label="Баллы опроса" tabular-nums>
+                                    <NNumberAnimation :from="0.0" :to="patientResult.patient_score" :precision="1" locale="en-US" :duration="1000" />
+                                </NStatistic>
+                            </NGi>
+                            <NGi>
+                                <NStatistic label="Баллы МО" tabular-nums>
+                                    <NNumberAnimation :from="0.0" :to="patientResult.department_score" :precision="1" locale="en-US" :duration="1000" />
+                                </NStatistic>
+                            </NGi>
+                            <NGi>
+                                <NStatistic label="Баллы сценария" tabular-nums>
+                                    <NNumberAnimation :from="0.0" :to="patientResult.scenario_score" :precision="1" locale="en-US" :duration="1000" />
                                 </NStatistic>
                             </NGi>
                             <NGi>
@@ -83,21 +97,6 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                                     </div>
                                 </NStatistic>
                             </NGi>
-                            <!--                    <NGi>-->
-                            <!--                        <NStatistic label="Балл организации" tabular-nums>-->
-                            <!--                            <NNumberAnimation :from="0" :to="countRequestedAnswer" :duration="1000" />-->
-                            <!--                        </NStatistic>-->
-                            <!--                    </NGi>-->
-                            <!--                    <NGi>-->
-                            <!--                        <NStatistic label="Балл по диагнозу" tabular-nums>-->
-                            <!--                            <NNumberAnimation :from="0" :to="countRequestedAnswer" :duration="1000" />-->
-                            <!--                        </NStatistic>-->
-                            <!--                    </NGi>-->
-                            <!--                    <NGi>-->
-                            <!--                        <NStatistic label="Кол-во ответов" tabular-nums>-->
-                            <!--                            <NNumberAnimation :from="0" :to="countRequestedAnswer" :duration="1000" />-->
-                            <!--                        </NStatistic>-->
-                            <!--                    </NGi>-->
                         </NGrid>
                     </NCard>
 
@@ -119,7 +118,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                                         <NFlex wrap size="small">
                                             <NTag v-for="answer in response.answer"
                                                   round
-                                                  type="info">
+                                                  type="primary">
                                                 {{ answer.text }}
                                             </NTag>
                                         </NFlex>
@@ -129,7 +128,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                                             {{ response.question.text }}
                                         </div>
                                         <NTag round
-                                              type="info">
+                                              type="primary">
                                             {{ response.answer.text }}
                                         </NTag>
                                     </NFlex>
@@ -144,7 +143,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                                             {{ param.param.name }}
                                         </div>
                                         <NTag round
-                                              type="info">
+                                              type="primary">
                                             {{ param.param_value.value_name }}
                                         </NTag>
                                     </NFlex>

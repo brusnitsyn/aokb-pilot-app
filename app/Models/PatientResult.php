@@ -14,7 +14,9 @@ class PatientResult extends Model
         'department_score',
         'total_score',
         'patient_responses',
-        'department_responses'
+        'department_responses',
+        'scenario_id',
+        'scenario_score'
     ];
 
     public function department()
@@ -22,9 +24,14 @@ class PatientResult extends Model
         return $this->belongsTo(Department::class);
     }
 
-    public function patient()
+    public function patient(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    public function scenario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Scenario::class);
     }
 
     protected function casts(): array

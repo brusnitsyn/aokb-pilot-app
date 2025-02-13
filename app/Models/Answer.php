@@ -10,10 +10,16 @@ class Answer extends Model
         'text',
         'score',
         'question_id',
+        'scenario_id'
     ];
 
-    public function question()
+    public function question(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Question::class);
+    }
+
+    public function scenario(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Scenario::class, 'scenario_id');
     }
 }

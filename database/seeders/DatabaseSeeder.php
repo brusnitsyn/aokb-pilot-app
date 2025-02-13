@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             DiagnosisSeeder::class,
             DepartmentSurveySeeder::class,
+            ScenarioSeeder::class,
             PatientSurveySeeder::class,
             DepartmentParamSeeder::class
         ]);
