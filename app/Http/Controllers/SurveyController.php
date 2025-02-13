@@ -88,10 +88,10 @@ class SurveyController extends Controller
         }
 
         // Добавляем фиксированные баллы медицинской организации
-//        $medicalOrganization = Department::find($medicalOrganizationId);
-//        $organizationScore += $medicalOrganization->parameter_1_score
-//            + $medicalOrganization->parameter_2_score
-//            + $medicalOrganization->parameter_3_score;
+        $department = Department::find($medicalOrganizationId)->load(['params']);
+        foreach ($department->params as $param) {
+            $organizationScore += $param->paramValue->score;
+        }
 
         // Общий результат
         $totalScore = $patientScore + $organizationScore;
