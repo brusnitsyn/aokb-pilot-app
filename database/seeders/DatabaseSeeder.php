@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             DiagnosisSeeder::class,
             DepartmentSurveySeeder::class,
             PatientSurveySeeder::class,
+            DepartmentParamSeeder::class
         ]);
     }
 }
