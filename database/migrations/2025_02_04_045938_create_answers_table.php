@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\Question::class, 'question_id'); // Связь с вопросом
             $table->string('text'); // Текст ответа
             $table->double('score'); // Баллы за ответ
+            $table->foreignIdFor(\App\Models\Scenario::class, 'scenario_id')->nullable(); // Сценарий
             $table->timestamps();
         });
     }
