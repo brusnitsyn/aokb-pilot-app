@@ -22,21 +22,24 @@ Route::post('/workspace/diagnosis', [\App\Http\Controllers\WorkspaceController::
 Route::post('/user/department/update', [\App\Http\Controllers\Api\v1\DepartmentController::class, 'update'])
     ->name('user.department.update');
 
-Route::get('/request', [\App\Http\Controllers\SurveyController::class, 'show'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
+Route::get('/request', [\App\Http\Controllers\SurveyController::class, 'show'])
     ->name('request.create');
 
-Route::post('/request', [\App\Http\Controllers\SurveyController::class, 'store'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
+Route::post('/request', [\App\Http\Controllers\SurveyController::class, 'store'])
     ->name('request.store');
 
-Route::delete('/request', [\App\Http\Controllers\SurveyController::class, 'deleteResult'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
+Route::delete('/request', [\App\Http\Controllers\SurveyController::class, 'deleteResult'])
     ->name('request.delete');
 
-Route::get('/request/result', [\App\Http\Controllers\SurveyController::class, 'result'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
+Route::get('/request/result', [\App\Http\Controllers\SurveyController::class, 'result'])
     ->name('request.result');
 
 Route::prefix('my')->group(function () {
-    Route::get('/requests', [\App\Http\Controllers\MyController::class, 'requests'])->middleware(\App\Http\Middleware\CheckSelectedDepartment::class)
+    Route::get('/requests', [\App\Http\Controllers\MyController::class, 'requests'])
         ->name('my.request');
+
+    Route::post('/requests/update', [\App\Http\Controllers\MyController::class, 'update'])
+        ->name('my.request.update');
 });
 
 Route::middleware([

@@ -15,12 +15,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RegionSeeder::class,
+            StatusSeeder::class,
             DepartmentSeeder::class,
             DiagnosisSeeder::class,
             DepartmentSurveySeeder::class,
             ScenarioSeeder::class,
             PatientSurveySeeder::class,
-            DepartmentParamSeeder::class
+            DepartmentParamSeeder::class,
+            DepartmentDiagnosisGroupSeeder::class
         ]);
     }
 }

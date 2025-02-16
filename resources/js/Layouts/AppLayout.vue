@@ -45,7 +45,7 @@ function clickOnShowMoParameters() {
                         <Link :href="route('workspace')" class="h-full">
                             <AppLogo />
                         </Link>
-                        <DepartmentModal :departments="departments" @click-on-show-mo-parameters="clickOnShowMoParameters" />
+<!--                        <DepartmentModal :departments="departments" @click-on-show-mo-parameters="clickOnShowMoParameters" />-->
                     </NFlex>
                     <NSpace class="-m-5 -mr-[24px]" :size="0">
                         <NDropdown v-if="user && isLargeScreen" trigger="click" placement="top-end" :options="userOptions" @select="(key, option) => option.onClick()">

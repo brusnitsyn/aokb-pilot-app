@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('last_name')->nullable(); // Фамилия пациента
             $table->string('middle_name')->nullable(); // Отчество пациента
             $table->string('full_name')->nullable(); // ФИО пациента
+            $table->unsignedBigInteger('date_birth')->nullable();
+            $table->string('snils')->nullable();
             $table->double('total_score'); // Общий балл
             $table->foreignIdFor(\App\Models\Diagnosis::class, 'diagnosis_id')->nullable();
             $table->timestamps();

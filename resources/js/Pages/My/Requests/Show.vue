@@ -2,7 +2,7 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import {IconDots, IconHome} from "@tabler/icons-vue";
 import {Link, router} from "@inertiajs/vue3";
-import {NButton, NDropdown, NFlex, NIcon} from "naive-ui";
+import {NButton, NDropdown, NFlex, NIcon, NTag} from "naive-ui";
 defineProps({
     patients: Array
 })
@@ -48,7 +48,7 @@ const columns = [
     },
     {
         title: 'ФИО',
-        key: 'full_name'
+        key: 'patient.full_name'
     },
     {
         title: 'Диагноз',
@@ -61,6 +61,22 @@ const columns = [
     {
         title: 'Результат',
         key: 'total_score'
+    },
+    {
+        title: 'Статус',
+        key: 'status.name',
+        render(row) {
+            return h(
+                NTag,
+                {
+                    round: true,
+                    type: row.status.type ? row.status.type : 'default'
+                },
+                {
+                    default: () => row.status.name
+                }
+            )
+        }
     },
     {
         key: 'actions',

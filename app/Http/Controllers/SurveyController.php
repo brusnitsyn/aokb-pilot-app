@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Answer;
 use App\Models\Department;
 use App\Models\DepartmentAnswer;
+use App\Models\DepartmentDiagnosisGroup;
 use App\Models\DepartmentQuestion;
 use App\Models\Diagnosis;
+use App\Models\DiagnosisGroup;
 use App\Models\Patient;
 use App\Models\PatientResult;
 use App\Models\Question;
@@ -17,8 +19,20 @@ class SurveyController extends Controller
 {
     public function show(Request $request)
     {
+        $diagnosisGroups = DiagnosisGroup::with('diagnoses')->get();
         $diagnoses = Diagnosis::all(); // Получаем все диагнозы
-        $selectedDiagnosisId = $request->input('diagnosis_id'); // Выбранный диагноз
+        $selectedDiagnosis = json_decode(\request()->cookie('selectDiagnosis'));
+        $activeDepartment = json_decode(\request()->cookie('activeDepartment'));
+
+        $selectedDiagnosisGroupId = isset($selectedDiagnosis->diagnosis_group_id)
+            ? DiagnosisGroup::find($selectedDiagnosis->diagnosis_group_id)->id
+            : null; // Выбранная группа диагнозов
+        $selectedDiagnosisId = isset($selectedDiagnosis->diagnosis_id)
+            ? Diagnosis::find($selectedDiagnosis->diagnosis_id)->id
+            : null; // Выбранный диагноз
+        $selectedDepartmentId = isset($activeDepartment->id)
+            ? Department::find($activeDepartment->id)->id
+            : null; // Выбранный диагноз
 
         // Вопросы для пациента (фильтруем по диагнозу)
         $patientQuestions = $selectedDiagnosisId
@@ -28,11 +42,18 @@ class SurveyController extends Controller
         // Вопросы для медицинской организации
         $organizationQuestions = DepartmentQuestion::with('answers.departments')->get();
 
+        $departments = DepartmentDiagnosisGroup::with('department')
+            ->where('diagnosis_group_id', $selectedDiagnosisGroupId)
+            ->get();
+
         return Inertia::render('Request/Create', [
+            'diagnosisGroups' => $diagnosisGroups,
             'diagnoses' => $diagnoses,
             'patientQuestions' => $patientQuestions,
             'organizationQuestions' => $organizationQuestions,
             'selectedDiagnosisId' => $selectedDiagnosisId,
+            'selectedDepartmentId' => $selectedDepartmentId,
+            'departments' => $departments
         ]);
     }
 
@@ -40,12 +61,14 @@ class SurveyController extends Controller
     {
         // Валидация входных данных
         $request->validate([
+            'patient' => 'required|array',
             'diagnosis_id' => 'required|exists:diagnoses,id',
             'medical_organization_id' => 'required|exists:departments,id',
             'patient_responses' => 'required|array',
 //            'organization_responses' => 'required|array',
         ]);
 
+        $patient = $request->input('patient');
         $selectedDiagnosisId = $request->input('diagnosis_id');
         $patientResponses = $request->input('patient_responses', []);
         $organizationResponses = json_decode($request->cookie('organizationResponses', []));
@@ -110,6 +133,11 @@ class SurveyController extends Controller
         // Создание пациента
         $patient = Patient::create(
             [
+                'first_name' => $patient['first_name'],
+                'last_name' => $patient['last_name'],
+                'middle_name' => $patient['middle_name'],
+                'date_birth' => $patient['date_birth'],
+                'snils' => $patient['snils'],
                 'total_score' => $totalScore,
                 'diagnosis_id' => $diagnosis->id,
             ]
@@ -151,7 +179,8 @@ class SurveyController extends Controller
                 'department.params.param',
                 'department.params.paramValue',
                 'scenario',
-                'patient'
+                'patient',
+                'status'
             ]);
         $diagnosisGroupId = $patientResult->patient->diagnosis->diagnosis_group_id;
 

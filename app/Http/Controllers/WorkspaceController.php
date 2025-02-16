@@ -63,16 +63,16 @@ class WorkspaceController extends Controller
     public function setDiagnosis(Request $request)
     {
         $request->validate([
-            'diagnosisGroupId' => 'required|numeric',
-            'diagnosisId' => 'required|numeric',
+            'diagnosis_group_id' => 'required|numeric',
+            'diagnosis_id' => 'required|numeric',
         ]);
 
-        $diagnosisGroup = DiagnosisGroup::findOrFail($request->input('diagnosisGroupId'));
-        $diagnosis = Diagnosis::findOrFail($request->input('diagnosisId'));
+        $diagnosisGroup = DiagnosisGroup::findOrFail($request->input('diagnosis_group_id'));
+        $diagnosis = Diagnosis::findOrFail($request->input('diagnosis_id'));
 
         return response('')
             ->cookie('selectDiagnosis',
-                json_encode(['diagnosisGroupId' => $diagnosisGroup->id, 'diagnosisId' => $diagnosis->id]),
+                json_encode(['diagnosis_group_id' => $diagnosisGroup->id, 'diagnosis_id' => $diagnosis->id]),
                 config('session.lifetime')
             )->cookie('organizationResponses', null, config('session.lifetime'));
     }

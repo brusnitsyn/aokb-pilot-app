@@ -25,43 +25,13 @@ const props = defineProps({
     },
     imageUrl: String
 })
-
-const headerClass = computed(() => {
-    const classes = []
-    switch (props.type) {
-        case 'default':
-            classes.push('text-green-600')
-        break
-        case 'error':
-            classes.push('text-red-600')
-        break
-    }
-
-    return classes
-})
-
-const iconClass = computed(() => {
-    const classes = []
-    switch (props.type) {
-        case 'default':
-            classes.push('text-green-600')
-            break
-        case 'error':
-            classes.push('text-red-600')
-            break
-    }
-
-    return classes
-})
-
-
 </script>
 
 <template>
     <div v-if="disabled" class="relative border transition-colors overflow-clip rounded-3xl bg-white drop-shadow-sm">
         <div class="p-4 px-5 relative bg-no-repeat bg-right-bottom h-[140px] overflow-clip">
             <slot v-if="$slots.header" name="header" />
-            <div v-else class="w-[160px] text-base font-semibold leading-5 select-none">
+            <div v-else class="w-2/3 text-base font-semibold leading-5 select-none">
                 {{ header }}
             </div>
             <div class="w-[140px] h-[120px] absolute -right-6 -bottom-6 select-none bg-no-repeat bg-cover" :style="`background-image: url(${imageUrl})`" />
@@ -89,7 +59,7 @@ const iconClass = computed(() => {
         <Link v-if="href" :href="href">
             <div class="p-4 px-5 relative bg-no-repeat bg-right-bottom h-[140px] overflow-clip">
                 <slot v-if="$slots.header" name="header" />
-                <div v-else class="w-[160px] text-base font-semibold leading-5 select-none">
+                <div v-else class="w-2/3 text-base font-semibold leading-5 select-none">
                     {{ header }}
                 </div>
                 <div class="w-[140px] h-[120px] absolute -right-6 -bottom-6 select-none bg-no-repeat bg-cover" :style="`background-image: url(${imageUrl})`" />
@@ -97,7 +67,7 @@ const iconClass = computed(() => {
         </Link>
         <div v-else class="p-4 px-5 relative bg-no-repeat bg-right-bottom h-[140px] overflow-clip">
             <slot v-if="$slots.header" name="header" />
-            <div v-else class="w-[160px] text-base font-semibold leading-5 select-none">
+            <div v-else class="w-2/3 text-base font-semibold leading-5 select-none">
                 {{ header }}
             </div>
             <div class="w-[140px] h-[120px] absolute -right-6 -bottom-6 select-none bg-no-repeat bg-cover" :style="`background-image: url(${imageUrl})`" />

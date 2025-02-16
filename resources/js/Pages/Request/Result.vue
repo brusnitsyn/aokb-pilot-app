@@ -1,6 +1,6 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {IconHome,IconListDetails} from "@tabler/icons-vue";
+import {IconCheck,IconListDetails} from "@tabler/icons-vue";
 import {NButton, NIcon} from "naive-ui";
 import {Link, router, usePage} from "@inertiajs/vue3";
 
@@ -45,17 +45,17 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
             <NGi>
                 <NFlex align="center">
                     <NButtonGroup>
-<!--                        <NButton @click="router.visit(route('workspace'))" secondary round>-->
-<!--                            <template #icon>-->
-<!--                                <NIcon :component="IconHome" />-->
-<!--                            </template>-->
-<!--                            Вернуться на рабочую область-->
-<!--                        </NButton>-->
                         <NButton @click="router.visit(route('my.request'))" secondary round>
                             <template #icon>
                                 <NIcon :component="IconListDetails" />
                             </template>
                             Перейти к запросам МО
+                        </NButton>
+                        <NButton v-if="patientResult.status_id === 1" @click="router.post(route('my.request.update', { patient_result_id: patientResult.id }))" secondary type="primary" round>
+                            <template #icon>
+                                <NIcon :component="IconCheck" />
+                            </template>
+                            Сформировать запрос
                         </NButton>
                     </NButtonGroup>
 

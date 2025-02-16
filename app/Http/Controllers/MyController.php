@@ -13,11 +13,23 @@ class MyController extends Controller
         $department = json_decode($request->cookie('activeDepartment'));
         $patients = PatientResult::with([
             'patient.diagnosis',
-            'scenario'
-        ])->where('department_id', $department->id)->get();
+            'scenario',
+            'status'
+        ])->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('My/Requests/Show', [
             'patients' => $patients,
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        $patientResultId = $request->input('patient_result_id');
+
+        $patientResult = PatientResult::find($patientResultId);
+
+        $patientResult->update([
+            'status_id' => 2
         ]);
     }
 }

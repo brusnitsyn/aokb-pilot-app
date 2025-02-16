@@ -21,6 +21,7 @@ class Patient extends Model
             $count = $count + 1;
 
             $model->number = "$now/$count";
+            $model->full_name = "$model->last_name $model->first_name $model->middle_name";
         });
     }
 
@@ -31,7 +32,9 @@ class Patient extends Model
         'middle_name',
         'full_name',
         'total_score',
-        'diagnosis_id'
+        'diagnosis_id',
+        'date_birth',
+        'snils',
     ];
 
     public function diagnosis()
