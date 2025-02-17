@@ -135,6 +135,12 @@ watch(model.value, (newResponses) => {
         if (question.depends_on_answer_id && Object.values(newResponses).includes(question.depends_on_answer_id) === false) {
             delete model.value[question.id];
         }
+        // Удаление пустого массива
+        if (!question.requires && question.type === 'multiple') {
+            if (model.value[question.id]?.length === 0) {
+                delete model.value[question.id];
+            }
+        }
     });
 }, { deep: true });
 
