@@ -23,7 +23,7 @@ class DepartmentSurveySeeder extends Seeder
                 'depends_on_answer_id' => null,
                 'depends_on_diagnosis_group_id' => null,
                 'type' => 'single',
-                'requires_confirmation' => true,
+                'requires_confirmation' => false,
                 'requires' => true,
                 'default_answers' => null,
                 'default_answer' => 3
