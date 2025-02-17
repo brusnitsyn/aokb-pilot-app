@@ -113,7 +113,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
 
                 </NFlex>
             </NGi>
-            <NGi class="pt-[42px]">
+            <NGi class="pt-[48px]">
                 <NCard class="!rounded-3xl drop-shadow-sm">
                     <template #header>
                         {{ patientResult.department.name }} - параметры
