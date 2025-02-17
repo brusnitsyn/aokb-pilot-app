@@ -12,8 +12,11 @@ const diagnosisId = ref(null)
 // Инициализация ответов со значениями по умолчанию
 const initializeResponses = () => {
     props.departmentQuestions.forEach((question) => {
-        if (question.default_answers) {
+        if (question.type === 'multiple' && question.default_answers) {
             model.value[question.id] = question.default_answers;
+        }
+        if (question.type === 'single' && question.default_answer) {
+            model.value[question.id] = question.default_answer;
         }
     });
 }
