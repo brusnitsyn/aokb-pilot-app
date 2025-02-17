@@ -2,6 +2,8 @@
 import {IconArrowRight} from "@tabler/icons-vue";
 import AppDatePicker from "@/Components/App/Inputs/AppDatePicker.vue";
 import AppInputSnils from "@/Components/App/Inputs/AppInputSnils.vue";
+import { AnimatePresence, Motion } from 'motion-v'
+
 const props = defineProps(['stage', 'validationMessage'])
 const { onNextStage } = inject('navigate')
 // Ссылка на форму персональных данных пациента
@@ -69,68 +71,81 @@ const onNext = () => {
 </script>
 
 <template>
-    <transition name="fade" mode="out-in">
-        <NCard v-if="stage === 'personal'" key="personal" class="!rounded-3xl drop-shadow-sm">
-            <template #header>
-                Персональные данные пациента
-            </template>
-            <template #cover>
-                <NProgress
-                    type="line"
-                    :percentage="progress"
-                    color="#EC6608"
-                    :indicator-placement="'inside'"
-                    status="success"
-                    height="24px"
-                    border-radius="24px 24px 0px 0px"
-                    :fill-border-radius="progress >= 100 ? '0px 24px 0px 0px' : '0px 24px 24px 0px'"
-                />
-            </template>
-            <NForm ref="formRef"
-                   :model="model"
-                   :rules="rules">
-                <NFormItem label="Фамилия" path="last_name">
-                    <NInput v-model:value="model.last_name" placeholder="" />
-                </NFormItem>
-                <NFormItem label="Имя" path="first_name">
-                    <NInput v-model:value="model.first_name" placeholder="" />
-                </NFormItem>
-                <NFormItem label="Отчество" path="middle_name">
-                    <NInput v-model:value="model.middle_name" placeholder="" />
-                </NFormItem>
-                <NFormItem label="Дата рождения" path="date_birth">
-                    <AppDatePicker v-model:value="model.date_birth" />
-                </NFormItem>
-                <NFormItem label="СНИЛС" path="snils">
-                    <AppInputSnils v-model:value="model.snils" />
-                </NFormItem>
-            </NForm>
-            <template #action>
-                <NButtonGroup class="flex justify-end">
-                    <NButton
-                        type="primary"
-                        secondary
-                        round
-                        :disabled="progress !== 100"
-                        @click="onNext"
-                        icon-placement="right"
-                    >
-                        <template #icon>
-                            <NIcon :component="IconArrowRight" />
-                        </template>
-                        Далее
-                    </NButton>
-                </NButtonGroup>
-            </template>
-        </NCard>
-    </transition>
-    <transition name="fade" mode="out-in">
-        <NAlert v-if="stage === 'personal' && progress !== 100" class="!rounded-3xl drop-shadow-sm" type="info">
-            <div class="leading-5">
-                Укажите персональные данные пациента
-            </div>
-        </NAlert>
-    </transition>
+    <AnimatePresence>
+        <Motion
+            v-if="stage === 'personal'"
+            key="personal"
+            :initial="{ y: 100 }"
+            :animate="{ y: 0, scale: 1 }"
+            :exit="{ y: -10000 }">
+            <NCard class="!rounded-3xl drop-shadow-sm">
+                <template #header>
+                    Персональные данные пациента
+                </template>
+                <template #cover>
+                    <NProgress
+                        type="line"
+                        :percentage="progress"
+                        color="#EC6608"
+                        :indicator-placement="'inside'"
+                        status="success"
+                        height="24px"
+                        border-radius="24px 24px 0px 0px"
+                        :fill-border-radius="progress >= 100 ? '0px 24px 0px 0px' : '0px 24px 24px 0px'"
+                    />
+                </template>
+                <NForm ref="formRef"
+                       :model="model"
+                       :rules="rules">
+                    <NFormItem label="Фамилия" path="last_name">
+                        <NInput v-model:value="model.last_name" placeholder="" />
+                    </NFormItem>
+                    <NFormItem label="Имя" path="first_name">
+                        <NInput v-model:value="model.first_name" placeholder="" />
+                    </NFormItem>
+                    <NFormItem label="Отчество" path="middle_name">
+                        <NInput v-model:value="model.middle_name" placeholder="" />
+                    </NFormItem>
+                    <NFormItem label="Дата рождения" path="date_birth">
+                        <AppDatePicker v-model:value="model.date_birth" />
+                    </NFormItem>
+                    <NFormItem label="СНИЛС" path="snils">
+                        <AppInputSnils v-model:value="model.snils" />
+                    </NFormItem>
+                </NForm>
+                <template #action>
+                    <NButtonGroup class="flex justify-end">
+                        <NButton
+                            type="primary"
+                            secondary
+                            round
+                            :disabled="progress !== 100"
+                            @click="onNext"
+                            icon-placement="right"
+                        >
+                            <template #icon>
+                                <NIcon :component="IconArrowRight" />
+                            </template>
+                            Далее
+                        </NButton>
+                    </NButtonGroup>
+                </template>
+            </NCard>
+        </Motion>
+    </AnimatePresence>
+    <AnimatePresence>
+        <Motion
+            v-if="stage === 'personal' && progress !== 100"
+            :initial="{ y: 100 }"
+            :animate="{ y: 0, scale: 1 }"
+            :exit="{ y: -100, scale: 0 }">
+            <NAlert v-if="stage === 'personal' && progress !== 100" class="!rounded-3xl drop-shadow-sm" type="info">
+                <div class="leading-5">
+                    Укажите персональные данные пациента
+                </div>
+            </NAlert>
+        </Motion>
+    </AnimatePresence>
 </template>
 
 <style scoped>

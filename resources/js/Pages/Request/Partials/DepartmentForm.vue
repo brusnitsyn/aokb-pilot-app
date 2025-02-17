@@ -1,6 +1,8 @@
 <script setup>
 import {IconArrowLeft, IconArrowRight} from "@tabler/icons-vue";
 import {router} from "@inertiajs/vue3";
+import { AnimatePresence, Motion } from 'motion-v'
+
 const props = defineProps(['stage', 'departments', 'validationMessage'])
 const { hasPrevStage, onPrevStage, onNextStage } = inject('navigate')
 // Ссылка на форму
@@ -59,6 +61,16 @@ const onNext = async () => {
 </script>
 
 <template>
+    <AnimatePresence>
+        <Motion
+            v-if="stage === 'department'"
+            class="bg-primary  aspect-square rounded-2xl"
+            :initial="{ scale: 0 }"
+            :animate="{ rotate: 180, scale: 1 }"
+            :exit="{ rotate: 0, scale: 0 }">
+
+        </Motion>
+    </AnimatePresence>
     <transition name="fade" mode="out-in">
         <NCard v-if="stage === 'department'" key="department" class="!rounded-3xl drop-shadow-sm">
             <template #header>
