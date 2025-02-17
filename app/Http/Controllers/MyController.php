@@ -31,5 +31,7 @@ class MyController extends Controller
         $patientResult->update([
             'status_id' => 2
         ]);
+
+        return redirect(route('my.request'));
     }
 }
