@@ -108,7 +108,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                         <template #icon>
                             <NIcon :component="IconCheck" />
                         </template>
-                        Сформировать запрос
+                        Подтвердить запрос
                     </NButton>
 
                 </NFlex>
