@@ -44,18 +44,16 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
             <NGi />
             <NGi>
                 <NFlex align="center">
-                    <NButtonGroup>
-                        <NButton @click="router.visit(route('my.request'))" secondary round>
+                    <NButtonGroup class="w-full">
+                        <NButton @click="router.visit(route('my.request'))"
+                                 secondary
+                                 round
+                                 size="large"
+                                 block>
                             <template #icon>
                                 <NIcon :component="IconListDetails" />
                             </template>
                             Перейти к запросам МО
-                        </NButton>
-                        <NButton v-if="patientResult.status_id === 1" @click="router.post(route('my.request.update', { patient_result_id: patientResult.id }))" secondary type="primary" round>
-                            <template #icon>
-                                <NIcon :component="IconCheck" />
-                            </template>
-                            Сформировать запрос
                         </NButton>
                     </NButtonGroup>
 
@@ -99,6 +97,19 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                             </NGi>
                         </NGrid>
                     </NCard>
+
+                    <NButton v-if="patientResult.status_id === 1"
+                             @click="router.post(route('my.request.update', { patient_result_id: patientResult.id }))"
+                             secondary
+                             type="primary"
+                             size="large"
+                             round
+                             block>
+                        <template #icon>
+                            <NIcon :component="IconCheck" />
+                        </template>
+                        Сформировать запрос
+                    </NButton>
 
                 </NFlex>
             </NGi>
