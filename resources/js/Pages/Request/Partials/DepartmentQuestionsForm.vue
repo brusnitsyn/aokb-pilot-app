@@ -46,7 +46,18 @@ const isLastOrganizationQuestion = computed(() => {
 
 // Прогресс для медицинской организации
 const progress = computed(() => {
-    const answered = Object.keys(model.value).length;
+    const answered = Object.keys(model.value).filter(itm => {
+        const currentQuestion = visibleDepartmentQuestions.value.find(vdq => vdq.id === Number(itm))
+        if (Array.isArray(model.value[itm])) {
+            if (model.value[itm].length > 0 && currentQuestion.requires)
+                return true
+            else
+                return false
+        } else {
+            if (model.value[itm] !== null && currentQuestion.requires)
+                return true
+        }
+    }).length;
     const total = visibleDepartmentQuestions.value
         .filter(item => item.requires === true).length;
     const result = (answered / total) * 100
@@ -66,7 +77,7 @@ const prevOrganizationQuestion = () => {
 
 // Переход к следующему вопросу для медицинской организации
 const nextOrganizationQuestion = () => {
-    if (currentOrganizationQuestion.value.required === true && !model.value[currentOrganizationQuestion.value.id]) {
+    if (currentOrganizationQuestion.value.requires === true && !model.value[currentOrganizationQuestion.value.id]) {
         window.$message.error('Пожалуйста, выберите ответ на текущий вопрос.');
         return;
     }
@@ -107,6 +118,13 @@ const handleNegativeClick = (question, answer) => {
 }
 
 const hasDisableNext = computed(() => {
+    if (currentOrganizationQuestion.value.type === 'multiple') {
+        if (model.value[currentOrganizationQuestion.value.id]
+            && model.value[currentOrganizationQuestion.value.id].length === 0
+            && currentOrganizationQuestion.value.requires) {
+            return true
+        }
+    }
     return !model.value[currentOrganizationQuestion.value.id] && currentOrganizationQuestion.value.requires
 })
 
