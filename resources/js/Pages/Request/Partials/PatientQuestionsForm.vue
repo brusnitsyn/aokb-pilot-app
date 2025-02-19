@@ -1,5 +1,6 @@
 <script setup>
 import {IconArrowLeft, IconArrowRight} from "@tabler/icons-vue"
+import {Motion} from 'motion-v'
 const props = defineProps(['stage', 'patientQuestions'])
 const { onPrevStage, onNextStage, onSubmit } = inject('navigate')
 const model = defineModel('patientResponses')
@@ -80,8 +81,12 @@ watch(model.value, (newResponses) => {
 </script>
 
 <template>
-    <!-- Вопросы для пациента -->
-    <transition name="fade">
+    <Motion
+        v-if="stage === 'patient-questions'"
+        key="patient-questions"
+        :initial="{ y: 100, opacity: 0 }"
+        :animate="{ y: 0, opacity: 1 }"
+        :exit="{ y: 100, opacity: 0 }">
         <NCard v-if="stage === 'patient-questions' && patientQuestions.length > 0"
                key="patient"
                class="!rounded-3xl drop-shadow-sm"
@@ -149,14 +154,19 @@ watch(model.value, (newResponses) => {
         >
             Для выбранного диагноза еще не подготовлены вопросы
         </NCard>
-    </transition>
-    <transition name="fade" mode="out-in">
-        <NAlert v-if="currentScenario !== null" class="!rounded-3xl drop-shadow-sm bg-[#fbeef1]" type="info">
+    </Motion>
+
+    <Motion
+        v-if="currentScenario !== null"
+        :initial="{ y: 100 }"
+        :animate="{ y: 0, scale: 1 }"
+        :exit="{ y: -100, scale: 0 }">
+        <NAlert class="!rounded-3xl drop-shadow-sm bg-[#fbeef1]" type="info">
             <div class="leading-5">
                 Текущий сценарий &mdash; <span class="font-medium">{{ currentScenario.name }}</span>
             </div>
         </NAlert>
-    </transition>
+    </Motion>
 </template>
 
 <style scoped>
@@ -168,14 +178,5 @@ watch(model.value, (newResponses) => {
 }
 :deep(.n-card__action) {
     @apply rounded-b-3xl py-4 px-6;
-}
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
 }
 </style>

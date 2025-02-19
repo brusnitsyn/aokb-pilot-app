@@ -1,8 +1,8 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {IconDots, IconHome} from "@tabler/icons-vue";
+import {IconDots, IconHome, IconInfoCircle} from "@tabler/icons-vue";
 import {Link, router} from "@inertiajs/vue3";
-import {NButton, NDropdown, NFlex, NIcon, NTag} from "naive-ui";
+import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover} from "naive-ui";
 defineProps({
     patients: Array
 })
@@ -23,11 +23,18 @@ const rowOptions = [
         key: 'delete',
         onClick: (row) => {
             window.$dialog.warning({
-                title: 'Подтвердите действие',
+                title: `Удалить запрос №${row.patient.number}?`,
                 content: 'Это действие необратимо. Вы уверены?',
-                positiveText: 'Да',
+                positiveText: 'Удалить',
                 negativeText: 'Нет',
-                draggable: true,
+                positiveButtonProps: {
+                    round: true,
+                    type: 'primary',
+                    secondary: true
+                },
+                negativeButtonProps: {
+                    round: true,
+                },
                 onPositiveClick: () => {
                     router.delete(route('request.delete', {
                         patient_result_id: row.id
@@ -52,7 +59,41 @@ const columns = [
     },
     {
         title: 'Диагноз',
-        key: 'patient.diagnosis.code'
+        key: 'patient.diagnosis.code',
+        render(row) {
+            return h(
+                NFlex,
+                {
+                    align: 'center',
+                    size: 'small'
+                },
+                [
+                    h(
+                        'div',
+                        {},
+                        {
+                            default: () => row.patient.diagnosis.code
+                        }
+                    ),
+                    h(
+                        NPopover,
+                        {
+                            trigger: 'hover'
+                        },
+                        {
+                            trigger: () => h(
+                                NIcon,
+                                {
+                                    class: 'text-gray-300 text-lg',
+                                    component: IconInfoCircle
+                                },
+                            ),
+                            default: () => row.patient.diagnosis.name
+                        }
+                    )
+                ]
+            )
+        }
     },
     {
         title: 'Сценарий',
@@ -107,7 +148,7 @@ const columns = [
 </script>
 
 <template>
-    <AppLayout>
+    <AppLayout title="Запросы МО">
         <NFlex align="center" class="max-w-5xl mx-auto">
             <Link :href="route('workspace')" class="h-full">
                 <NButton secondary round>

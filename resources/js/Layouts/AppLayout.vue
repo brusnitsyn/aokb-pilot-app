@@ -1,22 +1,31 @@
 <script setup>
 import { ref } from 'vue';
 import {Head, Link, router, usePage} from '@inertiajs/vue3';
-import DepartmentModal from "@/Components/Department/DepartmentModal.vue";
 import AppLogo from "@/Components/App/AppLogo.vue";
-import {isSmallScreen} from "@/Utils/mediaQuery.js";
+import {isExtraLargeScreen, isLargeScreen, isSmallScreen} from "@/Utils/mediaQuery.js";
 import NaiveProvider from "@/Layouts/NaiveProvider.vue";
+import {IconDoorExit, IconMenu3} from "@tabler/icons-vue";
+import {NIcon} from "naive-ui";
 
 defineProps({
     title: String,
 });
 
-const emits = defineEmits([
-    'showMoParameters'
-])
-
+const user = usePage().props.auth.user
 const departments = ref(usePage().props.departments)
 
-const showingNavigationDropdown = ref(false);
+const mobileMenuCollapsed = ref(false);
+const renderIcon = (icon) => {
+    return () => h(NIcon, null, {default: () => h(icon)})
+}
+const userOptions = [
+    {
+        label: 'Выйти из учетной записи',
+        key: 'user-exit',
+        icon: renderIcon(IconDoorExit),
+        onClick: () => logout()
+    },
+]
 
 const switchToTeam = (team) => {
     router.put(route('current-team.update'), {
@@ -30,9 +39,6 @@ const logout = () => {
     router.post(route('logout'));
 };
 
-function clickOnShowMoParameters() {
-    emits('showMoParameters')
-}
 </script>
 
 <template>
@@ -45,45 +51,22 @@ function clickOnShowMoParameters() {
                         <Link :href="route('workspace')" class="h-full">
                             <AppLogo />
                         </Link>
-<!--                        <DepartmentModal :departments="departments" @click-on-show-mo-parameters="clickOnShowMoParameters" />-->
                     </NFlex>
-                    <NSpace class="-m-5 -mr-[24px]" :size="0">
-                        <NDropdown v-if="user && isLargeScreen" trigger="click" placement="top-end" :options="userOptions" @select="(key, option) => option.onClick()">
-                            <NButton quaternary class="h-[73px] rounded-none">
-                                <NSpace align="center">
-                                    <NSpace vertical align="end" :size="2">
-                                        <NText class="font-semibold">
-                                            {{ user.name }}
-                                        </NText>
-                                        <NText>
-                                            {{ user.login }}
-                                        </NText>
-                                    </NSpace>
-                                    <NAvatar :src="user.profile_photo_url" round size="large" />
-                                </NSpace>
-                            </NButton>
-                        </NDropdown>
-                        <NButton v-if="!isLargeScreen" quaternary class="h-[61px] w-[61px] rounded-none" @click="mobileMenuCollapsed = true">
-                            <NIcon :component="IconMenu3" />
-                        </NButton>
-                    </NSpace>
+                    <NFlex align="center">
+                        <NSpace vertical align="end" :size="0">
+                            <NText>
+                                {{ user.name }}
+                            </NText>
+                            <NText class="text-sm text-gray-400">
+                                {{ user.email }}
+                            </NText>
+                        </NSpace>
+                        <NAvatar :src="user.profile_photo_url" round size="large" />
+                    </NFlex>
                 </NFlex>
             </NLayoutHeader>
             <NLayout has-sider position="absolute" class="!bg-gray-50" style="top: 73px; bottom: 54px">
-                <NLayoutSider v-if="isLargeScreen" collapse-mode="width" :collapsed-width="0" width="240" :collapsed="menuCollapsed"
-                              show-trigger @collapse="menuCollapsed = true"
-                              @expand="menuCollapsed = false"
-                              :collapsed-trigger-class="menuCollapsed === true ? '!-right-5 !top-1/4' : ''"
-                              trigger-class="!top-1/4" bordered content-class="">
-                    <NFlex vertical justify="space-between" class="h-full relative">
-                        <NMenu :options="menuOptions" :value="currentRoute"/>
-                        <NSpace vertical>
-                            <NImage v-if="characterView" :preview-disabled="true" class="h-[450px] p-8 px-8" width="192" src="/assets/svg/woman.svg" />
-                            <NImage v-if="heartView" :preview-disabled="true" src="/assets/svg/heart.svg" width="192" class="absolute bottom-[15%] px-6" />
-                        </NSpace>
-                    </NFlex>
-                </NLayoutSider>
-                <NLayout :native-scrollbar="false" :content-class="(menuCollapsed && isLargeScreen) ? 'p-7 pl-14' : 'p-4 lg:p-7 h-full'" class="!bg-transparent h-full">
+                <NLayout :native-scrollbar="false" content-class="p-4 lg:p-7 h-full" class="!bg-transparent h-full">
                     <Transition name="fade" mode="out-in" appear>
                         <main class="h-full">
                             <NFlex v-if="$slots.header || $slots.headermore" justify="space-between" align="center"

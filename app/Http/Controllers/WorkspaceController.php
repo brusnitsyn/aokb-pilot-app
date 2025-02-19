@@ -7,6 +7,8 @@ use App\Models\DepartmentAnswer;
 use App\Models\DepartmentQuestion;
 use App\Models\Diagnosis;
 use App\Models\DiagnosisGroup;
+use App\Models\PatientResult;
+use App\Models\UserDepartment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -16,10 +18,16 @@ class WorkspaceController extends Controller
     {
         $diagnosisGroups = DiagnosisGroup::with('diagnoses')->get();
         $departments = Department::all();
+        $userDepartments = UserDepartment::where('user_id', auth()->user()->id)
+            ->get()
+            ->map(function ($item) {
+                return $item->department_id;
+            })->values()
+            ->toArray();
 
         // Cookie
-        $activeDepartment = json_decode(\request()->cookie('activeDepartment'));
-        $organizationResponses = json_decode(\request()->cookie('organizationResponses'));
+//        $activeDepartment = json_decode(\request()->cookie('activeDepartment'));
+//        $organizationResponses = json_decode(\request()->cookie('organizationResponses'));
         $selectedDiagnosis = json_decode(\request()->cookie('selectDiagnosis'));
 
         // Группа диагноза и сам диагноз
@@ -27,19 +35,22 @@ class WorkspaceController extends Controller
         $selectedDiagnosis = isset($selectedDiagnosis->diagnosisId) ? Diagnosis::find($selectedDiagnosis->diagnosisId) : null;
 
         // Вопросы для медицинской организации
-        $organizationQuestions = $selectedDiagnosisGroup ? DepartmentQuestion::with('answers.departments')
-            ->where('depends_on_diagnosis_group_id', $selectedDiagnosisGroup->id)
-            ->orWhere('depends_on_diagnosis_group_id', null)
-            ->get() : [];
+//        $organizationQuestions = $selectedDiagnosisGroup ? DepartmentQuestion::with('answers.departments')
+//            ->where('depends_on_diagnosis_group_id', $selectedDiagnosisGroup->id)
+//            ->orWhere('depends_on_diagnosis_group_id', null)
+//            ->get() : [];
+
+        $countResults = PatientResult::whereIn('department_id', $userDepartments)->count();
 
         return Inertia::render('Workspace', [
             'diagnosisGroups' => $diagnosisGroups,
             'departments' => $departments,
-            'activeDepartment' => $activeDepartment,
-            'organizationQuestions' => $organizationQuestions,
-            'organizationResponses' => $organizationResponses,
+//            'activeDepartment' => $activeDepartment,
+//            'organizationQuestions' => $organizationQuestions,
+//            'organizationResponses' => $organizationResponses,
             'selectedDiagnosisGroup' => $selectedDiagnosisGroup,
             'selectedDiagnosis' => $selectedDiagnosis,
+            'countResults' => $countResults,
         ]);
     }
 

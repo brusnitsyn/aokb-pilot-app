@@ -1,6 +1,7 @@
 <script setup>
 import {IconArrowLeft, IconArrowRight} from "@tabler/icons-vue";
 import {router, usePage} from "@inertiajs/vue3";
+import {Motion} from 'motion-v'
 const props = defineProps(['stage', 'validationMessage', 'departmentQuestions'])
 const { onPrevStage, onNextStage, hasPrevStage } = inject('navigate')
 const model = ref({})
@@ -156,8 +157,13 @@ const onSubmit = async () => {
 </script>
 
 <template>
-    <transition name="fade" mode="in-out">
-        <NCard v-if="stage === 'department-questions'" key="department-questions" class="!rounded-3xl drop-shadow-sm">
+    <Motion
+        v-if="stage === 'department-questions'"
+        key="department-questions"
+        :initial="{ y: 100, opacity: 0 }"
+        :animate="{ y: 0, opacity: 1 }"
+        :exit="{ y: 100, opacity: 0 }">
+        <NCard class="!rounded-3xl drop-shadow-sm">
             <template #header>
                 {{ currentOrganizationQuestion.text }}
             </template>
@@ -267,14 +273,19 @@ const onSubmit = async () => {
                 </NButtonGroup>
             </template>
         </NCard>
-    </transition>
-    <transition name="fade" mode="out-in">
-        <NAlert v-if="stage === 'department-questions' && progress !== 100" class="!rounded-3xl drop-shadow-sm mt-4" type="info">
+    </Motion>
+
+    <Motion
+        v-if="stage === 'department-questions' && progress !== 100"
+        :initial="{ y: 100 }"
+        :animate="{ y: 0, scale: 1 }"
+        :exit="{ y: -100, scale: 0 }">
+        <NAlert class="!rounded-3xl drop-shadow-sm" type="info">
             <div class="leading-5">
                 Настройте параметры медицинской организации
             </div>
         </NAlert>
-    </transition>
+    </Motion>
 </template>
 
 <style scoped>
