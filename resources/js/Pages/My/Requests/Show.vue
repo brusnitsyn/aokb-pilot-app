@@ -2,7 +2,7 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import {IconDots, IconHome, IconInfoCircle} from "@tabler/icons-vue";
 import {Link, router} from "@inertiajs/vue3";
-import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover} from "naive-ui";
+import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip} from "naive-ui";
 defineProps({
     patients: Array
 })
@@ -50,12 +50,38 @@ const rowOptions = [
 
 const columns = [
     {
-        title: '№ п/п',
+        title: '№ запроса',
         key: 'patient.number'
+    },
+    {
+        title: 'Дата поступления запроса',
+        key: 'created_at',
+        render(row) {
+            return h(
+                NTime,
+                {
+                    time: row.created_at,
+                    format: 'dd.MM.yyyy hh:mm:ss'
+                }
+            )
+        }
     },
     {
         title: 'ФИО',
         key: 'patient.full_name'
+    },
+    {
+        title: 'Дата рождения',
+        key: 'patient.date_birth',
+        render(row) {
+            return h(
+                NTime,
+                {
+                    time: row.patient.date_birth,
+                    format: 'dd.MM.yyyy'
+                }
+            )
+        }
     },
     {
         title: 'Диагноз',
@@ -76,7 +102,7 @@ const columns = [
                         }
                     ),
                     h(
-                        NPopover,
+                        NTooltip,
                         {
                             trigger: 'hover'
                         },
@@ -92,6 +118,36 @@ const columns = [
                         }
                     )
                 ]
+            )
+        }
+    },
+    {
+        title: 'Запрос из',
+        key: 'department.name',
+        render(row) {
+            return h(
+                NEllipsis,
+                {
+                    class: '!max-w-[160px]'
+                },
+                {
+                    default: () => row.department.name
+                }
+            )
+        }
+    },
+    {
+        title: 'Запрос в',
+        key: 'department.name',
+        render(row) {
+            return h(
+                NEllipsis,
+                {
+                    class: '!max-w-[160px]'
+                },
+                {
+                    default: () => row.department.name
+                }
             )
         }
     },
@@ -149,7 +205,7 @@ const columns = [
 
 <template>
     <AppLayout title="Запросы МО">
-        <NFlex align="center" class="max-w-5xl mx-auto">
+        <NFlex align="center" class="w-full">
             <Link :href="route('workspace')" class="h-full">
                 <NButton secondary round>
                     <template #icon>

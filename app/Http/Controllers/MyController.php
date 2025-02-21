@@ -23,7 +23,8 @@ class MyController extends Controller
         $patients = PatientResult::with([
             'patient.diagnosis',
             'scenario',
-            'status'
+            'status',
+            'department'
         ])->whereIn('department_id', $userDepartments)->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('My/Requests/Show', [
