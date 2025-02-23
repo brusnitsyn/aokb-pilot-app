@@ -6,6 +6,7 @@ import {isExtraLargeScreen, isLargeScreen, isSmallScreen} from "@/Utils/mediaQue
 import NaiveProvider from "@/Layouts/NaiveProvider.vue";
 import {IconDoorExit, IconMenu3} from "@tabler/icons-vue";
 import {NIcon} from "naive-ui";
+import {Motion} from 'motion-v'
 
 defineProps({
     title: String,
@@ -67,7 +68,15 @@ const logout = () => {
             </NLayoutHeader>
             <NLayout has-sider position="absolute" class="!bg-gray-50" style="top: 73px; bottom: 54px">
                 <NLayout :native-scrollbar="false" content-class="p-4 lg:p-7 h-full" class="!bg-transparent h-full">
-                    <Transition name="fade" mode="out-in" appear>
+                    <Motion as-child
+                            :initial="{
+                              opacity: 0,
+                              y: 100
+                            }"
+                            :animate="{
+                              opacity: 1,
+                              y: 0
+                            }">
                         <main class="h-full">
                             <NFlex v-if="$slots.header || $slots.headermore" justify="space-between" align="center"
                                    class="mb-5">
@@ -83,7 +92,7 @@ const logout = () => {
                             </NP>
                             <slot/>
                         </main>
-                    </Transition>
+                    </Motion>
                 </NLayout>
             </NLayout>
             <NLayoutFooter
