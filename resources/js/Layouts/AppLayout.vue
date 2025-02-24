@@ -68,7 +68,8 @@ const logout = () => {
             </NLayoutHeader>
             <NLayout has-sider position="absolute" class="!bg-gray-50" style="top: 73px; bottom: 54px">
                 <NLayout :native-scrollbar="false" content-class="p-4 lg:p-7 h-full" class="!bg-transparent h-full">
-                    <Motion as-child
+                    <Motion as="main"
+                            class="h-full"
                             :initial="{
                               opacity: 0,
                               y: 100
@@ -77,21 +78,19 @@ const logout = () => {
                               opacity: 1,
                               y: 0
                             }">
-                        <main class="h-full">
-                            <NFlex v-if="$slots.header || $slots.headermore" justify="space-between" align="center"
-                                   class="mb-5">
-                                <NH1 v-if="$slots.header" :class="headerClass">
-                                    <slot name="header"/>
-                                </NH1>
-                                <NSpace>
-                                    <slot name="headermore"/>
-                                </NSpace>
-                            </NFlex>
-                            <NP v-if="$slots.subheader">
-                                <slot name="subheader"/>
-                            </NP>
-                            <slot/>
-                        </main>
+                        <NFlex v-if="$slots.header || $slots.headermore" justify="space-between" align="center"
+                               class="mb-5">
+                            <NH1 v-if="$slots.header" :class="headerClass">
+                                <slot name="header"/>
+                            </NH1>
+                            <NSpace>
+                                <slot name="headermore"/>
+                            </NSpace>
+                        </NFlex>
+                        <NP v-if="$slots.subheader">
+                            <slot name="subheader"/>
+                        </NP>
+                        <slot/>
                     </Motion>
                 </NLayout>
             </NLayout>

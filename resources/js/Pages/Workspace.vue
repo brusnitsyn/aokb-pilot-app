@@ -37,6 +37,13 @@ const onLogout = () => {
         <NFlex align="center" class="max-w-xl mx-auto h-full">
             <NGrid cols="1" x-gap="16" y-gap="16" responsive="screen">
                 <NGi>
+                    <NAlert type="info" class="!rounded-3xl drop-shadow-sm">
+                        <div class="leading-5">
+                            Вы авторизованы как <span class="font-medium">{{ usePage().props.auth.user.department.name }}</span>
+                        </div>
+                    </NAlert>
+                </NGi>
+                <NGi>
                     <WorkspaceItem header="Создать запрос на транспортировку"
                                    image-url="/assets/svg/illustrations/request.svg"
                                    :href="route('request.create')"
