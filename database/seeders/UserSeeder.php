@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserDepartment;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -19,7 +20,8 @@ class UserSeeder extends Seeder
         User::truncate();
 
         $users = [
-            [ 'name' => 'Администратор', 'email' => 'asu@amurokb.ru', 'login' => 'admin', 'password' => bcrypt('asu') ],
+            [ 'name' => 'Администратор', 'email' => 'asu@amurokb.ru', 'login' => 'admin', 'password' => Hash::make('asu') ],
+            [ 'name' => 'Каргополов А.И.', 'email' => 'kargopolov@amurokb.ru', 'login' => 'демоврач', 'password' => Hash::make('asu') ],
         ];
 
         $departments = Department::all();
@@ -28,7 +30,11 @@ class UserSeeder extends Seeder
             $userDepartments[] = [ 'user_id' => 1, 'department_id' => $department->id ];
         }
 
-        User::insert($users);
+        $userDepartments[] = [ 'user_id' => 2, 'department_id' => 1 ];
+
+        foreach ($users as $user) {
+            User::create($user);
+        }
         UserDepartment::insert($userDepartments);
     }
 }
