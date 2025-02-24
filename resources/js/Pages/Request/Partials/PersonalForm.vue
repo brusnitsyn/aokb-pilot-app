@@ -138,7 +138,7 @@ const onNext = () => {
         :exit="{ y: -100, scale: 0 }">
         <NAlert class="!rounded-3xl drop-shadow-sm" type="info">
             <div class="leading-5">
-                Укажите персональные данные пациента
+                Заполните все необходимые поля для продолжения
             </div>
         </NAlert>
     </Motion>

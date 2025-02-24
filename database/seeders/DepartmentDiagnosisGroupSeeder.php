@@ -20,8 +20,14 @@ class DepartmentDiagnosisGroupSeeder extends Seeder
 
         $departmentsDiagnosisGroups = [];
         foreach ($departments as $department) {
+            // ОКС группа
             $departmentsDiagnosisGroups[] = [
                 'diagnosis_group_id' => 1,
+                'department_id' => $department->id,
+            ];
+            // Хирургическая группа
+            $departmentsDiagnosisGroups[] = [
+                'diagnosis_group_id' => 2,
                 'department_id' => $department->id,
             ];
         }

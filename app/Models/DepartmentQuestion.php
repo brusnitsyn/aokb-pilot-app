@@ -15,7 +15,8 @@ class DepartmentQuestion extends Model
         'requires_confirmation',
         'requires',
         'default_answers',
-        'default_answer'
+        'default_answer',
+        'is_show'
     ];
 
     public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany

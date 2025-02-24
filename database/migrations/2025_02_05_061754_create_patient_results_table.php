@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('patient_results', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(\App\Models\Patient::class, 'patient_id'); // Связь с пациентом
-            $table->foreignIdFor(\App\Models\Department::class, 'department_id'); // Связь с медицинской организацией
+            $table->foreignIdFor(\App\Models\Department::class, 'from_department_id'); // Связь с медицинской организацией (откуда)
+            $table->foreignIdFor(\App\Models\Department::class, 'to_department_id'); // Связь с медицинской организацией (куда)
             $table->double('patient_score'); // Баллы пациента
             $table->double('department_score'); // Баллы медицинской организации
             $table->double('total_score'); // Общий результат

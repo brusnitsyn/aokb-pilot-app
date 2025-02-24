@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Model;
 
 class DepartmentAnswer extends Model
@@ -10,6 +11,8 @@ class DepartmentAnswer extends Model
         'department_question_id',
         'text',
         'score',
+        'is_show',
+        'disabled_department_ids'
     ];
 
     public function question(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -21,5 +24,12 @@ class DepartmentAnswer extends Model
     {
         return $this->belongsToMany(Department::class, 'department_answer_departments')
             ->withPivot('score');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'disabled_department_ids' => AsArrayObject::class,
+        ];
     }
 }

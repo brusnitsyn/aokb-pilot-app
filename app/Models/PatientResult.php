@@ -9,7 +9,8 @@ class PatientResult extends Model
 {
     protected $fillable = [
         'patient_id',
-        'department_id',
+        'from_department_id',
+        'to_department_id',
         'patient_score',
         'department_score',
         'total_score',
@@ -20,9 +21,14 @@ class PatientResult extends Model
         'status_id'
     ];
 
-    public function department()
+    public function from_department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'from_department_id');
+    }
+
+    public function to_department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Department::class, 'to_department_id');
     }
 
     public function patient(): \Illuminate\Database\Eloquent\Relations\BelongsTo

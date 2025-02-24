@@ -40,7 +40,10 @@ class WorkspaceController extends Controller
 //            ->orWhere('depends_on_diagnosis_group_id', null)
 //            ->get() : [];
 
-        $countResults = PatientResult::whereIn('department_id', $userDepartments)->count();
+        if (count($userDepartments) > 1)
+            $countResults = PatientResult::whereIn('from_department_id', $userDepartments)->count();
+        else
+            $countResults = PatientResult::where('from_department_id', $userDepartments)->count();
 
         return Inertia::render('Workspace', [
             'diagnosisGroups' => $diagnosisGroups,

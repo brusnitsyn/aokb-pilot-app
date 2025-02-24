@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\Param::class, 'param_id');
             $table->string('value_name'); // Наименование значения параметра
             $table->double('score')->default(0.0); // Балл за назначение параметра
+            $table->json('depends_diagnosis_group_ids')->nullable(); // Ссылки на группы диагнозов
             $table->timestamps();
         });
     }

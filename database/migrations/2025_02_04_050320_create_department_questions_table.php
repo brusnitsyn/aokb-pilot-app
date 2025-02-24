@@ -24,6 +24,7 @@ return new class extends Migration
             $table->boolean('requires')->default(true); // Обязательна ли проверка на наличие значения
             $table->json('default_answers')->nullable(); // Значения по умолчанию для множественного выбора
             $table->integer('default_answer')->nullable(); // Значения по умолчанию для одиночного выбора
+            $table->boolean('is_show')->default(true); // Отображение вопроса
             $table->timestamps();
         });
     }

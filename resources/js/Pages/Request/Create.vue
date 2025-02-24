@@ -85,7 +85,7 @@ const onSubmit = () => {
 provide('navigate', { hasPrevStage, hasNextStage, onPrevStage, onNextStage, onSubmit })
 </script>
 <template>
-    <AppLayout>
+    <AppLayout title="Создание запроса на транспортировку">
         <NFlex vertical justify="items-start" size="large" class="max-w-xl mx-auto h-full">
             <div>
                 <Link :href="route('workspace')" class="h-full">

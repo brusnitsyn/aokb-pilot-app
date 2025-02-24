@@ -12,6 +12,7 @@ use App\Models\DiagnosisGroup;
 use App\Models\Patient;
 use App\Models\PatientResult;
 use App\Models\Question;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -40,7 +41,12 @@ class SurveyController extends Controller
             : collect();
 
         // Вопросы для медицинской организации
-        $organizationQuestions = DepartmentQuestion::with('answers.departments')->get();
+        $organizationQuestions = DepartmentQuestion::with([
+            'answers' => function ($query) use ($selectedDepartmentId) {
+                $query->whereJsonDoesntContain('disabled_department_ids', $selectedDepartmentId);
+            },
+            'answers.departments'
+        ])->get();
 
         $departments = DepartmentDiagnosisGroup::with('department')
             ->where('diagnosis_group_id', $selectedDiagnosisGroupId)
@@ -73,6 +79,9 @@ class SurveyController extends Controller
         $patientResponses = $request->input('patient_responses', []);
         $organizationResponses = json_decode($request->cookie('organizationResponses', []));
         $medicalOrganizationId = $request->input('medical_organization_id');
+
+        // Определение диагноза
+        $diagnosis = Diagnosis::find($selectedDiagnosisId);
 
         // Сценарий
         $scenarioId = null;
@@ -119,16 +128,13 @@ class SurveyController extends Controller
         }
 
         // Добавляем фиксированные баллы медицинской организации
-        $department = Department::find($medicalOrganizationId)->load(['params']);
+        $department = auth()->user()->departments()->first()->load(['params']);
         foreach ($department->params as $param) {
             $organizationScore += $param->paramValue->score;
         }
 
         // Общий результат
         $totalScore = $patientScore + $organizationScore + $scenarioScore;
-
-        // Определение диагноза (если не был выбран)
-        $diagnosis = Diagnosis::find($selectedDiagnosisId);
 
         // Создание пациента
         $patient = Patient::create(
@@ -146,7 +152,8 @@ class SurveyController extends Controller
         // Сохранение результата
         $patientResult = PatientResult::create([
             'patient_id' => $patient->id,
-            'department_id' => $medicalOrganizationId,
+            'from_department_id' => $department->id,
+            'to_department_id' => $medicalOrganizationId,
             'patient_score' => $patientScore,
             'department_score' => $organizationScore,
             'total_score' => $totalScore,
@@ -172,17 +179,21 @@ class SurveyController extends Controller
             'patient_id' => 'required|exists:patients,id',
         ]);
 
-        $patientResult = PatientResult::find($request->input('patient_id'))
-            ->load([
-                'department',
-                'department.params',
-                'department.params.param',
-                'department.params.paramValue',
-                'scenario',
-                'patient',
-                'status'
-            ]);
-        $diagnosisGroupId = $patientResult->patient->diagnosis->diagnosis_group_id;
+        $patient = Patient::find($request->input('patient_id'));
+
+        $diagnosisGroupId = $patient->diagnosis->diagnosis_group_id;
+
+        $patientResult = PatientResult::with([
+            'from_department',
+            'to_department',
+            'scenario',
+            'patient.diagnosis',
+            'status',
+            'from_department.params.param',
+            'from_department.params.paramValue' => function ($query) use ($diagnosisGroupId) {
+                $query->whereJsonContains('depends_diagnosis_group_ids', $diagnosisGroupId);
+            },
+        ])->where('patient_id', $patient->id)->first();
 
         $departmentQuestions = DepartmentQuestion::with('answers.departments')
             ->where('depends_on_diagnosis_group_id', $diagnosisGroupId)

@@ -131,7 +131,7 @@ const columns = [
                     class: '!max-w-[160px]'
                 },
                 {
-                    default: () => row.department.name
+                    default: () => row.from_department.name
                 }
             )
         }
@@ -146,7 +146,7 @@ const columns = [
                     class: '!max-w-[160px]'
                 },
                 {
-                    default: () => row.department.name
+                    default: () => row.to_department.name
                 }
             )
         }

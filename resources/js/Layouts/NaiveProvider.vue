@@ -2,6 +2,7 @@
 import {ruRU, dateRuRU} from 'naive-ui'
 import NMessageContent from "@/Components/Naive/NMessageContent.vue";
 import NDialogContent from "@/Components/Naive/NDialogContent.vue";
+import NNotificationContent from "@/Components/Naive/NNotificationHelperContent.vue";
 
 const themeOverrides = {
     common: {
@@ -31,6 +32,9 @@ const themeOverrides = {
         <NDialogProvider>
             <NDialogContent />
         </NDialogProvider>
+        <NNotificationProvider key="helper" placement="bottom-right" container-class="!min-w-xl">
+            <NNotificationContent />
+        </NNotificationProvider>
         <slot />
     </NConfigProvider>
 </template>

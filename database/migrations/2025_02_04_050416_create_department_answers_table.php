@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\DepartmentQuestion::class, 'department_question_id'); // Связь с вопросом
             $table->string('text'); // Текст ответа
             $table->double('score'); // Баллы за ответ
+            $table->boolean('is_show')->default(true); // Отображение варианта ответа
+            $table->json('disabled_department_ids')->nullable(); // Связь с МО
             $table->timestamps();
         });
     }

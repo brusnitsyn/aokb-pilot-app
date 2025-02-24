@@ -83,98 +83,116 @@ class DepartmentSurveySeeder extends Seeder
         $answers = [
             [
                 'text' => 'Отсутствует',
-                'score' => 4.5,
-                'department_question_id' => 1
+                'score' => 3.5,
+                'department_question_id' => 1,
+                'disabled_department_ids' => "[30]"
             ], // 1 Оснащение
             [
                 'text' => 'Не в полном объеме',
                 'score' => 0,
-                'department_question_id' => 1
+                'department_question_id' => 1,
+                'disabled_department_ids' => "[]"
             ], // 2 Оснащение
             [
                 'text' => 'В полном объеме',
                 'score' => 0,
-                'department_question_id' => 1
+                'department_question_id' => 1,
+                'disabled_department_ids' => "[]"
             ], // 3 Оснащение
 
             [
                 'text' => 'ЭКГ (дист)',
-                'score' => 2,
-                'department_question_id' => 2
+                'score' => 1,
+                'department_question_id' => 2,
+                'disabled_department_ids' => "[]"
             ], // 4 Не в полном объеме (отсутствуют позиции)
             [
                 'text' => 'УЗИ',
                 'score' => 1,
-                'department_question_id' => 2
+                'department_question_id' => 2,
+                'disabled_department_ids' => "[2,3,4,5,6,7,8,9,10,11,12,13,19,20,21,22,23,24,25,26,27,28,29,30]"
             ], // 5 Не в полном объеме (отсутствуют позиции)
             [
                 'text' => 'ЭКС',
                 'score' => 0.5,
-                'department_question_id' => 2
+                'department_question_id' => 2,
+                'disabled_department_ids' => "[2,3,4,5,6,7,8,9,10,11,12,13,19,20,21,22,23,24,25,26,27,28,29,30]"
             ], // 6 Не в полном объеме (отсутствуют позиции)
             [
                 'text' => 'ИВЛ',
                 'score' => 1,
-                'department_question_id' => 2
+                'department_question_id' => 2,
+                'disabled_department_ids' => "[2,3,4,5,6,7,8,9,10,11,12,13,19,20,21,22,23,24,25,26,27,28,29,30]"
             ], // 7 Не в полном объеме (отсутствуют позиции)
 
             [
                 'text' => 'Отсутствует',
                 'score' => 0,
-                'department_question_id' => 3
+                'department_question_id' => 3,
+                'disabled_department_ids' => "[]"
             ], // 8 Возможность эвакуации собственными силами
             [
                 'text' => 'Имеется',
                 'score' => 0,
-                'department_question_id' => 3
+                'department_question_id' => 3,
+                'disabled_department_ids' => "[]"
             ], // 9 Возможность эвакуации собственными силами
 
             [
                 'text' => 'Отсутствует',
-                'score' => 0,
-                'department_question_id' => 4
+                'score' => 1.5,
+                'department_question_id' => 4,
+                'disabled_department_ids' => "[]"
             ], // 10 Возможность посадки воздушного судна
             [
                 'text' => 'Затруднительна',
-                'score' => 0,
-                'department_question_id' => 4
+                'score' => 1,
+                'department_question_id' => 4,
+                'disabled_department_ids' => "[]"
             ], // 11 Возможность посадки воздушного судна
             [
                 'text' => 'Имеется',
                 'score' => 0.5,
-                'department_question_id' => 4
+                'department_question_id' => 4,
+                'disabled_department_ids' => "[]"
             ], // 12 Возможность посадки воздушного судна
 
             [
                 'text' => 'Имеется',
                 'score' => 0,
-                'department_question_id' => 5
+                'department_question_id' => 5,
+                'disabled_department_ids' => "[]"
             ], // 13 Возможность оказания помощи на месте
             [
                 'text' => 'Отсутствует',
                 'score' => 0.5,
-                'department_question_id' => 5
+                'department_question_id' => 5,
+                'disabled_department_ids' => "[]"
             ], // 14 Возможность оказания помощи на месте
 
             [
                 'text' => 'Кардиолог',
-                'score' => 0.5,
-                'department_question_id' => 6
+                'score' => 1,
+                'department_question_id' => 6,
+                'disabled_department_ids' => "[2,3,4,5,6,7,8,9,10,11,12,13,19,20,21,22,23,24,25,26,27,28,29,30]"
             ], // 15 Отсутствие специалистов
             [
                 'text' => 'Анестезиолог-реаниматолог',
-                'score' => 0.5,
-                'department_question_id' => 6
+                'score' => 1,
+                'department_question_id' => 6,
+                'disabled_department_ids' => "[2,3,4,5,6,7,8,9,10,11,12,13,19,20,21,22,23,24,25,26,27,28,29,30]"
             ], // 16 Отсутствие специалистов
             [
                 'text' => 'Терапевт',
-                'score' => 0.5,
-                'department_question_id' => 6
+                'score' => 1,
+                'department_question_id' => 6,
+                'disabled_department_ids' => "[1,7,8,9,10,11,12,13,14,15,16,17,18,22,23,24,25,26,27,28,29,30]"
             ], // 17 Отсутствие специалистов
             [
                 'text' => 'Фельдшер',
-                'score' => 0.5,
-                'department_question_id' => 6
+                'score' => 1,
+                'department_question_id' => 6,
+                'disabled_department_ids' => "[1,2,3,4,5,6,14,15,16,17,21]"
             ], // 18 Отсутствие специалистов
         ];
 
