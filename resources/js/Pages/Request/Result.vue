@@ -12,6 +12,14 @@ const props = defineProps({
 
 const page = usePage()
 const responsesAnswers = ref([])
+onMounted(() => {
+    if (props.patientResult.status_id === 1) {
+        window.$notifyHelper.info({
+            title: 'Статус запроса',
+            content: 'Ваш запрос создан, но не отправлен.\nПроверьте результат и подтвердите запрос.'
+        })
+    }
+})
 
 for (const departmentResponse in props.patientResult.department_responses) {
     const model = {
@@ -39,7 +47,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
 </script>
 
 <template>
-    <AppLayout>
+    <AppLayout :title="`Результаты запроса ${patientResult.patient.number}`">
         <NGrid cols="3" x-gap="32">
             <NGi />
             <NGi>
@@ -116,7 +124,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
             <NGi class="pt-[48px]">
                 <NCard class="!rounded-3xl drop-shadow-sm">
                     <template #header>
-                        {{ patientResult.department.name }} - параметры
+                        {{ patientResult.from_department.name }} - параметры
                     </template>
                     <NTabs type="segment" animated>
                         <NTabPane name="responses" tab="Изменяемые параметры">
@@ -147,8 +155,8 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                             </NList>
                         </NTabPane>
                         <NTabPane name="params" tab="Неизменяемые параметры">
-                            <NList v-if="patientResult.department.params.length > 0">
-                                <NListItem v-for="param in patientResult.department.params">
+                            <NList v-if="patientResult.from_department.params.length > 0">
+                                <NListItem v-for="param in patientResult.from_department.params">
                                     <NFlex justify="space-between" align="center">
                                         <div>
                                             {{ param.param.name }}
