@@ -31,7 +31,7 @@ class SurveyController extends Controller
         $selectedDiagnosisId = isset($selectedDiagnosis->diagnosis_id)
             ? Diagnosis::find($selectedDiagnosis->diagnosis_id)->id
             : null; // Выбранный диагноз
-        $selectedDepartmentId = auth()->user()->myDepartment();
+        $selectedDepartmentId = auth()->user()->myDepartment()->id;
 
         // Вопросы для пациента (фильтруем по диагнозу)
         $patientQuestions = $selectedDiagnosisId
