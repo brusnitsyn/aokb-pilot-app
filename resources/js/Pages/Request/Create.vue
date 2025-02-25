@@ -13,7 +13,6 @@ const props = defineProps({
     organizationQuestions: Array,
     medicalOrganizations: Array,
     selectedDiagnosisId: Number,
-    selectedDepartmentId: Number,
     departments: Array
 });
 
@@ -70,7 +69,7 @@ const onSubmit = () => {
     router.post(route('request.store'), {
         patient: personalPatient.value,
         diagnosis_id: props.selectedDiagnosisId,
-        medical_organization_id: props.selectedDepartmentId,
+        medical_organization_id: selectedDepartmentId.value,
         patient_responses: patientResponses.value
     }, {
         onSuccess: () => {
@@ -110,6 +109,7 @@ provide('navigate', { hasPrevStage, hasNextStage, onPrevStage, onNextStage, onSu
 
             <!-- Установка МО -->
             <DepartmentForm :stage="stage"
+                            v-model:selected-department-id="selectedDepartmentId"
                             :departments="departments"
                             :validation-message="validationMessage" />
 
