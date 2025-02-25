@@ -23,7 +23,7 @@ class SurveyController extends Controller
         $diagnosisGroups = DiagnosisGroup::with('diagnoses')->get();
         $diagnoses = Diagnosis::all(); // Получаем все диагнозы
         $selectedDiagnosis = json_decode(\request()->cookie('selectDiagnosis'));
-        $activeDepartment = json_decode(\request()->cookie('activeDepartment'));
+        $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
 
         $selectedDiagnosisGroupId = isset($selectedDiagnosis->diagnosis_group_id)
             ? DiagnosisGroup::find($selectedDiagnosis->diagnosis_group_id)->id
@@ -31,9 +31,7 @@ class SurveyController extends Controller
         $selectedDiagnosisId = isset($selectedDiagnosis->diagnosis_id)
             ? Diagnosis::find($selectedDiagnosis->diagnosis_id)->id
             : null; // Выбранный диагноз
-        $selectedDepartmentId = isset($activeDepartment->id)
-            ? Department::find($activeDepartment->id)->id
-            : null; // Выбранный диагноз
+        $selectedDepartmentId = auth()->user()->myDepartment();
 
         // Вопросы для пациента (фильтруем по диагнозу)
         $patientQuestions = $selectedDiagnosisId
@@ -42,13 +40,17 @@ class SurveyController extends Controller
 
         // Вопросы для медицинской организации
         $organizationQuestions = DepartmentQuestion::with([
-            'answers' => function ($query) use ($selectedDepartmentId) {
-                $query->whereJsonDoesntContain('disabled_department_ids', $selectedDepartmentId);
+            'answers' => function ($query) use ($selectedDepartmentId, $selectedDiagnosisGroupId) {
+                $query->with('dependsDiagnosisGroup')->whereHas('dependsDiagnosisGroup', function ($query) use ($selectedDiagnosisGroupId) {
+                    $query->where('diagnosis_group_id', $selectedDiagnosisGroupId);
+                })->whereJsonDoesntContain('disabled_department_ids', $selectedDepartmentId)
+                ->orderBy('text', 'asc');
             },
             'answers.departments'
         ])->get();
 
         $departments = DepartmentDiagnosisGroup::with('department')
+            ->whereNot('department_id', $selectedDepartmentId)
             ->where('diagnosis_group_id', $selectedDiagnosisGroupId)
             ->get();
 
@@ -127,8 +129,10 @@ class SurveyController extends Controller
             }
         }
 
+        $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
         // Добавляем фиксированные баллы медицинской организации
-        $department = auth()->user()->departments()->first()->load(['params']);
+        $department = isset($myDepartmentId) ? Department::find((integer)$myDepartmentId)->load('params')
+            : auth()->user()->departments()->first()->load(['params']);
         foreach ($department->params as $param) {
             $organizationScore += $param->paramValue->score;
         }
@@ -189,6 +193,9 @@ class SurveyController extends Controller
             'scenario',
             'patient.diagnosis',
             'status',
+            'from_department.params' => function ($query) use ($diagnosisGroupId) {
+                $query->whereJsonContains('depends_diagnosis_group_ids', $diagnosisGroupId);
+            },
             'from_department.params.param',
             'from_department.params.paramValue' => function ($query) use ($diagnosisGroupId) {
                 $query->whereJsonContains('depends_diagnosis_group_ids', $diagnosisGroupId);
@@ -196,8 +203,9 @@ class SurveyController extends Controller
         ])->where('patient_id', $patient->id)->first();
 
         $departmentQuestions = DepartmentQuestion::with('answers.departments')
-            ->where('depends_on_diagnosis_group_id', $diagnosisGroupId)
-            ->orWhere('depends_on_diagnosis_group_id', null)
+            ->whereHas('dependsDiagnosisGroup', function ($query) use ($diagnosisGroupId) {
+                $query->where('diagnosis_group_id', $diagnosisGroupId);
+            })
             ->get();
 
         return Inertia::render('Request/Result', [

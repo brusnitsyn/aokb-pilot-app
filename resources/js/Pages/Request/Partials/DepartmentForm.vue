@@ -50,13 +50,8 @@ const options = computed({
 })
 
 const onNext = async () => {
-    await axios.post(route('user.department.update'), {
-        id: model.value.department_id
-    }).then(() => {
-        router.reload()
-        selectedDepartmentId.value = model.value.department_id
-        onNextStage()
-    })
+    selectedDepartmentId.value = model.value.department_id
+    onNextStage()
 }
 </script>
 
@@ -69,7 +64,7 @@ const onNext = async () => {
         :exit="{ y: 100, opacity: 0 }">
         <NCard class="!rounded-3xl drop-shadow-sm">
             <template #header>
-                Выберите медицинскую организацию
+                В какую медицинскую организацию транспортировать?
             </template>
             <template #cover>
                 <NProgress

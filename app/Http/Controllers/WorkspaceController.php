@@ -18,27 +18,23 @@ class WorkspaceController extends Controller
     {
         $diagnosisGroups = DiagnosisGroup::with('diagnoses')->get();
         $departments = Department::all();
-        $userDepartments = UserDepartment::where('user_id', auth()->user()->id)
-            ->get()
-            ->map(function ($item) {
-                return $item->department_id;
-            })->values()
-            ->toArray();
 
-        // Cookie
-//        $activeDepartment = json_decode(\request()->cookie('activeDepartment'));
-//        $organizationResponses = json_decode(\request()->cookie('organizationResponses'));
+        $myDepartmentId = \request()->cookie('myDepartment');
+        $userDepartments = !is_null($myDepartmentId) ? UserDepartment::where('user_id', auth()->user()->id)
+            ->where('department_id', $myDepartmentId)
+            ->get() : UserDepartment::where('user_id', auth()->user()->id)->get();
+        $myDepartment = Department::find($userDepartments->first()->department_id)->load('region');
+        $userDepartments = $userDepartments->map(function ($item) {
+            return $item->department_id;
+        })->values()->toArray();
+
+
         $selectedDiagnosis = json_decode(\request()->cookie('selectDiagnosis'));
+
 
         // Группа диагноза и сам диагноз
         $selectedDiagnosisGroup = isset($selectedDiagnosis->diagnosisGroupId) ? DiagnosisGroup::with('diagnoses')->find($selectedDiagnosis->diagnosisGroupId) : null;
         $selectedDiagnosis = isset($selectedDiagnosis->diagnosisId) ? Diagnosis::find($selectedDiagnosis->diagnosisId) : null;
-
-        // Вопросы для медицинской организации
-//        $organizationQuestions = $selectedDiagnosisGroup ? DepartmentQuestion::with('answers.departments')
-//            ->where('depends_on_diagnosis_group_id', $selectedDiagnosisGroup->id)
-//            ->orWhere('depends_on_diagnosis_group_id', null)
-//            ->get() : [];
 
         if (count($userDepartments) > 1)
             $countResults = PatientResult::whereIn('from_department_id', $userDepartments)->count();
@@ -54,6 +50,7 @@ class WorkspaceController extends Controller
             'selectedDiagnosisGroup' => $selectedDiagnosisGroup,
             'selectedDiagnosis' => $selectedDiagnosis,
             'countResults' => $countResults,
+            'myDepartment' => $myDepartment,
         ]);
     }
 

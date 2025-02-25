@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Department;
+use App\Models\UserDepartment;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -30,9 +32,18 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
+
+        $myDepartment = $myDepartmentId ? Department::whereId((integer)$myDepartmentId)->get()->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'region' => $item->region->shortName
+            ];
+        })->first() : null;
+
         return array_merge([
             ...parent::share($request),
-            'activeDepartment' => json_decode($request->cookie('activeDepartment')),
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
@@ -40,8 +51,8 @@ class HandleInertiaRequests extends Middleware
         ], [
             'auth' => [
                 'user' => $request->user() ? [
-                    ...$request->user()->toArray(),
-                    'department' => $request->user()->departments()->first(),
+                    ...$request->user()->load(['role.scopes'])->toArray(),
+                    'department' => $myDepartment
                 ] : null
             ]
         ]);

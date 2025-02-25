@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Model;
 
 class DepartmentParam extends Model
@@ -10,6 +11,7 @@ class DepartmentParam extends Model
         'department_id',
         'param_id',
         'param_value_id',
+        'depends_diagnosis_group_ids'
     ];
 
     public function department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -25,5 +27,12 @@ class DepartmentParam extends Model
     public function paramValue(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(ParamValue::class, 'param_value_id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'depends_diagnosis_group_ids' => AsArrayObject::class,
+        ];
     }
 }

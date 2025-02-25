@@ -2,14 +2,17 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import WorkspaceItem from "@/Components/Workspace/WorkspaceItem.vue";
 import {router, usePage} from "@inertiajs/vue3";
+import {IconEdit, IconListSearch} from "@tabler/icons-vue";
+import {Motion} from 'motion-v'
+import {useCheckScope} from "@/Composables/useCheckScope.js";
+import DepartmentModal from "@/Components/Department/DepartmentModal.vue";
 
 const props = defineProps({
     diagnosis: Array,
     diagnosisGroups: Array,
     countResults: Number
 })
-
-const page = usePage()
+const { hasScope, scopes } = useCheckScope()
 
 const onLogout = () => {
     window.$dialog.warning({
@@ -37,11 +40,16 @@ const onLogout = () => {
         <NFlex align="center" class="max-w-xl mx-auto h-full">
             <NGrid cols="1" x-gap="16" y-gap="16" responsive="screen">
                 <NGi>
-                    <NAlert type="info" class="!rounded-3xl drop-shadow-sm">
-                        <div class="leading-5">
-                            Вы авторизованы как <span class="font-medium">{{ usePage().props.auth.user.department.name }}</span>
+                    <div class="relative">
+                        <NAlert type="info" class="!rounded-3xl drop-shadow-sm">
+                            <div class="leading-5">
+                                Вы авторизованы как оператор «<span class="font-medium">{{ usePage().props.auth.user.department.name }}</span>»
+                            </div>
+                        </NAlert>
+                        <div v-if="hasScope(scopes.HAS_CHANGE_DEPARTMENT)" class="absolute -right-[56px] inset-y-0">
+                            <DepartmentModal />
                         </div>
-                    </NAlert>
+                    </div>
                 </NGi>
                 <NGi>
                     <WorkspaceItem header="Создать запрос на транспортировку"

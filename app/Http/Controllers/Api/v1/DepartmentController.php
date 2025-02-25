@@ -26,11 +26,7 @@ class DepartmentController extends Controller
         $responses = $request->all();
         $department = Department::with('region')->find($responses['id']);
 
-        return response('')->cookie('activeDepartment', json_encode([
-            'id' => $department->id,
-            'name' => $department->name,
-            'region' => $department->region->shortName
-        ]), config('session.lifetime'));
+        return response('')->cookie('myDepartment', $department->id, config('session.lifetime'));
     }
 
     public function search(Request $request)

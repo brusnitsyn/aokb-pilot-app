@@ -12,7 +12,7 @@ class DepartmentAnswer extends Model
         'text',
         'score',
         'is_show',
-        'disabled_department_ids'
+        'disabled_department_ids',
     ];
 
     public function question(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -24,6 +24,11 @@ class DepartmentAnswer extends Model
     {
         return $this->belongsToMany(Department::class, 'department_answer_departments')
             ->withPivot('score');
+    }
+
+    public function dependsDiagnosisGroup(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(DiagnosisGroupRelations::class, 'diagnosable');
     }
 
     protected function casts(): array

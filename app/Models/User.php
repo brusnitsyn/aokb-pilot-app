@@ -30,6 +30,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id'
     ];
 
     /**
@@ -69,6 +70,25 @@ class User extends Authenticatable
     public function departments(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Department::class, 'user_departments', 'user_id', 'department_id');
+    }
+
+    public function myDepartment()
+    {
+        $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
+
+        return isset($myDepartmentId)
+            ? Department::find((integer)$myDepartmentId)->id
+            : $this->departments->first()->id;
+    }
+
+    public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function hasPermission($scope): bool
+    {
+        return in_array($scope, $this->role->scopes);
     }
 
     protected function defaultProfilePhotoUrl(): string

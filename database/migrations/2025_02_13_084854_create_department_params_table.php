@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignIdFor(\App\Models\Department::class, 'department_id');
             $table->foreignIdFor(\App\Models\Param::class, 'param_id');
             $table->foreignIdFor(\App\Models\ParamValue::class, 'param_value_id');
+            $table->json('depends_diagnosis_group_ids')->nullable();
             $table->timestamps();
         });
     }

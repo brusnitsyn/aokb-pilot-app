@@ -5,7 +5,8 @@ import DepartmentInputSearch from "@/Components/Department/DepartmentInputSearch
 import DepartmentListSearchResult from "@/Components/Department/DepartmentListSearchResult.vue"
 import {isExtraLargeScreen, isLargeScreen, isMediumScreen, isSmallScreen} from "@/Utils/mediaQuery.js"
 import {router, usePage} from "@inertiajs/vue3"
-import {IconMapPin, IconSettings} from '@tabler/icons-vue'
+import {IconListSearch, IconMapPin, IconSettings} from '@tabler/icons-vue'
+import {Motion} from 'motion-v'
 
 const emits = defineEmits([
     'clickOnShowMoParameters'
@@ -14,15 +15,16 @@ const departments = ref([])
 
 axios.get('/api/v1/departments').then(res => {
     departments.value = res.data
-    selectedRegion.value = usePage().props.activeDepartment ? {
-        key: usePage().props.activeDepartment.region,
-        children: departments.value[usePage().props.activeDepartment.region]
+    console.log(usePage().props.auth.user.department)
+    selectedRegion.value = usePage().props.auth.user ? {
+        key: usePage().props.auth.user.department.region,
+        children: departments.value[usePage().props.auth.user.department.region]
     } : {
         key: '',
         children: null,
     }
 })
-const hasActiveDepartment = computed(() => usePage().props.activeDepartment !== null)
+const hasActiveDepartment = computed(() => usePage().props.auth.user.department !== null)
 const hasShowModal = ref(false)
 const hasLoading = ref(false)
 const selectedRegion = ref({
@@ -31,7 +33,7 @@ const selectedRegion = ref({
 })
 const departmentActive = computed({
     get() {
-        return usePage().props.activeDepartment
+        return usePage().props.auth.user.department
     },
     async set(value) {
         hasLoading.value = true
@@ -67,12 +69,6 @@ const modalTitle = computed(() => {
 
 const hasWorkspacePage = computed(() => usePage().url.includes('workspace'))
 
-// Проверка, выбраны ли группа и диагноз
-const hasSelectedDiagnosis = computed(() => {
-    return usePage().props.selectedDiagnosisGroup !== null && usePage().props.selectedDiagnosis !== null
-})
-
-
 const departmentActiveClass = computed(() => {
     return [
         '!my-0',
@@ -104,26 +100,23 @@ function onLeaveModal() {
 </script>
 
 <template>
-    <NFlex align="center" inline>
-        <NButtonGroup>
-            <NButton round type="primary" secondary @click="onClickTitle" :disabled="(!hasWorkspacePage || !hasSelectedDiagnosis)">
-                <template #icon>
-                    <NIcon :component="IconMapPin" />
-                </template>
-                {{ departmentActive ? departmentActive.name : 'Выберите МО' }}
-            </NButton>
-            <NButton v-if="hasActiveDepartment"
-                     round
-                     type="info"
-                     secondary
-                     @click="onShowDrawer"
-                     :disabled="(!hasWorkspacePage || !hasSelectedDiagnosis)">
-                <template #icon>
-                    <NIcon :component="IconSettings" />
-                </template>
-            </NButton>
-        </NButtonGroup>
-    </NFlex>
+    <NTooltip>
+        <template #trigger>
+            <Motion
+                as-child
+                :transition="{ duration: 0.1, }"
+                :hover="{ scale: 1.10 }"
+                :initial="{ scale: 1 }"
+                as="div"
+                class="!text-xl !rounded-full !h-full !w-[46px] !px-0">
+                <NButton type="primary" secondary bordered round @click="onClickTitle">
+                    <NIcon :component="IconListSearch" />
+                </NButton>
+            </Motion>
+        </template>
+        Изменить медицинскую организацию
+    </NTooltip>
+
     <NModal @afterLeave="onLeaveModal"
             :mask-closable="false"
             display-directive="if"

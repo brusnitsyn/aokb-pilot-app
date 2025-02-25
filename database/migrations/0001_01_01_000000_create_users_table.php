@@ -11,6 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('scopes', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('description');
+            $table->timestamps();
+        });
+
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('slug');
+            $table->string('name');
+            $table->timestamps();
+        });
+
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('login')->unique();
@@ -21,6 +35,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
+            $table->foreignIdFor(\App\Models\Role::class, 'role_id');
             $table->timestamps();
         });
 
@@ -38,6 +53,13 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        Schema::create('role_scopes', function (Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(\App\Models\Role::class, 'role_id');
+            $table->foreignIdFor(\App\Models\Scope::class, 'scope_id');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -45,8 +67,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('role_scopes');
+        Schema::dropIfExists('roles');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('scopes');
     }
 };

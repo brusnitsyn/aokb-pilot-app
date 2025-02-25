@@ -73,35 +73,66 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
 
                     <NCard class="!rounded-3xl drop-shadow-sm">
                         <template #header>
-                            Результат опроса
+                            Ранжирование баллов
+                        </template>
+                        <template #header-extra>
+                            <NTag type="error" round class="!px-4">
+                                <NSpace align="center" :size="4">
+                                    <span class="leading-4">Общее кол-во:</span>
+                                    <span class="text-base font-medium">
+                                        <NNumberAnimation :from="0.0" :to="totalScore" :precision="1" locale="en-US" :duration="1000" />
+                                    </span>
+                                </NSpace>
+                            </NTag>
                         </template>
                         <NGrid cols="4" x-gap="6" y-gap="6">
                             <NGi>
-                                <NStatistic label="Общий балл" tabular-nums>
-                                    <NNumberAnimation :from="0.0" :to="totalScore" :precision="1" locale="en-US" :duration="1000" />
-                                </NStatistic>
+                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl" type="info" round>
+                                    <NSpace vertical align="center" :size="4">
+                                        <span>Опрос</span>
+                                        <span class="!text-2xl">
+                                            <NNumberAnimation :from="0.0" :to="patientResult.patient_score" :precision="1" locale="en-US" :duration="1000" />
+                                        </span>
+                                    </NSpace>
+                                </NTag>
                             </NGi>
                             <NGi>
-                                <NStatistic label="Баллы опроса" tabular-nums>
-                                    <NNumberAnimation :from="0.0" :to="patientResult.patient_score" :precision="1" locale="en-US" :duration="1000" />
-                                </NStatistic>
+                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl" type="info" round>
+                                    <NSpace vertical align="center" :size="4">
+                                        <span>МО</span>
+                                        <span class="!text-2xl">
+                                            <NNumberAnimation :from="0.0" :to="patientResult.department_score" :precision="1" locale="en-US" :duration="1000" />
+                                        </span>
+                                    </NSpace>
+                                </NTag>
                             </NGi>
                             <NGi>
-                                <NStatistic label="Баллы МО" tabular-nums>
-                                    <NNumberAnimation :from="0.0" :to="patientResult.department_score" :precision="1" locale="en-US" :duration="1000" />
-                                </NStatistic>
+                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl" type="info" round>
+                                    <NSpace vertical align="center" :size="4">
+                                        <span>Сценарий</span>
+                                        <span class="!text-2xl">
+                                            <NNumberAnimation :from="0.0" :to="patientResult.scenario_score" :precision="1" locale="en-US" :duration="1000" />
+                                        </span>
+                                    </NSpace>
+                                </NTag>
+<!--                                <NStatistic label="Сценарий" tabular-nums>-->
+<!--                                    <NNumberAnimation :from="0.0" :to="patientResult.scenario_score" :precision="1" locale="en-US" :duration="1000" />-->
+<!--                                </NStatistic>-->
                             </NGi>
                             <NGi>
-                                <NStatistic label="Баллы сценария" tabular-nums>
-                                    <NNumberAnimation :from="0.0" :to="patientResult.scenario_score" :precision="1" locale="en-US" :duration="1000" />
-                                </NStatistic>
-                            </NGi>
-                            <NGi>
-                                <NStatistic label="Код диагноза" tabular-nums>
-                                    <div>
-                                        {{ patientResult.patient.diagnosis.code }}
-                                    </div>
-                                </NStatistic>
+                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl !py-3" type="primary" round>
+                                    <NSpace vertical align="center" :size="4">
+                                        <span>Код диагноза</span>
+                                        <span class="!text-2xl">
+                                            {{ patientResult.patient.diagnosis.code }}
+                                        </span>
+                                    </NSpace>
+                                </NTag>
+<!--                                <NStatistic label="Код диагноза" tabular-nums>-->
+<!--                                    <div>-->
+<!--                                        {{ patientResult.patient.diagnosis.code }}-->
+<!--                                    </div>-->
+<!--                                </NStatistic>-->
                             </NGi>
                         </NGrid>
                     </NCard>
@@ -186,5 +217,11 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
 }
 :deep(.n-tabs-capsule) {
     @apply !rounded-3xl;
+}
+:deep(.n-statistic-value) {
+    @apply text-center;
+}
+:deep(.n-statistic__label) {
+    @apply text-center;
 }
 </style>
