@@ -43,10 +43,10 @@ const onLogout = () => {
                     <div class="relative">
                         <NAlert type="info" class="!rounded-3xl drop-shadow-sm">
                             <div class="leading-5">
-                                Вы авторизованы как оператор «<span class="font-medium">{{ usePage().props.auth.user.department.name }}</span>»
+                                Вы авторизованы как <span class="lowercase">{{ usePage().props.auth.user.role.name }}</span> «<span class="font-medium">{{ usePage().props.auth.user.department.name }}</span>»
                             </div>
                         </NAlert>
-                        <div v-if="hasScope(scopes.HAS_CHANGE_DEPARTMENT)" class="absolute -right-[56px] inset-y-0">
+                        <div v-if="hasScope(scopes.HAS_CHANGE_DEPARTMENT)" class="absolute -right-[56px] top-0 flex items-center justify-center h-full">
                             <DepartmentModal />
                         </div>
                     </div>

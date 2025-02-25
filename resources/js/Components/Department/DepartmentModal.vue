@@ -108,7 +108,7 @@ function onLeaveModal() {
                 :hover="{ scale: 1.10 }"
                 :initial="{ scale: 1 }"
                 as="div"
-                class="!text-xl !rounded-full !h-full !w-[46px] !px-0">
+                class="!text-xl !rounded-full !w-[46px] !h-[46px] !px-0">
                 <NButton type="primary" secondary bordered round @click="onClickTitle">
                     <NIcon :component="IconListSearch" />
                 </NButton>
