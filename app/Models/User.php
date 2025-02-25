@@ -77,8 +77,8 @@ class User extends Authenticatable
         $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
 
         return isset($myDepartmentId)
-            ? Department::find((integer)$myDepartmentId)->id
-            : $this->departments->first()->id;
+            ? Department::find((integer)$myDepartmentId)
+            : $this->departments->first();
     }
 
     public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo

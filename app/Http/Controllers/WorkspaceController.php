@@ -19,12 +19,7 @@ class WorkspaceController extends Controller
         $diagnosisGroups = DiagnosisGroup::with('diagnoses')->get();
         $departments = Department::all();
 
-        $myDepartmentId = \request()->cookie('myDepartment');
-        $userDepartments = !is_null($myDepartmentId) ? UserDepartment::where('user_id', auth()->user()->id)
-            ->where('department_id', $myDepartmentId)
-            ->get() : UserDepartment::where('user_id', auth()->user()->id)->get();
-        $myDepartment = Department::find($userDepartments->first()->department_id)->load('region');
-        $userDepartments = $userDepartments->map(function ($item) {
+        $userDepartments = auth()->user()->departments->map(function ($item) {
             return $item->department_id;
         })->values()->toArray();
 
@@ -50,7 +45,6 @@ class WorkspaceController extends Controller
             'selectedDiagnosisGroup' => $selectedDiagnosisGroup,
             'selectedDiagnosis' => $selectedDiagnosis,
             'countResults' => $countResults,
-            'myDepartment' => $myDepartment,
         ]);
     }
 

@@ -34,13 +34,11 @@ class HandleInertiaRequests extends Middleware
     {
         $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
 
-        $myDepartment = $myDepartmentId ? Department::whereId((integer)$myDepartmentId)->get()->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'name' => $item->name,
-                'region' => $item->region->shortName
-            ];
-        })->first() : null;
+        $myDepartment = auth()->hasUser() ? [
+            'id' => auth()->user()->myDepartment()->id,
+            'name' => auth()->user()->myDepartment()->name,
+            'region' => auth()->user()->myDepartment()->region->shortName
+        ] : null;
 
         return array_merge([
             ...parent::share($request),
