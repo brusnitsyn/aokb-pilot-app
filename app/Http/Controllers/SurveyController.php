@@ -35,7 +35,7 @@ class SurveyController extends Controller
 
         // Вопросы для пациента (фильтруем по диагнозу)
         $patientQuestions = $selectedDiagnosisId
-            ? Diagnosis::find($selectedDiagnosisId)->questions()->with('answers.scenario')->get()
+            ? Diagnosis::find($selectedDiagnosisId)->questions()->with('answers.scenario.answer')->get()
             : collect();
 
         // Вопросы для медицинской организации
