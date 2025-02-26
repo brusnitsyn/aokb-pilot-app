@@ -7,7 +7,8 @@ import {Link, router, usePage} from "@inertiajs/vue3";
 const props = defineProps({
     totalScore: [String, Number],
     patientResult: Object,
-    departmentQuestions: Array
+    departmentQuestions: Array,
+    patientQuestions: Array
 })
 
 const page = usePage()
@@ -49,7 +50,39 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
 <template>
     <AppLayout :title="`Результаты запроса ${patientResult.patient.number}`">
         <NGrid cols="3" x-gap="32">
-            <NGi />
+            <NGi class="pt-[48px]">
+                <NCard class="!rounded-3xl drop-shadow-sm">
+                    <template #header>
+                        Опрос
+                    </template>
+                    <NList>
+                        <NListItem v-for="response in patientQuestions">
+                            <NSpace vertical :size="2" v-if="Array.isArray(response.answer)">
+                                <div>
+                                    {{ response.question.text }}
+                                </div>
+                                <NFlex wrap size="small">
+                                    <NTag v-for="answer in response.answer"
+                                          round
+                                          type="primary">
+                                        {{ answer.text }}
+                                    </NTag>
+                                </NFlex>
+                            </NSpace>
+                            <NFlex v-else justify="space-between" align="center">
+                                <div>
+                                    {{ response.question.text }}
+                                </div>
+                                <NTag round
+                                      type="primary">
+                                    {{ response.answer.text }}
+                                </NTag>
+                            </NFlex>
+                        </NListItem>
+                    </NList>
+                </NCard>
+            </NGi>
+
             <NGi>
                 <NFlex align="center">
                     <NButtonGroup class="w-full">
@@ -129,22 +162,24 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                         </NGrid>
                     </NCard>
 
-                    <NButton v-if="patientResult.status_id === 1"
-                             @click="router.post(route('my.request.update', { patient_result_id: patientResult.id }))"
-                             class="h-12"
-                             secondary
-                             type="error"
-                             size="large"
-                             round
-                             block>
-                        <template #icon>
-                            <NIcon :component="IconCheck" />
-                        </template>
-                        Подтвердить запрос
-                    </NButton>
+                    <NFlex justify="center" align="center" class="w-full">
+                        <NButton v-if="patientResult.status_id === 1"
+                                 @click="router.post(route('my.request.update', { patient_result_id: patientResult.id }))"
+                                 class="h-12"
+                                 secondary
+                                 type="error"
+                                 size="large"
+                                 round>
+                            <template #icon>
+                                <NIcon :component="IconCheck" />
+                            </template>
+                            Подтвердить запрос
+                        </NButton>
+                    </NFlex>
 
                 </NFlex>
             </NGi>
+
             <NGi class="pt-[48px]">
                 <NCard class="!rounded-3xl drop-shadow-sm">
                     <template #header>

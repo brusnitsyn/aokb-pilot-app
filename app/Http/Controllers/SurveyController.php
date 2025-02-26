@@ -215,10 +215,20 @@ class SurveyController extends Controller
             })
             ->get();
 
+        $questionResponses = $patientResult->patient_responses;
+
+        $patientQuestions = [];
+        foreach ($questionResponses as $questionId => $answerId) {
+            $question = Question::find($questionId);
+            $answer  = Answer::find($answerId);
+            $patientQuestions[] = ['question' => $question, 'answer' => $answer];
+        }
+
         return Inertia::render('Request/Result', [
             'totalScore' => $patientResult->total_score,
             'patientResult' => $patientResult,
             'departmentQuestions' => $departmentQuestions,
+            'patientQuestions' => $patientQuestions,
         ]);
     }
 
