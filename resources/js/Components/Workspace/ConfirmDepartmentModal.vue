@@ -30,13 +30,13 @@ const onSubmit = async () => {
             display-directive="if"
             class="max-w-xl !rounded-3xl"
             preset="card"
-            title="Требуется ли вылет по координатам">
+            title="Транспортировка по заданным координатам">
         <NSpace vertical :size="24">
             <NForm @submit.prevent="onSubmit">
                 <NFormItemGi :show-label="false" :show-feedback="false">
                     <NRadioGroup v-model:value="department_id" class="flex flex-col gap-y-2">
                         <NRadio :value="30" label="Да" />
-                        <NRadio :value="departmentId" label="Нет" />
+                        <NRadio :value="departmentId" label="Нет (текущее)" />
                     </NRadioGroup>
                 </NFormItemGi>
                 <Motion v-if="department_id === 30"
@@ -48,7 +48,7 @@ const onSubmit = async () => {
                     </NFormItemGi>
                 </Motion>
                 <NButton type="primary" round size="large" block attr-type="submit" class="mt-6">
-                    Перейти к созданию запроса
+                    Далее
                 </NButton>
             </NForm>
 
