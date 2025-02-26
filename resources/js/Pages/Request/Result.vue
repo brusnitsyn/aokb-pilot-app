@@ -50,7 +50,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
 <template>
     <AppLayout :title="`Результаты запроса ${patientResult.patient.number}`">
         <NGrid cols="3" x-gap="32">
-            <NGi class="pt-[48px]">
+            <NGi>
                 <NCard class="!rounded-3xl drop-shadow-sm">
                     <template #header>
                         Опрос
@@ -180,7 +180,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                 </NFlex>
             </NGi>
 
-            <NGi class="pt-[48px]">
+            <NGi>
                 <NCard class="!rounded-3xl drop-shadow-sm">
                     <template #header>
                         {{ patientResult.from_department.name }} - параметры
