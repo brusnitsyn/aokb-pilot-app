@@ -34,32 +34,32 @@ class PatientSurveySeeder extends Seeder
             [ 'text' => 'Болевой синдром', 'depends_on_answer_id' => 3 ], // 9
             [ 'text' => 'Ишемические изменения на ЭКГ', 'depends_on_answer_id' => 3 ], // 10
 
-            [ 'text' => 'ТЛТ', 'depends_on_answer_id' => 20 ], // 11
+            [ 'text' => 'Время от начала заболевания', 'depends_on_answer_id' => 20 ], // 11
 
-            [ 'text' => 'ТЛТ - Да', 'depends_on_answer_id' => 21 ], // 12
+            [ 'text' => 'ТЛТ', 'depends_on_answer_id' => 21 ], // 12
 
-            [ 'text' => 'Нарушение гемодинамики', 'depends_on_answer_id' => 24 ], // 13
-            [ 'text' => 'Болевой синдром', 'depends_on_answer_id' => 24 ], // 14
-            [ 'text' => 'Положительная динамика на ЭКГ?', 'depends_on_answer_id' => 24 ], // 15
+            [ 'text' => 'Жизнеугрожающие нарушения ритма', 'depends_on_answer_id' => 24 ], // 13
+            [ 'text' => 'Нарушение гемодинамики', 'depends_on_answer_id' => 24 ], // 14
+            [ 'text' => 'Болевой синдром', 'depends_on_answer_id' => 24 ], // 15
+            [ 'text' => 'Ишемические изменения на ЭКГ', 'depends_on_answer_id' => 24 ], // 16
 
-            [ 'text' => 'Шок', 'depends_on_answer_id' => 25 ], // 16 Не эффективный - Нарушение гемодинамики - Да
-            [ 'text' => 'Отек', 'depends_on_answer_id' => 25 ], // 17 Не эффективный - Нарушение гемодинамики - Да
+            // ТЛТ не проведен
+            [ 'text' => 'Жизнеугрожающие нарушения ритма', 'depends_on_answer_id' => 25 ], // 17
+            [ 'text' => 'Нарушение гемодинамики', 'depends_on_answer_id' => 25 ], // 18
+            [ 'text' => 'Болевой синдром', 'depends_on_answer_id' => 25 ], // 19
+            [ 'text' => 'Ишемические изменения на ЭКГ', 'depends_on_answer_id' => 25 ], // 20
 
-            [ 'text' => 'ТЛТ - Нет', 'depends_on_answer_id' => 22 ], // 18 Тлт - Нет
+            // От 12 до 48 часов от начала заболевания
+            [ 'text' => 'Жизнеугрожающие нарушения ритма', 'depends_on_answer_id' => 22 ], // 21
+            [ 'text' => 'Нарушение гемодинамики', 'depends_on_answer_id' => 22 ], // 22
+            [ 'text' => 'Болевой синдром', 'depends_on_answer_id' => 22 ], // 23
+            [ 'text' => 'Ишемические изменения на ЭКГ', 'depends_on_answer_id' => 22 ], // 24
 
-            [ 'text' => 'Нарушение гемодинамики', 'depends_on_answer_id' => 35 ], // 19 Тлт - нет - До 48 часов от начала заболевания
-            [ 'text' => 'Болевой синдром', 'depends_on_answer_id' => 35 ], // 20 Тлт - нет - До 48 часов от начала заболевания
-            [ 'text' => 'Положительная динамика на ЭКГ?', 'depends_on_answer_id' => 35 ], // 21 Тлт - нет - До 48 часов от начала заболевания
-
-            [ 'text' => 'Шок', 'depends_on_answer_id' => 37 ], // 22 Тлт - нет - До 48 часов от начала заболевания - Нарушение гемодинамики - Да
-            [ 'text' => 'Отек', 'depends_on_answer_id' => 37 ], // 23 Тлт - нет - До 48 часов от начала заболевания - Нарушение гемодинамики - Да
-
-            [ 'text' => 'Нарушение гемодинамики', 'depends_on_answer_id' => 36 ], // 24 Тлт - нет - После 48 часов от начала заболевания
-            [ 'text' => 'Болевой синдром', 'depends_on_answer_id' => 36 ], // 25 Тлт - нет - После 48 часов от начала заболевания
-            [ 'text' => 'Положительная динамика на ЭКГ?', 'depends_on_answer_id' => 36 ], // 26 Тлт - нет - После 48 часов от начала заболевания
-
-            [ 'text' => 'Шок', 'depends_on_answer_id' => 47 ], // 27 Тлт - нет - После 48 часов от начала заболевания - Нарушение гемодинамики - Да
-            [ 'text' => 'Отек', 'depends_on_answer_id' => 47 ], // 28 Тлт - нет - После 48 часов от начала заболевания - Нарушение гемодинамики - Да
+            // Больше 48 часов от начала заболевания
+            [ 'text' => 'Жизнеугрожающие нарушения ритма', 'depends_on_answer_id' => 23 ], // 25
+            [ 'text' => 'Нарушение гемодинамики', 'depends_on_answer_id' => 23 ], // 26
+            [ 'text' => 'Болевой синдром', 'depends_on_answer_id' => 23 ], // 27
+            [ 'text' => 'Ишемические изменения на ЭКГ', 'depends_on_answer_id' => 23 ], // 28
         ];
 
         $answers = [
@@ -97,60 +97,64 @@ class PatientSurveySeeder extends Seeder
 
             [ 'text' => 'С подъемом ST', 'score' => 0, 'question_id' => 1, 'scenario_id' => null ], // 20 ОКС
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 11, 'scenario_id' => null ], // 21 ТЛТ
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 11, 'scenario_id' => null ], // 22 ТЛТ
+            [ 'text' => 'До 12 часов от начала заболевания', 'score' => 0, 'question_id' => 11, 'scenario_id' => null ], // 21 Время от начала заболевания
+            [ 'text' => 'От 12 до 48 часов от начала заболевания', 'score' => 0, 'question_id' => 11, 'scenario_id' => 5 ], // 22 Время от начала заболевания
+            [ 'text' => 'Больше 48 часов от начала заболевания', 'score' => 0, 'question_id' => 11, 'scenario_id' => 6 ], // 23 Время от начала заболевания
 
-            [ 'text' => 'Эффективный', 'score' => 0, 'question_id' => 12, 'scenario_id' => null ], // 23 ТЛТ - Да
-            [ 'text' => 'Не эффективный', 'score' => 0, 'question_id' => 12, 'scenario_id' => null ], // 24 ТЛТ - Да
+            [ 'text' => 'Проведен', 'score' => 0, 'question_id' => 12, 'scenario_id' => 4 ], // 24 ТЛТ
+            [ 'text' => 'Не проведен', 'score' => 0, 'question_id' => 12, 'scenario_id' => 3 ], // 25 ТЛТ
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 13, 'scenario_id' => null ], // 25 Не эффективный - Нарушение гемодинамики
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 13, 'scenario_id' => null ], // 26 Не эффективный - Нарушение гемодинамики
+            // ТЛТ проведен
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 13, 'scenario_id' => null ], // 26 Жизнеугрожающие нарушения ритма
+            [ 'text' => 'Да', 'score' => 3, 'question_id' => 13, 'scenario_id' => null ], // 27 Жизнеугрожающие нарушения ритма
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 16, 'scenario_id' => null ], // 27 Не эффективный - Нарушение гемодинамики - Да - Шок
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 16, 'scenario_id' => null ], // 28 Не эффективный - Нарушение гемодинамики - Да - Шок
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 14, 'scenario_id' => null ], // 28 Нарушение гемодинамики
+            [ 'text' => 'Да', 'score' => 2, 'question_id' => 14, 'scenario_id' => null ], // 29 Нарушение гемодинамики
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 17, 'scenario_id' => null ], // 29 Не эффективный - Нарушение гемодинамики - Да - Отек
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 17, 'scenario_id' => null ], // 30 Не эффективный - Нарушение гемодинамики - Да - Отек
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 15, 'scenario_id' => null ], // 30 Болевой синдром
+            [ 'text' => 'Да', 'score' => 1, 'question_id' => 15, 'scenario_id' => null ], // 31 Болевой синдром
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 14, 'scenario_id' => null ], // 31 Не эффективный - Болевой синдром
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 14, 'scenario_id' => null ], // 32 Не эффективный - Болевой синдром
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 16, 'scenario_id' => null ], // 32 Ишемические изменения на ЭКГ
+            [ 'text' => 'Да', 'score' => 0, 'question_id' => 16, 'scenario_id' => null ], // 33 Ишемические изменения на ЭКГ
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 15, 'scenario_id' => null ], // 33 Не эффективный - Положительная динамика на ЭКГ?
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 15, 'scenario_id' => null ], // 34 Не эффективный - Положительная динамика на ЭКГ?
+            // ТЛТ проведен
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 17, 'scenario_id' => null ], // 34 Жизнеугрожающие нарушения ритма
+            [ 'text' => 'Да', 'score' => 3, 'question_id' => 17, 'scenario_id' => null ], // 35 Жизнеугрожающие нарушения ритма
 
-            [ 'text' => 'До 48 часов от начала заболевания', 'score' => 0, 'question_id' => 18, 'scenario_id' => null ], // 35 Тлт - нет
-            [ 'text' => 'После 48 часов от начала заболевания', 'score' => 0, 'question_id' => 18, 'scenario_id' => null ], // 36 Тлт - нет
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 18, 'scenario_id' => null ], // 36 Нарушение гемодинамики
+            [ 'text' => 'Да', 'score' => 2, 'question_id' => 18, 'scenario_id' => null ], // 37 Нарушение гемодинамики
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 19, 'scenario_id' => null ], // 37 Тлт - нет - До 48 часов от начала заболевания - Нарушение гемодинамики
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 19, 'scenario_id' => null ], // 38 Тлт - нет - До 48 часов от начала заболевания - Нарушение гемодинамики
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 19, 'scenario_id' => null ], // 38 Болевой синдром
+            [ 'text' => 'Да', 'score' => 1, 'question_id' => 19, 'scenario_id' => null ], // 39 Болевой синдром
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 22, 'scenario_id' => null ], // 39 Тлт - нет - До 48 часов от начала заболевания - Нарушение гемодинамики - Да - Шок
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 22, 'scenario_id' => null ], // 40 Тлт - нет - До 48 часов от начала заболевания - Нарушение гемодинамики - Да - Шок
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 20, 'scenario_id' => null ], // 40 Ишемические изменения на ЭКГ
+            [ 'text' => 'Да', 'score' => 0, 'question_id' => 20, 'scenario_id' => null ], // 41 Ишемические изменения на ЭКГ
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 23, 'scenario_id' => null ], // 41 Тлт - нет - До 48 часов от начала заболевания - Нарушение гемодинамики - Да - Отек
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 23, 'scenario_id' => null ], // 42 Тлт - нет - До 48 часов от начала заболевания - Нарушение гемодинамики - Да - Отек
+            // От 12 до 48 часов от начала заболевания
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 21, 'scenario_id' => null ], // 42 Жизнеугрожающие нарушения ритма
+            [ 'text' => 'Да', 'score' => 3, 'question_id' => 21, 'scenario_id' => null ], // 43 Жизнеугрожающие нарушения ритма
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 20, 'scenario_id' => null ], // 43 Тлт - нет - До 48 часов от начала заболевания - Болевой синдром
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 20, 'scenario_id' => null ], // 44 Тлт - нет - До 48 часов от начала заболевания - Болевой синдром
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 22, 'scenario_id' => null ], // 44 Нарушение гемодинамики
+            [ 'text' => 'Да', 'score' => 2, 'question_id' => 22, 'scenario_id' => null ], // 45 Нарушение гемодинамики
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 21, 'scenario_id' => null ], // 45 Тлт - нет - До 48 часов от начала заболевания - Положительная динамика на ЭКГ?
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 21, 'scenario_id' => null ], // 46 Тлт - нет - До 48 часов от начала заболевания - Положительная динамика на ЭКГ?
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 23, 'scenario_id' => null ], // 46 Болевой синдром
+            [ 'text' => 'Да', 'score' => 1, 'question_id' => 23, 'scenario_id' => null ], // 47 Болевой синдром
 
-            // Тлт - нет - После 48 часов от начала заболевания
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 24, 'scenario_id' => null ], // 47 Тлт - нет - После 48 часов от начала заболевания - Нарушение гемодинамики
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 24, 'scenario_id' => null ], // 48 Тлт - нет - После 48 часов от начала заболевания - Нарушение гемодинамики
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 24, 'scenario_id' => null ], // 48 Ишемические изменения на ЭКГ
+            [ 'text' => 'Да', 'score' => 0, 'question_id' => 24, 'scenario_id' => null ], // 49 Ишемические изменения на ЭКГ
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 27, 'scenario_id' => null ], // 49 Тлт - нет - После 48 часов от начала заболевания - Нарушение гемодинамики - Да - Шок
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 27, 'scenario_id' => null ], // 50 Тлт - нет - После 48 часов от начала заболевания - Нарушение гемодинамики - Да - Шок
+            // Больше 48 часов от начала заболевания
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 25, 'scenario_id' => null ], // 50 Жизнеугрожающие нарушения ритма
+            [ 'text' => 'Да', 'score' => 3, 'question_id' => 25, 'scenario_id' => null ], // 51 Жизнеугрожающие нарушения ритма
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 28, 'scenario_id' => null ], // 51 Тлт - нет - После 48 часов от начала заболевания - Нарушение гемодинамики - Да - Отек
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 28, 'scenario_id' => null ], // 52 Тлт - нет - После 48 часов от начала заболевания - Нарушение гемодинамики - Да - Отек
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 26, 'scenario_id' => null ], // 52 Нарушение гемодинамики
+            [ 'text' => 'Да', 'score' => 2, 'question_id' => 26, 'scenario_id' => null ], // 53 Нарушение гемодинамики
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 25, 'scenario_id' => null ], // 53 Тлт - нет - После 48 часов от начала заболевания - Болевой синдром
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 25, 'scenario_id' => null ], // 54 Тлт - нет - После 48 часов от начала заболевания - Болевой синдром
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 27, 'scenario_id' => null ], // 54 Болевой синдром
+            [ 'text' => 'Да', 'score' => 1, 'question_id' => 27, 'scenario_id' => null ], // 55 Болевой синдром
 
-            [ 'text' => 'Да', 'score' => 0, 'question_id' => 26, 'scenario_id' => null ], // 55 Тлт - нет - После 48 часов от начала заболевания - Положительная динамика на ЭКГ?
-            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 26, 'scenario_id' => null ], // 56 Тлт - нет - После 48 часов от начала заболевания - Положительная динамика на ЭКГ?
+            [ 'text' => 'Нет', 'score' => 0, 'question_id' => 28, 'scenario_id' => null ], // 56 Ишемические изменения на ЭКГ
+            [ 'text' => 'Да', 'score' => 0, 'question_id' => 28, 'scenario_id' => null ], // 57 Ишемические изменения на ЭКГ
         ];
 
         Answer::insert($answers);
