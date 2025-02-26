@@ -14,6 +14,7 @@ use App\Models\PatientResult;
 use App\Models\Question;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Inertia\Inertia;
 
 class SurveyController extends Controller
@@ -159,6 +160,8 @@ class SurveyController extends Controller
         $patientResult = PatientResult::create([
             'patient_id' => $patient->id,
             'from_department_id' => $department->id,
+            'coords' => null,
+            'comment' => Cookie::get('coordsComment'),
             'to_department_id' => $medicalOrganizationId,
             'patient_score' => $patientScore,
             'department_score' => $organizationScore,
@@ -168,6 +171,8 @@ class SurveyController extends Controller
             'scenario_id' => $scenarioId,
             'scenario_score' => $scenarioScore,
         ]);
+
+        Cookie::queue(Cookie::forget('myDepartment'));
 
         return redirect(route('request.result', [
             'patient_id' => $patient->id

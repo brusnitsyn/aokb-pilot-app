@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 class DepartmentController extends Controller
 {
@@ -28,7 +29,10 @@ class DepartmentController extends Controller
         $responses = $request->all();
         $department = Department::with('region')->find($responses['id']);
 
-        return response('')->cookie('myDepartment', $department->id, config('session.lifetime'));
+        Cookie::queue(Cookie::make('coordsComment', $responses['comment'], config('session.lifetime')));
+        Cookie::queue(Cookie::make('myDepartment', $department->id, config('session.lifetime')));
+//
+//        return response('')->cookie('myDepartment', $department->id, config('session.lifetime'));
     }
 
     public function search(Request $request)

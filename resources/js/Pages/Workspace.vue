@@ -2,10 +2,9 @@
 import AppLayout from '@/Layouts/AppLayout.vue';
 import WorkspaceItem from "@/Components/Workspace/WorkspaceItem.vue";
 import {router, usePage} from "@inertiajs/vue3";
-import {IconEdit, IconListSearch} from "@tabler/icons-vue";
-import {Motion} from 'motion-v'
 import {useCheckScope} from "@/Composables/useCheckScope.js";
 import DepartmentModal from "@/Components/Department/DepartmentModal.vue";
+import ConfirmDepartmentModal from "@/Components/Workspace/ConfirmDepartmentModal.vue";
 
 const props = defineProps({
     diagnosis: Array,
@@ -52,10 +51,7 @@ const onLogout = () => {
                     </div>
                 </NGi>
                 <NGi>
-                    <WorkspaceItem header="Создать запрос на транспортировку"
-                                   image-url="/assets/svg/illustrations/request.svg"
-                                   :href="route('request.create')"
-                    />
+                    <ConfirmDepartmentModal />
                 </NGi>
                 <NGi>
                     <WorkspaceItem header="Запросы МО"
