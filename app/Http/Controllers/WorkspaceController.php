@@ -17,7 +17,7 @@ class WorkspaceController extends Controller
     public function show(Request $request)
     {
         $diagnosisGroups = DiagnosisGroup::with('diagnoses')->get();
-        $departments = Department::all();
+        $departments = Department::where('is_receive', true)->get();
 
         $userDepartments = auth()->user()->departments->map(function ($item) {
             return $item->department_id;

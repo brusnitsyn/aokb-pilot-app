@@ -52,6 +52,9 @@ class SurveyController extends Controller
         $departments = DepartmentDiagnosisGroup::with('department')
             ->whereNot('department_id', $selectedDepartmentId)
             ->where('diagnosis_group_id', $selectedDiagnosisGroupId)
+            ->whereHas('department', function ($query) {
+                $query->where('is_receive', true);
+            })
             ->get();
 
         return Inertia::render('Request/Create', [

@@ -8,9 +8,11 @@ use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $departments = Department::with('region')->get()->map(function ($item) {
+        $isReceive = $request->input('is_receive');
+        $departments = Department::with('region')
+            ->where('is_receive', false)->get()->map(function ($item) {
             return [
                 'id' => $item->id,
                 'name' => $item->name,
