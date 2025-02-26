@@ -115,9 +115,6 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                                         </span>
                                     </NSpace>
                                 </NTag>
-<!--                                <NStatistic label="Сценарий" tabular-nums>-->
-<!--                                    <NNumberAnimation :from="0.0" :to="patientResult.scenario_score" :precision="1" locale="en-US" :duration="1000" />-->
-<!--                                </NStatistic>-->
                             </NGi>
                             <NGi>
                                 <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl !py-3" type="primary" round>
@@ -128,19 +125,15 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                                         </span>
                                     </NSpace>
                                 </NTag>
-<!--                                <NStatistic label="Код диагноза" tabular-nums>-->
-<!--                                    <div>-->
-<!--                                        {{ patientResult.patient.diagnosis.code }}-->
-<!--                                    </div>-->
-<!--                                </NStatistic>-->
                             </NGi>
                         </NGrid>
                     </NCard>
 
                     <NButton v-if="patientResult.status_id === 1"
                              @click="router.post(route('my.request.update', { patient_result_id: patientResult.id }))"
+                             class="h-12"
                              secondary
-                             type="primary"
+                             type="error"
                              size="large"
                              round
                              block>
