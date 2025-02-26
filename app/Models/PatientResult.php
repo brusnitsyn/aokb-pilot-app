@@ -10,6 +10,8 @@ class PatientResult extends Model
     protected $fillable = [
         'patient_id',
         'from_department_id',
+        'coords',
+        'comment',
         'to_department_id',
         'patient_score',
         'department_score',

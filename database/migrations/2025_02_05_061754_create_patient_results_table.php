@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\Patient::class, 'patient_id'); // Связь с пациентом
             $table->foreignIdFor(\App\Models\Department::class, 'from_department_id'); // Связь с медицинской организацией (откуда)
+            $table->string('coords')->nullable();
+            $table->text('comment')->nullable();
             $table->foreignIdFor(\App\Models\Department::class, 'to_department_id'); // Связь с медицинской организацией (куда)
             $table->double('patient_score'); // Баллы пациента
             $table->double('department_score'); // Баллы медицинской организации
