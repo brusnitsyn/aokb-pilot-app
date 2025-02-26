@@ -1,10 +1,32 @@
 <script setup>
 import {IconArrowLeft, IconArrowRight} from "@tabler/icons-vue"
 import {Motion} from 'motion-v'
+import _ from 'lodash'
+
 const props = defineProps(['stage', 'patientQuestions'])
 const { onPrevStage, onNextStage, onSubmit } = inject('navigate')
 const model = defineModel('patientResponses')
-const currentScenario = ref(null)
+const _currentScenario = ref(null)
+const currentScenario = computed({
+    get() {
+        if (model.value === null) return null
+        const keys = Object.keys(model.value)
+        if (keys.length === 0) return null
+        const lastKey = Number(keys[keys.length - 1])
+        const lastValue = Number(model.value[lastKey])
+
+        const question = props.patientQuestions.find(item => item.id === lastKey)
+        const ans = question.answers.find(item => item.id === lastValue)
+
+        if (ans.scenario !== null) {
+            return _currentScenario.value = ans.scenario
+        } else if (_currentScenario.value !== null && (question.id === _currentScenario.value.answer.question_id)) {
+            return _currentScenario.value = null
+        } else if (_currentScenario.value === null) {
+            return _currentScenario.value = null
+        }
+    }
+})
 
 // Фильтрация видимых вопросов для пациента
 const visiblePatientQuestions = computed(() => {
@@ -61,19 +83,16 @@ const nextPatientQuestion = () => {
 };
 
 const handleAnswerClick = (answer) => {
-    if (answer.scenario !== null) {
-        currentScenario.value = answer.scenario
-    }
+
 }
 
 // Отслеживаем изменения ответов на вопросы
 watch(model.value, (newResponses) => {
     // Удаляем ответы на зависимые вопросы, если изменился ответ на предыдущий вопрос
     props.patientQuestions.forEach((question) => {
-        if (question.depends_on_answer_id && Object.values(newResponses).includes(question.depends_on_answer_id) === false) {
-            if (question.answers.find(itm => itm.scenario_id !== null)) {
-                currentScenario.value = null
-            }
+        if (question.depends_on_answer_id
+            && Object.values(newResponses).includes(question.depends_on_answer_id) === false)
+        {
             delete model.value[question.id];
         }
     });
