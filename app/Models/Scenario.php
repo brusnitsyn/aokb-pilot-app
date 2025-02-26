@@ -11,8 +11,8 @@ class Scenario extends Model
         'score'
     ];
 
-    public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function answer(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasMany(Answer::class);
+        return $this->hasOne(Answer::class);
     }
 }
