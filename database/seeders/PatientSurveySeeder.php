@@ -97,9 +97,9 @@ class PatientSurveySeeder extends Seeder
 
             [ 'text' => 'С подъемом ST', 'score' => 0, 'question_id' => 1, 'scenario_id' => null ], // 20 ОКС
 
-            [ 'text' => 'До 12 часов от начала заболевания', 'score' => 0, 'question_id' => 11, 'scenario_id' => null ], // 21 Время от начала заболевания
-            [ 'text' => 'От 12 до 48 часов от начала заболевания', 'score' => 0, 'question_id' => 11, 'scenario_id' => 5 ], // 22 Время от начала заболевания
-            [ 'text' => 'Больше 48 часов от начала заболевания', 'score' => 0, 'question_id' => 11, 'scenario_id' => 6 ], // 23 Время от начала заболевания
+            [ 'text' => 'До 12 часов', 'score' => 0, 'question_id' => 11, 'scenario_id' => null ], // 21 Время от начала заболевания
+            [ 'text' => 'От 12 до 48 часов', 'score' => 0, 'question_id' => 11, 'scenario_id' => 5 ], // 22 Время от начала заболевания
+            [ 'text' => 'Больше 48 часов', 'score' => 0, 'question_id' => 11, 'scenario_id' => 6 ], // 23 Время от начала заболевания
 
             [ 'text' => 'Проведен', 'score' => 0, 'question_id' => 12, 'scenario_id' => 4 ], // 24 ТЛТ
             [ 'text' => 'Не проведен', 'score' => 0, 'question_id' => 12, 'scenario_id' => 3 ], // 25 ТЛТ
