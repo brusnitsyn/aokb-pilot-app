@@ -83,7 +83,7 @@ const onNext = async () => {
                    :rules="rules">
                 <NFormItem :show-label="false" path="department_id">
                     <NSelect v-model:value="model.department_id"
-                             placeholder="" :options="options" />
+                             filterable placeholder="" :options="options" />
                 </NFormItem>
             </NForm>
             <template #action>
