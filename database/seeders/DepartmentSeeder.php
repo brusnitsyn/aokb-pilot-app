@@ -60,6 +60,9 @@ class DepartmentSeeder extends Seeder
             [ 'name' => 'ГАУЗ АО "Амурская областная клиническая больница"', 'is_receive' => true ],
             [ 'name' => 'ГАУЗ АО "Амурская областная детская клиническая больница"', 'is_receive' => true ],
             [ 'name' => 'ГАУЗ АО "Амурская областная инфекционная больница"', 'is_receive' => true ],
+            [ 'name' => 'ГБУЗ АО "Амурская областная психиатрическая больница"', 'is_receive' => true ],
+            [ 'name' => 'Кардиохирургический центр АГМА', 'is_receive' => true ],
+            [ 'name' => 'ДНЦ Физиологии и патологии дыхания', 'is_receive' => true ],
         ];
 
         Department::insert($departmentsReceive);
