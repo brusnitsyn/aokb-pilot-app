@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->integer('fias_objectid')->nullable();
             $table->foreignId('regionId')
+                ->nullable()
                 ->constrained('regions', 'id');
+            $table->boolean('is_receive')->default(false);
             $table->timestamps();
         });
     }

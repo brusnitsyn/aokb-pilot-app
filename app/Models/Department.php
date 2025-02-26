@@ -10,7 +10,8 @@ class Department extends Model
         'name',
         'address',
         'fias_objectid',
-        'regionId'
+        'regionId',
+        'is_receive'
     ];
 
     public function region(): \Illuminate\Database\Eloquent\Relations\BelongsTo

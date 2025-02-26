@@ -55,5 +55,13 @@ class DepartmentSeeder extends Seeder
         ];
 
         Department::insert($departments);
+
+        $departmentsReceive = [
+            [ 'name' => 'ГАУЗ АО "Амурская областная клиническая больница"', 'is_receive' => true ],
+            [ 'name' => 'ГАУЗ АО "Амурская областная детская клиническая больница"', 'is_receive' => true ],
+            [ 'name' => 'ГАУЗ АО "Амурская областная инфекционная больница"', 'is_receive' => true ],
+        ];
+
+        Department::insert($departmentsReceive);
     }
 }
