@@ -275,17 +275,31 @@ const onSubmit = async () => {
         </NCard>
     </Motion>
 
-    <Motion
-        v-if="stage === 'department-questions' && progress !== 100"
-        :initial="{ y: 100 }"
-        :animate="{ y: 0, scale: 1 }"
-        :exit="{ y: -100, scale: 0 }">
-        <NAlert class="!rounded-3xl drop-shadow-sm" type="info">
-            <div class="leading-5">
-                Настройте параметры отправляемой медицинской организации
-            </div>
-        </NAlert>
-    </Motion>
+    <template v-if="stage === 'department-questions' && progress !== 100">
+        <Motion
+            v-if="currentOrganizationQuestion.type === 'single'"
+            :initial="{ y: 100 }"
+            :animate="{ y: 0, scale: 1 }"
+            :exit="{ y: -100, scale: 0 }">
+            <NAlert class="!rounded-3xl drop-shadow-sm" type="info">
+                <div class="leading-5">
+                    Выберите параметр
+                </div>
+            </NAlert>
+        </Motion>
+        <Motion
+            v-else
+            :initial="{ y: 100 }"
+            :animate="{ y: 0, scale: 1 }"
+            :exit="{ y: -100, scale: 0 }">
+            <NAlert class="!rounded-3xl drop-shadow-sm" type="info">
+                <div class="leading-5">
+                    Выберите параметры
+                </div>
+            </NAlert>
+        </Motion>
+    </template>
+
 </template>
 
 <style scoped>

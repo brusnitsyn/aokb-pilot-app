@@ -122,7 +122,7 @@ const onNext = async () => {
         :exit="{ y: -100, scale: 0 }">
         <NAlert class="!rounded-3xl drop-shadow-sm" type="info">
             <div class="leading-5">
-                Укажите медицинскую организацию которая будет принимать запрос
+                Выберите организацию
             </div>
         </NAlert>
     </Motion>
