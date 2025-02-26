@@ -20,7 +20,7 @@ class WorkspaceController extends Controller
         $departments = Department::where('is_receive', true)->get();
 
         $userDepartments = auth()->user()->departments->map(function ($item) {
-            return $item->department_id;
+            return $item->id;
         })->values()->toArray();
 
 
