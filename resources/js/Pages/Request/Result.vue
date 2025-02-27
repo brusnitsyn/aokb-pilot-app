@@ -162,11 +162,10 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                         </NGrid>
                     </NCard>
 
-                    <NFlex justify="center" align="center" class="w-full">
+                    <NFlex justify="center" align="center" class="w-full mt-5">
                         <NButton v-if="patientResult.status_id === 1"
                                  @click="router.post(route('my.request.update', { patient_result_id: patientResult.id }))"
-                                 class="h-12"
-                                 secondary
+                                 class="h-[74px] !rounded-3xl"
                                  type="error"
                                  size="large"
                                  round>
