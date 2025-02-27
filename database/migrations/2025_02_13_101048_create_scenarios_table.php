@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name'); // Наименование сценария
             $table->double('score')->default(0.0); // Балл сценария
+            $table->string('color')->nullable();
             $table->timestamps();
         });
     }

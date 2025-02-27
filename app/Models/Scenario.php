@@ -8,7 +8,8 @@ class Scenario extends Model
 {
     protected $fillable = [
         'name',
-        'score'
+        'score',
+        'color'
     ];
 
     public function answer(): \Illuminate\Database\Eloquent\Relations\HasOne

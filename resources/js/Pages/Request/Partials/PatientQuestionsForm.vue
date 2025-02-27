@@ -1,5 +1,5 @@
 <script setup>
-import {IconArrowLeft, IconArrowRight} from "@tabler/icons-vue"
+import {IconArrowLeft, IconArrowRight, IconInfoCircleFilled} from "@tabler/icons-vue"
 import {Motion} from 'motion-v'
 
 const props = defineProps(['stage', 'patientQuestions'])
@@ -91,6 +91,8 @@ const nextPatientQuestion = () => {
 const handleAnswerClick = (answer) => {
 
 }
+
+// const scenarioClass = computed(() => )
 
 // Отслеживаем изменения ответов на вопросы
 watch(model.value, (newResponses) => {
@@ -186,8 +188,11 @@ watch(model.value, (newResponses) => {
         :initial="{ y: 100 }"
         :animate="{ y: 0, scale: 1 }"
         :exit="{ y: -100, scale: 0 }">
-        <NAlert class="!rounded-3xl drop-shadow-sm bg-[#fbeef1]" type="info">
-            <div class="leading-5">
+        <NAlert class="!rounded-3xl drop-shadow-sm" :class="currentScenario ? `bg-${currentScenario.color}-200 text-${currentScenario.color}-500` : null" :bordered="false">
+            <template #icon>
+                <NIcon :component="IconInfoCircleFilled" color="" :class="currentScenario ? `text-${currentScenario.color}-500` : null" />
+            </template>
+            <div class="leading-5 text-black">
                 Текущий сценарий &mdash; <span class="font-medium">{{ currentScenario.name }}</span>
             </div>
         </NAlert>
@@ -195,12 +200,7 @@ watch(model.value, (newResponses) => {
 </template>
 
 <style scoped>
-:deep(.n-alert__icon) {
-    @apply text-[#d03050];
-}
-:deep(.n-alert__border) {
-    border: 1px solid #f3cbd3;
-}
+
 :deep(.n-card__action) {
     @apply rounded-b-3xl py-4 px-6;
 }
