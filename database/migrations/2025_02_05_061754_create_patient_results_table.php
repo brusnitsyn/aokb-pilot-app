@@ -26,6 +26,7 @@ return new class extends Migration
             $table->json('patient_responses')->nullable(); // Выбранные ответы на вопросы пациента
             $table->json('department_responses')->nullable(); // Выбранные ответы на вопросы МО
             $table->foreignIdFor(\App\Models\PatientResultStatus::class, 'status_id')->default(1);
+            $table->foreignIdFor(\App\Models\User::class, 'user_id');
             $table->timestamps();
         });
     }

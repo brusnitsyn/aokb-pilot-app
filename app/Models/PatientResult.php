@@ -20,7 +20,8 @@ class PatientResult extends Model
         'department_responses',
         'scenario_id',
         'scenario_score',
-        'status_id'
+        'status_id',
+        'user_id'
     ];
 
     public function from_department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
