@@ -135,7 +135,7 @@ class SurveyController extends Controller
 
         $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
         // Добавляем фиксированные баллы медицинской организации
-        $department = Department::find(Cookie::get('senderDepartment'))->load('params');
+        $department = Department::find(auth()->user()->myDepartment()->id)->load('params');
         foreach ($department->params as $param) {
             $organizationScore += $param->paramValue->score;
         }
