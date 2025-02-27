@@ -182,7 +182,7 @@ watch(model.value, (newResponses) => {
     </Motion>
 
     <Motion
-        v-if="currentScenario !== null"
+        v-if="stage === 'patient-questions' && currentScenario !== null"
         :initial="{ y: 100 }"
         :animate="{ y: 0, scale: 1 }"
         :exit="{ y: -100, scale: 0 }">
