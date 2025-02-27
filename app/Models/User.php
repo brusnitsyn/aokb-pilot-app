@@ -74,7 +74,7 @@ class User extends Authenticatable
 
     public function myDepartment()
     {
-        $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
+        $myDepartmentId = json_decode(\request()->cookie('senderDepartment'));
 
         if ($myDepartmentId === null && $this->role->slug === 'ROLE_ADMIN')
             return null;
