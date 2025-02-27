@@ -1,7 +1,6 @@
 <script setup>
 import {IconArrowLeft, IconArrowRight} from "@tabler/icons-vue"
 import {Motion} from 'motion-v'
-import _ from 'lodash'
 
 const props = defineProps(['stage', 'patientQuestions'])
 const { onPrevStage, onNextStage, onSubmit } = inject('navigate')
