@@ -126,12 +126,39 @@ const columns = [
         key: 'department.name',
         render(row) {
             return h(
-                NEllipsis,
+                NFlex,
                 {
-                    class: '!max-w-[160px]'
+                    align: 'center',
+                    size: 6
                 },
                 {
-                    default: () => row.from_department.name
+                    default: () => [
+                        h(
+                            NEllipsis,
+                            {
+                                class: '!max-w-[160px]'
+                            },
+                            {
+                                default: () => row.from_department.name
+                            }
+                        ),
+                        row.from_department.id === 30 ? h(
+                            NTooltip,
+                            {
+                                trigger: 'hover'
+                            },
+                            {
+                                trigger: () => h(
+                                    NIcon,
+                                    {
+                                        class: 'text-gray-300 text-lg',
+                                        component: IconInfoCircle
+                                    },
+                                ),
+                                default: () => row.comment
+                            }
+                        ) : null
+                    ]
                 }
             )
         }
