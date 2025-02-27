@@ -16,7 +16,7 @@ const departments = ref([])
 axios.get('/api/v1/departments').then(res => {
     departments.value = res.data
     console.log(usePage().props.auth.user.department)
-    selectedRegion.value = usePage().props.auth.user ? {
+    selectedRegion.value = usePage().props.auth.user.department ? {
         key: usePage().props.auth.user.department.region,
         children: departments.value[usePage().props.auth.user.department.region]
     } : {
@@ -25,7 +25,7 @@ axios.get('/api/v1/departments').then(res => {
     }
 })
 const hasActiveDepartment = computed(() => usePage().props.auth.user.department !== null)
-const hasShowModal = ref(false)
+const hasShowModal = defineModel('showModal')
 const hasLoading = ref(false)
 const selectedRegion = ref({
     key: '',

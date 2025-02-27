@@ -32,6 +32,7 @@ const onLogout = () => {
         },
     })
 }
+const departmentShowModal = ref(false)
 </script>
 
 <template>
@@ -42,11 +43,13 @@ const onLogout = () => {
                     <div class="relative">
                         <NAlert type="info" class="!rounded-3xl drop-shadow-sm">
                             <div class="leading-5">
-                                Вы вошли как <span class="lowercase">{{ usePage().props.auth.user.role.name }}</span> «<span class="font-medium">{{ usePage().props.auth.user.department.name }}</span>»
+                                Вы вошли как
+                                <span class="lowercase">{{ usePage().props.auth.user.role.name }}</span> <span v-if="usePage().props.auth.user.department">«<span class="font-medium">{{ usePage().props.auth.user.department.name }}</span>»</span>
+                                <NText v-else type="primary" class="font-medium cursor-pointer" @click="departmentShowModal = true">выбрать МО</NText>
                             </div>
                         </NAlert>
                         <div v-if="hasScope(scopes.HAS_CHANGE_DEPARTMENT)" class="absolute -right-[56px] top-0 flex items-center justify-center h-full">
-                            <DepartmentModal />
+                            <DepartmentModal v-model:show-modal="departmentShowModal" />
                         </div>
                     </div>
                 </NGi>

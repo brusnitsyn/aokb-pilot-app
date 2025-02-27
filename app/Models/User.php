@@ -76,6 +76,9 @@ class User extends Authenticatable
     {
         $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
 
+        if ($myDepartmentId === null && $this->role->slug === 'ROLE_ADMIN')
+            return null;
+
         if ($this->role->scopes->contains('name',  '=', config('permissions.HAS_CHANGE_DEPARTMENT')))
             return isset($myDepartmentId)
                 ? Department::find((integer)$myDepartmentId)

@@ -2,8 +2,12 @@
 import WorkspaceItem from "@/Components/Workspace/WorkspaceItem.vue";
 import {router, usePage} from "@inertiajs/vue3";
 import {Motion} from 'motion-v'
+
+const department = computed(() => usePage().props.auth.user.department)
+const hasSetDepartment = computed(() => department.value !== null)
+
 const hasShow = ref(false)
-const departmentId = usePage().props.auth.user.department.id
+const departmentId = department.value ? department.value.id : null
 const department_id = ref(departmentId)
 const comment = ref(null)
 
@@ -15,15 +19,20 @@ const onSubmit = async () => {
         hasShow.value = false
         router.visit(route('request.create'))
     })
+}
 
-
+const onClickItem = () => {
+    if (hasSetDepartment.value === true)
+        hasShow.value = true
 }
 </script>
 
 <template>
     <WorkspaceItem header="Создать запрос на транспортировку"
                    image-url="/assets/svg/illustrations/request.svg"
-                   @click="hasShow = true"
+                   @click="onClickItem"
+                   :disabled="!hasSetDepartment"
+                   disabled-reason="Выберите МО"
     />
     <NModal v-model:show="hasShow"
             :mask-closable="false"

@@ -34,7 +34,7 @@ class HandleInertiaRequests extends Middleware
     {
         $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
 
-        $myDepartment = auth()->hasUser() ? [
+        $myDepartment = auth()->hasUser() && auth()->user()->myDepartment() !== null ? [
             'id' => auth()->user()->myDepartment()->id,
             'name' => auth()->user()->myDepartment()->name,
             'region' => auth()->user()->myDepartment()->region->shortName
