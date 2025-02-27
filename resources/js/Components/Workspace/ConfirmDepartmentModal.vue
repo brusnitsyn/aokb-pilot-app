@@ -25,6 +25,8 @@ const onClickItem = () => {
     if (hasSetDepartment.value === true)
         hasShow.value = true
 }
+
+const placeholder = ref('Опишите подробнее место эвакуации')
 </script>
 
 <template>
@@ -43,7 +45,7 @@ const onClickItem = () => {
         <NSpace vertical :size="24">
             <NForm @submit.prevent="onSubmit">
                 <NFormItemGi :show-label="false" :show-feedback="false">
-                    <NRadioGroup v-model:value="department_id" class="flex flex-col gap-y-2">
+                    <NRadioGroup v-model:value="department_id" class="flex flex-row gap-x-2">
                         <NRadio :value="30" label="Да" />
                         <NRadio :value="departmentId" label="Нет (текущее)" />
                     </NRadioGroup>
@@ -53,7 +55,7 @@ const onClickItem = () => {
                         :animate="{ opacity: 1 }"
                         :exit="{ opacity: 0 }">
                     <NFormItemGi label="Комментарий" :show-feedback="false" class="mt-4">
-                        <NInput type="textarea" v-model:value="comment" placeholder="" :resizable="false" />
+                        <NInput type="textarea" v-model:value="comment" :placeholder="placeholder" @focus="placeholder = ''" @blur="placeholder = 'Опишите подробнее место эвакуации'" :resizable="false"  />
                     </NFormItemGi>
                 </Motion>
                 <NButton type="primary" round size="large" block attr-type="submit" class="mt-6">
