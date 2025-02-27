@@ -34,6 +34,16 @@ const onClickItem = () => {
 }
 
 const placeholder = ref('Опишите подробнее место эвакуации')
+
+const hasDisabledSubmit = computed(() => {
+    if (department_id.value === 30) {
+        if (typeof comment.value === 'undefined' || comment.value === null)
+            return true
+        if (comment.value.match(/^ *$/) !== null) return true
+    }
+    else
+        return false
+})
 </script>
 
 <template>
@@ -50,22 +60,22 @@ const placeholder = ref('Опишите подробнее место эваку
             preset="card"
             title="Транспортировка по заданным координатам">
         <NSpace vertical :size="24">
-            <NForm @submit.prevent="onSubmit">
+            <NForm model="" @submit.prevent="onSubmit">
                 <NFormItemGi :show-label="false" :show-feedback="false">
-                    <NRadioGroup v-model:value="department_id" class="flex flex-row gap-x-2">
+                    <NRadioGroup v-model:value="department_id" class="flex flex-row gap-x-2 items-center justify-center w-full">
                         <NRadio :value="30" label="Да" />
-                        <NRadio :value="departmentId" label="Нет (текущее)" />
+                        <NRadio :value="departmentId" label="Нет" />
                     </NRadioGroup>
                 </NFormItemGi>
                 <Motion v-if="department_id === 30"
                         :initial="{ opacity: 0 }"
                         :animate="{ opacity: 1 }"
                         :exit="{ opacity: 0 }">
-                    <NFormItemGi label="Комментарий" :show-feedback="false" class="mt-4">
-                        <NInput type="textarea" v-model:value="comment" :placeholder="placeholder" @focus="placeholder = ''" @blur="placeholder = 'Опишите подробнее место эвакуации'" :resizable="false"  />
+                    <NFormItemGi label="Комментарий" class="mt-2">
+                        <NInput type="textarea" v-model:value="comment" :placeholder="placeholder" @focus="placeholder = ''" @blur="placeholder = 'Опишите подробнее о месте эвакуации'" :resizable="false"  />
                     </NFormItemGi>
                 </Motion>
-                <NButton type="primary" round size="large" block attr-type="submit" class="mt-6">
+                <NButton type="primary" round size="large" block attr-type="submit" class="mt-3" :disabled="hasDisabledSubmit">
                     Далее
                 </NButton>
             </NForm>
