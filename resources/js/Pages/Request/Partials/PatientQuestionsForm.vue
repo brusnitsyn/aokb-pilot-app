@@ -24,6 +24,8 @@ const currentScenario = computed({
             return _currentScenario.value = null
         } else if (_currentScenario.value === null) {
             return _currentScenario.value = null
+        } else {
+            return _currentScenario.value
         }
     }
 })
