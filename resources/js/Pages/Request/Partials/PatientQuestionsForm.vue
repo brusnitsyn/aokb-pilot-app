@@ -6,6 +6,7 @@ const props = defineProps(['stage', 'patientQuestions'])
 const { onPrevStage, onNextStage, onSubmit } = inject('navigate')
 const model = defineModel('patientResponses')
 const _currentScenario = ref(null)
+const lastScenarioAnswer = ref(null)
 const currentScenario = computed({
     get() {
         if (model.value === null) return null
@@ -17,13 +18,17 @@ const currentScenario = computed({
         const question = props.patientQuestions.find(item => item.id === lastKey)
         const ans = question.answers.find(item => item.id === lastValue)
 
-        if (ans.scenario !== null) {
-            return _currentScenario.value = ans.scenario
-        } else if (_currentScenario.value !== null && (question.id === _currentScenario.value.answer.question_id)) {
-            return _currentScenario.value = null
-        } else if (_currentScenario.value === null) {
-            return _currentScenario.value = null
+        if (ans.scenario === null) {
+            const values = Object.values(model.value)
+            if (!values.includes(lastScenarioAnswer.value)) {
+                return _currentScenario.value = null
+            } else {
+                return _currentScenario.value
+            }
         } else {
+            _currentScenario.value = ans.scenario
+            lastScenarioAnswer.value = ans.id
+
             return _currentScenario.value
         }
     }
