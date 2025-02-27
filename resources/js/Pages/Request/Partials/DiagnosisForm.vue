@@ -140,17 +140,17 @@ const onSubmit = async () => {
         </NCard>
     </Motion>
 
-    <Motion
-        v-if="stage === 'diagnosis' && progress !== 100"
-        :initial="{ y: 100 }"
-        :animate="{ y: 0, scale: 1 }"
-        :exit="{ y: -100, scale: 0 }">
-        <NAlert class="!rounded-3xl drop-shadow-sm" type="info">
-            <div class="leading-5">
-                Установите диагноз пациента
-            </div>
-        </NAlert>
-    </Motion>
+<!--    <Motion-->
+<!--        v-if="stage === 'diagnosis' && progress !== 100"-->
+<!--        :initial="{ y: 100 }"-->
+<!--        :animate="{ y: 0, scale: 1 }"-->
+<!--        :exit="{ y: -100, scale: 0 }">-->
+<!--        <NAlert class="!rounded-3xl drop-shadow-sm" type="info">-->
+<!--            <div class="leading-5">-->
+<!--                Установите диагноз пациента-->
+<!--            </div>-->
+<!--        </NAlert>-->
+<!--    </Motion>-->
 </template>
 
 <style scoped>

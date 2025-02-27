@@ -287,17 +287,17 @@ const onSubmit = async () => {
                 </div>
             </NAlert>
         </Motion>
-        <Motion
-            v-else
-            :initial="{ y: 100 }"
-            :animate="{ y: 0, scale: 1 }"
-            :exit="{ y: -100, scale: 0 }">
-            <NAlert class="!rounded-3xl drop-shadow-sm" type="info">
-                <div class="leading-5">
-                    Выберите параметры
-                </div>
-            </NAlert>
-        </Motion>
+<!--        <Motion-->
+<!--            v-else-->
+<!--            :initial="{ y: 100 }"-->
+<!--            :animate="{ y: 0, scale: 1 }"-->
+<!--            :exit="{ y: -100, scale: 0 }">-->
+<!--            <NAlert class="!rounded-3xl drop-shadow-sm" type="info">-->
+<!--                <div class="leading-5">-->
+<!--                    Выберите параметры-->
+<!--                </div>-->
+<!--            </NAlert>-->
+<!--        </Motion>-->
     </template>
 
 </template>
