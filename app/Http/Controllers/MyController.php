@@ -24,8 +24,10 @@ class MyController extends Controller
             'patient.diagnosis',
             'scenario',
             'status',
+            'sender_department',
             'from_department',
             'to_department',
+            'user'
         ])->whereIn('from_department_id', $userDepartments)->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('My/Requests/Show', [

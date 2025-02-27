@@ -135,7 +135,7 @@ class SurveyController extends Controller
 
         $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
         // Добавляем фиксированные баллы медицинской организации
-        $department = auth()->user()->myDepartment()->load('params');
+        $department = Department::find(Cookie::get('senderDepartment'))->load('params');
         foreach ($department->params as $param) {
             $organizationScore += $param->paramValue->score;
         }
@@ -159,7 +159,8 @@ class SurveyController extends Controller
         // Сохранение результата
         $patientResult = PatientResult::create([
             'patient_id' => $patient->id,
-            'from_department_id' => $department->id,
+            'sender_department_id' => $department->id,
+            'from_department_id' => auth()->user()->myDepartment()->id,
             'coords' => null,
             'comment' => Cookie::get('coordsComment'),
             'to_department_id' => $medicalOrganizationId,
@@ -170,6 +171,7 @@ class SurveyController extends Controller
             'department_responses' => $organizationResponses,
             'scenario_id' => $scenarioId,
             'scenario_score' => $scenarioScore,
+            'user_id' => auth()->id()
         ]);
 
         Cookie::queue(Cookie::forget('myDepartment'));
@@ -228,6 +230,7 @@ class SurveyController extends Controller
             'totalScore' => $patientResult->total_score,
             'patientResult' => $patientResult,
             'departmentQuestions' => $departmentQuestions,
+            'senderDepartment' => auth()->user()->departments->first(),
             'patientQuestions' => $patientQuestions,
         ]);
     }

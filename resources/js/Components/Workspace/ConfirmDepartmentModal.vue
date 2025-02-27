@@ -21,6 +21,7 @@ const comment = ref(null)
 const onSubmit = async () => {
     await axios.post(route('user.department.update'), {
         id: department_id.value,
+        sender_department_id: usePage().props.auth.user.department.id,
         comment: comment.value
     }).then(() => {
         hasShow.value = false

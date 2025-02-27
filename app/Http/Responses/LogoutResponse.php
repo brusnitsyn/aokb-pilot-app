@@ -20,6 +20,7 @@ class LogoutResponse implements LogoutResponseContract
 //            Cookie::queue(Cookie::forget($name));
 //        }
         Cookie::queue(Cookie::forget('myDepartment'));
+        Cookie::queue(Cookie::forget('senderDepartment'));
         Cookie::queue(Cookie::forget('activeDepartment'));
         Cookie::queue(Cookie::forget('coordsComment'));
 

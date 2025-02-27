@@ -136,16 +136,17 @@ const columns = [
                         h(
                             NEllipsis,
                             {
-                                class: '!max-w-[160px]'
+                                class: '!max-w-[180px]'
                             },
                             {
-                                default: () => row.from_department.name
+                                default: () => row.sender_department.name
                             }
                         ),
                         row.from_department.id === 30 ? h(
                             NTooltip,
                             {
-                                trigger: 'hover'
+                                trigger: 'hover',
+                                style: 'max-width: 300px'
                             },
                             {
                                 trigger: () => h(
@@ -155,7 +156,18 @@ const columns = [
                                         component: IconInfoCircle
                                     },
                                 ),
-                                default: () => row.comment
+                                header: () => h(
+                                    'div',
+                                    {},
+                                    `${row.from_department.name}`
+                                ),
+                                default: () => h(
+                                    'div',
+                                    {
+                                        class: 'wrap'
+                                    },
+                                    row.comment
+                                )
                             }
                         ) : null
                     ]

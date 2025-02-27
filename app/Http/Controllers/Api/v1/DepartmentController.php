@@ -31,6 +31,7 @@ class DepartmentController extends Controller
 
         Cookie::queue(Cookie::make('coordsComment', $responses['comment'] ?? null, config('session.lifetime')));
         Cookie::queue(Cookie::make('myDepartment', $department->id, config('session.lifetime')));
+        Cookie::queue(Cookie::make('senderDepartment', $responses['sender_department_id'] ?? null, config('session.lifetime')));
 //
 //        return response('')->cookie('myDepartment', $department->id, config('session.lifetime'));
     }
