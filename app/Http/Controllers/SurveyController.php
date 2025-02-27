@@ -159,7 +159,7 @@ class SurveyController extends Controller
         // Сохранение результата
         $patientResult = PatientResult::create([
             'patient_id' => $patient->id,
-            'sender_department_id' => $department->id,
+            'sender_department_id' => Cookie::get('senderDepartment'),
             'from_department_id' => auth()->user()->myDepartment()->id,
             'coords' => null,
             'comment' => Cookie::get('coordsComment'),
