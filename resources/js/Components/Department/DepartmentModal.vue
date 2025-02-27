@@ -41,7 +41,9 @@ const departmentActive = computed({
             ...value
         }).then(() => {
             hasShowModal.value = false
-            router.reload()
+            router.reload({
+                only: ['auth']
+            })
         }).finally(() => {
             hasLoading.value = false
         })

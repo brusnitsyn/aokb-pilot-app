@@ -7,8 +7,15 @@ const department = computed(() => usePage().props.auth.user.department)
 const hasSetDepartment = computed(() => department.value !== null)
 
 const hasShow = ref(false)
-const departmentId = department.value ? department.value.id : null
-const department_id = ref(departmentId)
+const department_id = ref(null)
+const departmentId = computed(() => {
+    if (department.value) {
+        department_id.value = department.value.id
+        return department.value.id
+    }
+    return null
+})
+
 const comment = ref(null)
 
 const onSubmit = async () => {
