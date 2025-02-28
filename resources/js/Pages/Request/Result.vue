@@ -45,6 +45,32 @@ for (const departmentResponse in props.patientResult.department_responses) {
 }
 
 const countRequestedAnswer = computed(() => Object.keys(props.patientResult.patient_responses).length)
+
+const navigateToWorkspace = () => {
+    if (props.patientResult.status_id === 1)
+        window.$dialog.warning({
+        title: `Вы не подтвердили запрос`,
+        content: 'Вы желаете покинуть страницу?',
+        positiveText: 'Да',
+        negativeText: 'Нет',
+        positiveButtonProps: {
+            round: true,
+            type: 'primary',
+            secondary: true
+        },
+        negativeButtonProps: {
+            round: true,
+        },
+        onPositiveClick: () => {
+            router.visit(route('my.request'))
+        },
+        onNegativeClick: () => {
+
+        }
+    })
+    else
+        router.visit(route('my.request'))
+}
 </script>
 
 <template>
@@ -86,7 +112,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
             <NGi>
                 <NFlex align="center">
                     <NButtonGroup class="w-full">
-                        <NButton @click="router.visit(route('my.request'))"
+                        <NButton @click="navigateToWorkspace"
                                  secondary
                                  round
                                  size="large"
