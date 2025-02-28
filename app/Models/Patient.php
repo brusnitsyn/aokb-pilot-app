@@ -13,8 +13,9 @@ class Patient extends Model
             $yearNow = Carbon::now()->year;
             $monthNow = Carbon::now()->month;
 
-            $count = Patient::whereYear('created_at', $yearNow)
+            $count = PatientResult::whereYear('created_at', $yearNow)
                 ->whereMonth('created_at', $monthNow)
+                ->get()
                 ->count();
 
             $now = Carbon::now()->format('Ym');
