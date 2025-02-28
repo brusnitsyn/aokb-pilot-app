@@ -1,5 +1,6 @@
 <script setup>
 import {debounce} from "@/Utils/debounce.js";
+import AppInput from "@/Components/App/AppInput.vue";
 
 const value = ref('')
 const emits = defineEmits(['update:options'])
@@ -36,12 +37,13 @@ async function searchDepartment(search) {
 </script>
 
 <template>
-    <NInput v-model:value="debounceValue"
+    <AppInput v-model:value="debounceValue"
             :loading="hasLoading"
             clearable
             :disabled="hasLoading"
             placeholder="Найти медицинскую организацию"
             size="large"
+            class="px-1.5"
     />
 </template>
 

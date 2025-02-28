@@ -2,6 +2,7 @@
 import {IconArrowLeft, IconArrowRight} from "@tabler/icons-vue";
 import {router} from "@inertiajs/vue3";
 import { Motion } from 'motion-v'
+import AppSelect from "@/Components/App/AppSelect.vue";
 
 const props = defineProps(['stage', 'departments', 'validationMessage'])
 const { hasPrevStage, onPrevStage, onNextStage } = inject('navigate')
@@ -82,7 +83,7 @@ const onNext = async () => {
                    :model="model"
                    :rules="rules">
                 <NFormItem :show-label="false" path="department_id">
-                    <NSelect v-model:value="model.department_id"
+                    <AppSelect v-model:value="model.department_id"
                              filterable placeholder="" :options="options" />
                 </NFormItem>
             </NForm>

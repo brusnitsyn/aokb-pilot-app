@@ -2,6 +2,7 @@
 import {IconArrowLeft, IconArrowRight} from "@tabler/icons-vue";
 import {router, usePage} from "@inertiajs/vue3";
 import {Motion} from 'motion-v'
+import AppSelect from "@/Components/App/AppSelect.vue";
 const props = defineProps(['stage', 'diagnoses', 'validationMessage'])
 const { hasPrevStage, onPrevStage, onNextStage } = inject('navigate')
 const selectedDiagnosisId = defineModel('selectedDiagnosisId')
@@ -94,7 +95,7 @@ const onSubmit = async () => {
                    :model="model"
                    :rules="rules">
                 <NFormItem label="Выберите группу диагнозов" path="diagnosis_group_id">
-                    <NSelect
+                    <AppSelect
                         :value="model.diagnosis_group_id"
                         :options="page.props.diagnosisGroups"
                         @update:value="value => updateDiagnosisGroup(value)"
@@ -103,7 +104,7 @@ const onSubmit = async () => {
                     />
                 </NFormItem>
                 <NFormItem v-if="model.diagnosis_group_id !== null" label="Выберите диагноз" path="diagnosis_id">
-                    <NSelect
+                    <AppSelect
                         v-model:value="model.diagnosis_id"
                         :options="diagnosis"
                         label-field="name"
@@ -166,4 +167,5 @@ const onSubmit = async () => {
 .fade-leave-to {
     opacity: 0;
 }
+
 </style>

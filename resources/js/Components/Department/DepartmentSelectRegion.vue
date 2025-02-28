@@ -21,7 +21,7 @@ function hasActive(key) {
     <NScrollbar class="max-h-[300px]">
         <ul>
             <li v-for="(option, key) in options" :key="option.id"
-                class="py-3 px-4 cursor-pointer rounded transition-colors leading-4" :class="hasActive(key) ? 'bg-[#EC6608] text-[#EC6608] bg-opacity-20' : ''"
+                class="py-3 px-4 cursor-pointer transition-colors leading-4 rounded-3xl" :class="hasActive(key) ? 'bg-[#EC6608] text-[#EC6608] bg-opacity-20' : ''"
                 @click="onSelect(key, option)">
                 {{ key }}
             </li>

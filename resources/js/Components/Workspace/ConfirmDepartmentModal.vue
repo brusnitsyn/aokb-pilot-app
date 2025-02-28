@@ -73,7 +73,7 @@ const hasDisabledSubmit = computed(() => {
                         :animate="{ opacity: 1 }"
                         :exit="{ opacity: 0 }">
                     <NFormItemGi label="Комментарий" class="mt-2">
-                        <NInput type="textarea" v-model:value="comment" :placeholder="placeholder" @focus="placeholder = ''" @blur="placeholder = 'Опишите подробнее о месте эвакуации'" :resizable="false"  />
+                        <NInput class="rounded-2xl px-1" type="textarea" v-model:value="comment" :placeholder="placeholder" @focus="placeholder = ''" @blur="placeholder = 'Опишите подробнее о месте эвакуации'" :resizable="false"  />
                     </NFormItemGi>
                 </Motion>
                 <NButton type="primary" round size="large" block attr-type="submit" class="mt-3" :disabled="hasDisabledSubmit">

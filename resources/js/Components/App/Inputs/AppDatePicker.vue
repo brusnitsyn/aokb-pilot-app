@@ -14,5 +14,7 @@ const value = defineModel('value')
 </template>
 
 <style scoped>
-
+:deep(.n-input) {
+    @apply !px-1.5 !rounded-3xl
+}
 </style>

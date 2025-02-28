@@ -97,13 +97,13 @@ const onNext = () => {
                    :model="model"
                    :rules="rules">
                 <NFormItem label="Фамилия" path="last_name">
-                    <NInput v-model:value="model.last_name" placeholder="" />
+                    <NInput v-model:value="model.last_name" placeholder="" class="px-1.5 rounded-3xl" />
                 </NFormItem>
                 <NFormItem label="Имя" path="first_name">
-                    <NInput v-model:value="model.first_name" placeholder="" />
+                    <NInput v-model:value="model.first_name" placeholder="" class="px-1.5 rounded-3xl" />
                 </NFormItem>
                 <NFormItem label="Отчество" path="middle_name">
-                    <NInput v-model:value="model.middle_name" placeholder="" />
+                    <NInput v-model:value="model.middle_name" placeholder="" class="px-1.5 rounded-3xl" />
                 </NFormItem>
                 <NFormItem label="Дата рождения" path="date_birth">
                     <AppDatePicker v-model:value="model.date_birth" />
