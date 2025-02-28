@@ -34,7 +34,7 @@ const onClickItem = () => {
         hasShow.value = true
 }
 
-const placeholder = ref('Опишите подробнее место эвакуации')
+const placeholder = ref('Опишите подробнее о месте эвакуации')
 
 const hasDisabledSubmit = computed(() => {
     if (department_id.value === 30) {
@@ -58,14 +58,18 @@ const hasDisabledSubmit = computed(() => {
             :mask-closable="false"
             display-directive="if"
             class="max-w-xl !rounded-3xl"
-            preset="card"
-            title="Транспортировка по заданным координатам">
+            preset="card">
+        <template #header>
+            <div class="!text-base">
+                Транспортировка будет осуществлена из «{{ department.name }}»
+            </div>
+        </template>
         <NSpace vertical :size="24">
             <NForm model="" @submit.prevent="onSubmit">
                 <NFormItemGi :show-label="false" :show-feedback="false">
                     <NRadioGroup v-model:value="department_id" class="flex flex-row gap-x-2 items-center justify-center w-full">
-                        <NRadio :value="30" label="Да" />
-                        <NRadio :value="departmentId" label="Нет" />
+                        <NRadio :value="departmentId" label="Да" />
+                        <NRadio :value="30" label="Нет" />
                     </NRadioGroup>
                 </NFormItemGi>
                 <Motion v-if="department_id === 30"
