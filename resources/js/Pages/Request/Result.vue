@@ -79,7 +79,9 @@ const navigateToWorkspace = () => {
             <NGi>
                 <NCard class="!rounded-3xl drop-shadow-sm">
                     <template #header>
-                        Заполненные медицинские параметры
+                        <div class="uppercase flex flex-row justify-center">
+                            Чек-лист
+                        </div>
                     </template>
                     <NList>
                         <NListItem v-for="response in patientQuestions">
@@ -211,7 +213,9 @@ const navigateToWorkspace = () => {
             <NGi>
                 <NCard class="!rounded-3xl drop-shadow-sm">
                     <template #header>
-                        {{ patientResult.from_department.name }}: общие параметры
+                        <div class="uppercase flex flex-row justify-center">
+                            Параметры МО
+                        </div>
                     </template>
                     <NTabs type="segment" animated>
                         <NTabPane name="responses" tab="Изменяемые">
