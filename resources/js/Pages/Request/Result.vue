@@ -1,6 +1,6 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {IconCheck,IconListDetails} from "@tabler/icons-vue";
+import {IconCheck, IconInfoCircleFilled, IconListDetails} from "@tabler/icons-vue";
 import {NButton, NIcon} from "naive-ui";
 import {Link, router, usePage} from "@inertiajs/vue3";
 
@@ -98,7 +98,10 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                         </NButton>
                     </NButtonGroup>
 
-                    <NAlert class="!rounded-3xl drop-shadow-sm w-full" type="info">
+                    <NAlert class="!rounded-3xl drop-shadow-sm w-full" :bordered="false" :class="`bg-${patientResult.scenario.color}-200`">
+                        <template #icon>
+                            <NIcon :component="IconInfoCircleFilled" color="" :class="patientResult.scenario ? `text-${patientResult.scenario.color}-500` : null" />
+                        </template>
                         <div class="leading-5">
                             Предложенный сценарий &mdash; <span class="font-medium">{{ patientResult.scenario.name }}</span>
                         </div>
