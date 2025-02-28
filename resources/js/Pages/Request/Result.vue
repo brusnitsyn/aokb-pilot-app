@@ -50,7 +50,7 @@ const navigateToWorkspace = () => {
     if (props.patientResult.status_id === 1)
         window.$dialog.warning({
         title: `Вы не подтвердили запрос`,
-        content: 'Вы желаете покинуть страницу?',
+        content: 'Хотите продолжить?',
         positiveText: 'Да',
         negativeText: 'Нет',
         positiveButtonProps: {
