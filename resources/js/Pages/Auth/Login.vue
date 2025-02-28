@@ -57,7 +57,12 @@ function submit(e) {
     <NaiveProvider>
         <AuthenticationCard>
             <template #logo>
-                <NImage src="/assets/svg/logo-short.svg" preview-disabled />
+                <NSpace vertical align="center" :size="16">
+                    <NImage src="/assets/svg/logo-short.svg" preview-disabled />
+                    <div class="rounded-3xl bg-white py-3 px-4 drop-shadow-sm text-[#ec6608] font-medium">
+                        Программа транспортировки пациентов
+                    </div>
+                </NSpace>
             </template>
 
             <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
