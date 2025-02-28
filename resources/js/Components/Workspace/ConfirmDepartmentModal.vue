@@ -35,9 +35,11 @@ const onClickItem = () => {
 }
 
 const placeholder = ref('Опишите подробнее о месте эвакуации')
+const hasShowAnswers = ref(true)
 
 const hasDisabledSubmit = computed(() => {
     if (department_id.value === 30) {
+        hasShowAnswers.value = false
         if (typeof comment.value === 'undefined' || comment.value === null)
             return true
         if (comment.value.match(/^ *$/) !== null) return true
@@ -45,6 +47,12 @@ const hasDisabledSubmit = computed(() => {
     else
         return false
 })
+
+const onAfterLeave = () => {
+    department_id.value = departmentId.value
+    comment.value = null
+    hasShowAnswers.value = true
+}
 </script>
 
 <template>
@@ -58,15 +66,19 @@ const hasDisabledSubmit = computed(() => {
             :mask-closable="false"
             display-directive="if"
             class="max-w-xl !rounded-3xl"
-            preset="card">
+            preset="card"
+            @after-leave="onAfterLeave">
         <template #header>
-            <div class="!text-base">
+            <div v-if="department_id === 30" class="!text-base">
+                Транспортировка будет осуществлена по координатам
+            </div>
+            <div v-else class="!text-base">
                 Транспортировка будет осуществлена из «{{ department.name }}»
             </div>
         </template>
         <NSpace vertical :size="24">
             <NForm model="" @submit.prevent="onSubmit">
-                <NFormItemGi :show-label="false" :show-feedback="false">
+                <NFormItemGi v-if="hasShowAnswers" :show-label="false" :show-feedback="false">
                     <NRadioGroup v-model:value="department_id" class="flex flex-row gap-x-2 items-center justify-center w-full">
                         <NRadio :value="departmentId" label="Да" />
                         <NRadio :value="30" label="Нет" />
