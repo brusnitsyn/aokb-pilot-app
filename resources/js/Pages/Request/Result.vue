@@ -53,7 +53,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
             <NGi>
                 <NCard class="!rounded-3xl drop-shadow-sm">
                     <template #header>
-                        Опрос
+                        Заполненные медицинские параметры
                     </template>
                     <NList>
                         <NListItem v-for="response in patientQuestions">
@@ -185,10 +185,10 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
             <NGi>
                 <NCard class="!rounded-3xl drop-shadow-sm">
                     <template #header>
-                        {{ patientResult.from_department.name }} - параметры
+                        {{ patientResult.from_department.name }}: общие параметры
                     </template>
                     <NTabs type="segment" animated>
-                        <NTabPane name="responses" tab="Изменяемые параметры">
+                        <NTabPane name="responses" tab="Изменяемые">
                             <NList>
                                 <NListItem v-for="response in responsesAnswers">
                                     <NSpace vertical :size="2" v-if="Array.isArray(response.answer)">
@@ -215,7 +215,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                                 </NListItem>
                             </NList>
                         </NTabPane>
-                        <NTabPane name="params" tab="Неизменяемые параметры">
+                        <NTabPane name="params" tab="Неизменяемые">
                             <NList v-if="patientResult.from_department.params.length > 0">
                                 <NListItem v-for="param in patientResult.from_department.params">
                                     <NFlex justify="space-between" align="center">
