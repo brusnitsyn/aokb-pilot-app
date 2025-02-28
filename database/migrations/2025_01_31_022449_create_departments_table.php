@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('address')->nullable();
+            $table->string('shortname')->nullable();
             $table->integer('fias_objectid')->nullable();
             $table->foreignId('regionId')
                 ->nullable()

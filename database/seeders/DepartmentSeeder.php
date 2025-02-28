@@ -57,12 +57,12 @@ class DepartmentSeeder extends Seeder
         Department::insert($departments);
 
         $departmentsReceive = [
-            [ 'name' => 'ГАУЗ АО "Амурская областная клиническая больница"', 'is_receive' => true ],
-            [ 'name' => 'ГАУЗ АО "Амурская областная детская клиническая больница"', 'is_receive' => true ],
-            [ 'name' => 'ГАУЗ АО "Амурская областная инфекционная больница"', 'is_receive' => true ],
-            [ 'name' => 'ГБУЗ АО "Амурская областная психиатрическая больница"', 'is_receive' => true ],
-            [ 'name' => 'Кардиохирургический центр АГМА', 'is_receive' => true ],
-            [ 'name' => 'ДНЦ Физиологии и патологии дыхания', 'is_receive' => true ],
+            [ 'name' => 'ГАУЗ АО "Амурская областная клиническая больница"', 'is_receive' => true, 'shortname' => 'ГАУЗ АО "АОКБ"' ],
+            [ 'name' => 'ГАУЗ АО "Амурская областная детская клиническая больница"', 'is_receive' => true, 'shortname' => 'ГАУЗ АО "АОДКБ"' ],
+            [ 'name' => 'ГАУЗ АО "Амурская областная инфекционная больница"', 'is_receive' => true, 'shortname' => 'ГАУЗ АО "АОИБ"' ],
+            [ 'name' => 'ГБУЗ АО "Амурская областная психиатрическая больница"', 'is_receive' => true, 'shortname' => 'ГАУЗ АО "АОПБ"' ],
+            [ 'name' => 'Кардиохирургический центр АГМА', 'is_receive' => true, 'shortname' => 'КЦ "АГМА"' ],
+            [ 'name' => 'ДНЦ Физиологии и патологии дыхания', 'is_receive' => true, 'shortname' => 'ДНЦ ФПД' ],
         ];
 
         Department::insert($departmentsReceive);

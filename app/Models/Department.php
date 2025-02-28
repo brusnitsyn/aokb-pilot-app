@@ -9,6 +9,7 @@ class Department extends Model
     protected $fillable = [
         'name',
         'address',
+        'shortname',
         'fias_objectid',
         'regionId',
         'is_receive'
