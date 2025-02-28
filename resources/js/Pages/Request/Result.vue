@@ -103,7 +103,7 @@ const countRequestedAnswer = computed(() => Object.keys(props.patientResult.pati
                             <NIcon :component="IconInfoCircleFilled" color="" :class="patientResult.scenario ? `text-${patientResult.scenario.color}-500` : null" />
                         </template>
                         <div class="leading-5">
-                            Предложенный сценарий &mdash; <span class="font-medium">{{ patientResult.scenario.name }}</span>
+                            Предложенный сценарий &mdash; <span class="font-medium">{{ patientResult.scenario.code }}. {{ patientResult.scenario.name }}</span>
                         </div>
                     </NAlert>
 

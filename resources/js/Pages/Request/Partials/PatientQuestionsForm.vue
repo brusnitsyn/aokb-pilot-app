@@ -193,7 +193,7 @@ watch(model.value, (newResponses) => {
                 <NIcon :component="IconInfoCircleFilled" color="" :class="currentScenario ? `text-${currentScenario.color}-500` : null" />
             </template>
             <div class="leading-5 text-black">
-                Текущий сценарий &mdash; <span class="font-medium">{{ currentScenario.name }}</span>
+                Текущий сценарий &mdash; <span class="font-medium">{{ currentScenario.code }}. {{ currentScenario.name }}</span>
             </div>
         </NAlert>
     </Motion>

@@ -192,7 +192,14 @@ const columns = [
     },
     {
         title: 'Сценарий',
-        key: 'scenario.name'
+        key: 'scenario.name',
+        render(row) {
+            return h(
+                'div',
+                {},
+                `${row.scenario.code}. ${row.scenario.name}`
+            )
+        }
     },
     {
         title: 'Результат',
