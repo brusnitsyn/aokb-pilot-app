@@ -180,12 +180,19 @@ const columns = [
         key: 'department.name',
         render(row) {
             return h(
-                NEllipsis,
+                NTooltip,
                 {
-                    class: '!max-w-[160px]'
+                    trigger: 'hover',
                 },
                 {
-                    default: () => row.to_department.name
+                    trigger: () => row.to_department.shortname,
+                    default: () => h(
+                        'div',
+                        {
+                            class: 'wrap'
+                        },
+                        row.to_department.name
+                    )
                 }
             )
         }
@@ -195,9 +202,27 @@ const columns = [
         key: 'scenario.name',
         render(row) {
             return h(
-                'div',
-                {},
-                `${row.scenario.code}. ${row.scenario.name}`
+                NFlex,
+                {
+                    size: 6,
+                    align: 'center'
+                },
+                [
+                    h(
+                        'div',
+                        {
+                            class: `rounded-full h-[28px] w-[28px] flex items-center justify-center bg-${row.scenario.color}-200 text-${row.scenario.color}-500`
+                        },
+                        row.scenario.code
+                    ),
+                    h(
+                        'div',
+                        {
+                            // class: `text-${row.scenario.color}-500`
+                        },
+                        row.scenario.name
+                    )
+                ]
             )
         }
     },
