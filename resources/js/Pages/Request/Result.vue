@@ -1,8 +1,9 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import {IconCheck, IconInfoCircleFilled, IconListDetails} from "@tabler/icons-vue";
-import {NButton, NIcon} from "naive-ui";
+import {NButton, NIcon, NTag} from "naive-ui";
 import {Link, router, usePage} from "@inertiajs/vue3";
+import SelectedParams from "@/Components/Result/SelectedParams.vue";
 
 const props = defineProps({
     totalScore: [String, Number],
@@ -221,18 +222,14 @@ const navigateToWorkspace = () => {
                         <NTabPane name="responses" tab="Изменяемые">
                             <NList>
                                 <NListItem v-for="response in responsesAnswers">
-                                    <NSpace vertical :size="2" v-if="Array.isArray(response.answer)">
+                                    <NFlex v-if="Array.isArray(response.answer)" justify="space-between" align="center">
                                         <div>
                                             {{ response.question.text }}
                                         </div>
                                         <NFlex wrap size="small">
-                                            <NTag v-for="answer in response.answer"
-                                                  round
-                                                  type="primary">
-                                                {{ answer.text }}
-                                            </NTag>
+                                            <SelectedParams :max="2" :params="response.answer" />
                                         </NFlex>
-                                    </NSpace>
+                                    </NFlex>
                                     <NFlex v-else justify="space-between" align="center">
                                         <div>
                                             {{ response.question.text }}
