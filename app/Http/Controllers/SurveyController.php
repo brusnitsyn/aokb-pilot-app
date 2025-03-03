@@ -136,7 +136,12 @@ class SurveyController extends Controller
         $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
         // Добавляем фиксированные баллы медицинской организации
         $department = Department::find(auth()->user()->myDepartment()->id)->load('params');
-        foreach ($department->params as $param) {
+        $departmentParams = $department->params()
+            ->whereJsonContains('depends_diagnosis_group_ids', [$selectedDiagnosisId])
+            ->whereHas('paramValue', function ($query) use ($selectedDiagnosisId) {
+                $query->whereJsonContains('depends_diagnosis_group_ids', [$selectedDiagnosisId]);
+            })->get();
+        foreach ($departmentParams as $param) {
             $organizationScore += $param->paramValue->score;
         }
 
