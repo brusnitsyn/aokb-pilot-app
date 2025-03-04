@@ -32,13 +32,15 @@ const themeOverrides = {
         <NDialogProvider>
             <NDialogContent />
         </NDialogProvider>
-        <NNotificationProvider key="helper" placement="bottom-right" container-class="!min-w-xl">
+        <NNotificationProvider key="helper" placement="bottom-right" container-class="!min-w-xl !rounded-3xl" class="!rounded-3xl">
             <NNotificationContent />
         </NNotificationProvider>
         <slot />
     </NConfigProvider>
 </template>
 
-<style scoped>
-
+<style>
+.n-notification {
+    @apply !rounded-3xl
+}
 </style>
