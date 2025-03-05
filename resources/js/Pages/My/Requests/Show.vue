@@ -1,6 +1,6 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {IconDots, IconHome, IconInfoCircle} from "@tabler/icons-vue";
+import {IconDots, IconHome, IconInfoCircle, IconMapPin} from "@tabler/icons-vue";
 import {Link, router} from "@inertiajs/vue3";
 import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip} from "naive-ui";
 defineProps({
@@ -152,8 +152,8 @@ const columns = [
                                 trigger: () => h(
                                     NIcon,
                                     {
-                                        class: 'text-gray-300 text-lg',
-                                        component: IconInfoCircle
+                                        class: 'text-gray-600 text-lg',
+                                        component: IconMapPin
                                     },
                                 ),
                                 header: () => h(
