@@ -2,7 +2,8 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import {IconDots, IconHome, IconInfoCircle, IconMapPin} from "@tabler/icons-vue";
 import {Link, router} from "@inertiajs/vue3";
-import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip} from "naive-ui";
+import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip, NCountdown} from "naive-ui";
+import {useNow} from "@vueuse/core";
 defineProps({
     patients: Array
 })
@@ -61,7 +62,7 @@ const columns = [
                 NTime,
                 {
                     time: row.created_at,
-                    format: 'dd.MM.yyyy hh:mm:ss'
+                    format: 'dd.MM.yyyy HH:mm:ss'
                 }
             )
         }
@@ -231,6 +232,19 @@ const columns = [
         key: 'total_score'
     },
     {
+        title: 'Время эвакуации',
+        render(row) {
+            const targetDate = new Date(row.updated_at)
+            const endTimestamp = ref(targetDate.getTime() + 24 * 60 * 60 * 1000)
+            return h(
+                NCountdown,
+                {
+                    duration: Math.max(0, endTimestamp.value - Date.now()),
+                }
+            )
+        }
+    },
+    {
         title: 'Статус',
         key: 'status.name',
         render(row) {
@@ -272,6 +286,13 @@ const columns = [
         }
     }
 ]
+
+const now = useNow()
+const rowClassName = (row) => {
+    const targetDate = new Date(row.updated_at)
+    const endTimestamp = ref(targetDate.getTime() + 24 * 60 * 60 * 1000)
+    return now.value.getTime() >= endTimestamp.value ? 'expired-row' : ''
+}
 </script>
 
 <template>
@@ -285,11 +306,14 @@ const columns = [
                     Вернуться на рабочую область
                 </NButton>
             </Link>
-            <NDataTable :columns="columns" :data="patients" />
+            <NDataTable :columns="columns" :data="patients" :row-class-name="rowClassName" />
         </NFlex>
     </AppLayout>
 </template>
 
-<style scoped>
-
+<style>
+/* Принудительно переопределяем стиль строки */
+.expired-row {
+    --n-merged-td-color: rgba(255, 0, 0, 0.2) !important;
+}
 </style>
