@@ -248,6 +248,7 @@ const columns = [
         key: 'countdown',
         width: 120,
         render(row) {
+            if (row.status_id === 1) return null
             const targetDate = new Date(row.updated_at)
             const endTimestamp = ref(targetDate.getTime() + 24 * 60 * 60 * 1000)
             return h(
