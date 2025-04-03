@@ -52,11 +52,13 @@ const rowOptions = [
 const columns = [
     {
         title: '№ запроса',
-        key: 'patient.number'
+        key: 'patient.number',
+        width: 100
     },
     {
         title: 'Дата поступления запроса',
         key: 'created_at',
+        width: 208,
         render(row) {
             return h(
                 NTime,
@@ -69,11 +71,14 @@ const columns = [
     },
     {
         title: 'ФИО',
-        key: 'patient.full_name'
+        key: 'patient.full_name',
+        ellipsis: true,
+        width: 208,
     },
     {
         title: 'Дата рождения',
         key: 'patient.date_birth',
+        width: 128,
         render(row) {
             return h(
                 NTime,
@@ -87,6 +92,7 @@ const columns = [
     {
         title: 'Диагноз',
         key: 'patient.diagnosis.code',
+        width: 86,
         render(row) {
             return h(
                 NFlex,
@@ -125,6 +131,7 @@ const columns = [
     {
         title: 'Запрос из',
         key: 'department.name',
+        width: 204,
         render(row) {
             return h(
                 NFlex,
@@ -179,6 +186,7 @@ const columns = [
     {
         title: 'Запрос в',
         key: 'department.name',
+        width: 138,
         render(row) {
             return h(
                 NTooltip,
@@ -201,6 +209,7 @@ const columns = [
     {
         title: 'Сценарий',
         key: 'scenario.name',
+        width: 390,
         render(row) {
             return h(
                 NFlex,
@@ -229,10 +238,12 @@ const columns = [
     },
     {
         title: 'Результат',
+        width: 94,
         key: 'total_score'
     },
     {
         title: 'Время эвакуации',
+        width: 120,
         render(row) {
             const targetDate = new Date(row.updated_at)
             const endTimestamp = ref(targetDate.getTime() + 24 * 60 * 60 * 1000)
@@ -247,6 +258,7 @@ const columns = [
     {
         title: 'Статус',
         key: 'status.name',
+        width: 118,
         render(row) {
             return h(
                 NTag,
