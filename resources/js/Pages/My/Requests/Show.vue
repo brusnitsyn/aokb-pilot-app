@@ -72,7 +72,9 @@ const columns = [
     {
         title: 'ФИО',
         key: 'patient.full_name',
-        ellipsis: true,
+        ellipsis: {
+            tooltip: true
+        },
         width: 208,
     },
     {
