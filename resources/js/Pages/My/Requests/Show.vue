@@ -209,7 +209,7 @@ const columns = [
     {
         title: 'Сценарий',
         key: 'scenario.name',
-        width: 390,
+        width: 400,
         render(row) {
             return h(
                 NFlex,
