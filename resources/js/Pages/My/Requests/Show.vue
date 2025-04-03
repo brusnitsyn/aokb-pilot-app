@@ -4,7 +4,7 @@ import {IconDots, IconHome, IconInfoCircle, IconMapPin} from "@tabler/icons-vue"
 import {Link, router} from "@inertiajs/vue3";
 import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip, NCountdown} from "naive-ui";
 import {useNow} from "@vueuse/core";
-defineProps({
+const props = defineProps({
     patients: Array
 })
 
@@ -245,6 +245,7 @@ const columns = [
     },
     {
         title: 'Время эвакуации',
+        key: 'countdown',
         width: 120,
         render(row) {
             const targetDate = new Date(row.updated_at)
@@ -301,6 +302,8 @@ const columns = [
     }
 ]
 
+const shouldShowTimerColumn = computed(() => props.patients.some(item => item.status_id !== 1))
+
 const now = useNow()
 const rowClassName = (row) => {
     const targetDate = new Date(row.updated_at)
@@ -320,7 +323,7 @@ const rowClassName = (row) => {
                     Вернуться на рабочую область
                 </NButton>
             </Link>
-            <NDataTable :columns="columns" :data="patients" :row-class-name="rowClassName" />
+            <NDataTable :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')" :data="patients" :row-class-name="rowClassName" />
         </NFlex>
     </AppLayout>
 </template>
