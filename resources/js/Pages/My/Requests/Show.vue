@@ -49,6 +49,7 @@ const rowOptions = [
     }
 ]
 
+const now = useNow()
 const columns = [
     {
         title: '№ запроса',
@@ -250,12 +251,25 @@ const columns = [
         render(row) {
             if (row.status_id === 1) return null
             const targetDate = new Date(row.updated_at)
-            const endTimestamp = ref(targetDate.getTime() + 24 * 60 * 60 * 1000)
+            const endTimestamp = targetDate.getTime() + 24 * 60 * 60 * 1000
+            const timeLeft = endTimestamp - now.value.getTime()
             return h(
                 NCountdown,
                 {
-                    duration: Math.max(0, endTimestamp.value - Date.now()),
-                }
+                    duration: Math.abs(timeLeft),
+                    render: ({ hours, minutes, seconds }) => {
+                        const isExpired = timeLeft <= 0
+                        const sign = isExpired ? '-' : ''
+                        const timeText = `${sign}${String(Math.abs(hours)).padStart(2, '0')}:${String(Math.abs(minutes)).padStart(2, '0')}:${String(Math.abs(seconds)).padStart(2, '0')}`
+
+                        return h('span', {
+                            style: {
+                                color: isExpired ? '#d03050' : '#18a058',
+                                fontWeight: 'semibold'
+                            }
+                        }, timeText)
+                    }
+                },
             )
         }
     },
@@ -304,13 +318,6 @@ const columns = [
 ]
 
 const shouldShowTimerColumn = computed(() => props.patients.some(item => item.status_id !== 1))
-
-const now = useNow()
-const rowClassName = (row) => {
-    const targetDate = new Date(row.updated_at)
-    const endTimestamp = ref(targetDate.getTime() + 24 * 60 * 60 * 1000)
-    return now.value.getTime() >= endTimestamp.value ? 'expired-row' : ''
-}
 </script>
 
 <template>
@@ -324,7 +331,7 @@ const rowClassName = (row) => {
                     Вернуться на рабочую область
                 </NButton>
             </Link>
-            <NDataTable :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')" :data="patients" :row-class-name="rowClassName" />
+            <NDataTable :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')" :data="patients" />
         </NFlex>
     </AppLayout>
 </template>
