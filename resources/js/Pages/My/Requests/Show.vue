@@ -5,6 +5,7 @@ import {Link, router} from "@inertiajs/vue3";
 import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip, NCountdown} from "naive-ui";
 import {useNow} from "@vueuse/core";
 import {renderIcon} from "@/Utils/helper.js";
+import {Motion} from 'motion-v'
 const props = defineProps({
     patients: Array
 })
@@ -261,27 +262,39 @@ const columns = [
         width: 120,
         render(row) {
             if (row.status_id === 1) return null
-            const targetDate = new Date(row.updated_at)
-            const endTimestamp = targetDate.getTime() + 24 * 60 * 60 * 1000
-            const timeLeft = endTimestamp - now.value.getTime()
-            return h(
-                NCountdown,
-                {
-                    duration: Math.abs(timeLeft),
-                    render: ({ hours, minutes, seconds }) => {
-                        const isExpired = timeLeft <= 0
-                        const sign = isExpired ? '-' : ''
-                        const timeText = `${sign}${String(Math.abs(hours)).padStart(2, '0')}:${String(Math.abs(minutes)).padStart(2, '0')}:${String(Math.abs(seconds)).padStart(2, '0')}`
 
-                        return h('span', {
-                            style: {
-                                color: isExpired ? '#d03050' : '#18a058',
-                                fontWeight: 'semibold'
-                            }
-                        }, timeText)
+            const targetDate = new Date(row.updated_at) // Берём дату из строки
+            const endTimestamp = targetDate.getTime() + 24 * 60 * 60 * 1000
+            const timeLeft = endTimestamp - now.value
+            const isExpired = timeLeft <= 0
+            const hoursLeft = timeLeft / (1000 * 60 * 60)
+
+            if (hoursLeft <= -48) {
+                return h(Motion, {
+                    initial: { opacity: 1 },
+                    animate: {
+                        opacity: [0.2, 1],
+                        transition: {
+                            duration: 1.0,
+                            repeat: Infinity,
+                            repeatType: 'mirror',
+                            ease: 'easeInOut'
+                        }
                     }
-                },
-            )
+                }, () => h('span', {
+                    style: {
+                        color: '#d03050',
+                        fontWeight: 500
+                    }
+                }, '-48:00:00'))
+            }
+
+            return h('span', {
+                style: {
+                    color: isExpired ? '#d03050' : '#18a058',
+                    fontWeight: 500
+                }
+            }, formatTime(timeLeft))
         }
     },
     {
@@ -327,6 +340,17 @@ const columns = [
         }
     }
 ]
+
+const formatTime = (ms) => {
+    const absMs = Math.abs(ms)
+    const hours = Math.floor(absMs / (1000 * 60 * 60))
+    const minutes = Math.floor((absMs % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((absMs % (1000 * 60)) / 1000)
+
+    const sign = ms <= 0 ? '-' : ''
+    return `${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+}
+
 
 const shouldShowTimerColumn = computed(() => props.patients.some(item => item.status_id !== 1))
 </script>
