@@ -65,6 +65,7 @@ class PatientResult extends Model
         return [
             'patient_responses' => AsArrayObject::class,
             'department_responses' => AsArrayObject::class,
+            'coords' => AsArrayObject::class,
         ];
     }
 }

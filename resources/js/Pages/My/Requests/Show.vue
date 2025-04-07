@@ -1,9 +1,10 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {IconDots, IconHome, IconInfoCircle, IconMapPin} from "@tabler/icons-vue";
+import {IconDots, IconExternalLink, IconHome, IconInfoCircle, IconMapPin, IconTag, IconTrash} from "@tabler/icons-vue";
 import {Link, router} from "@inertiajs/vue3";
 import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip, NCountdown} from "naive-ui";
 import {useNow} from "@vueuse/core";
+import {renderIcon} from "@/Utils/helper.js";
 const props = defineProps({
     patients: Array
 })
@@ -12,8 +13,17 @@ const rowOptions = [
     {
         label: 'Перейти к результатам',
         key: 'result',
+        icon: renderIcon(IconExternalLink),
         onClick: (row) => {
             router.visit(route('request.result', { patient_id: row.patient_id }))
+        }
+    },
+    {
+        label: 'Изменить статус',
+        key: 'change-status',
+        icon: renderIcon(IconTag),
+        onClick: (row) => {
+            window.$message.info('Пока не реализовано')
         }
     },
     {
@@ -22,6 +32,7 @@ const rowOptions = [
     {
         label: 'Удалить',
         key: 'delete',
+        icon: renderIcon(IconTrash),
         onClick: (row) => {
             window.$dialog.warning({
                 title: `Удалить запрос №${row.patient.number}?`,
@@ -59,7 +70,7 @@ const columns = [
     {
         title: 'Дата поступления запроса',
         key: 'created_at',
-        width: 208,
+        width: 180,
         render(row) {
             return h(
                 NTime,
@@ -323,14 +334,16 @@ const shouldShowTimerColumn = computed(() => props.patients.some(item => item.st
 <template>
     <AppLayout title="Запросы МО">
         <NFlex align="center" class="w-full">
-            <Link :href="route('workspace')" class="h-full">
-                <NButton secondary round>
-                    <template #icon>
-                        <NIcon :component="IconHome" />
-                    </template>
-                    Вернуться на рабочую область
-                </NButton>
-            </Link>
+            <NFlex align="center" justify="space-between" class="w-full">
+                <Link :href="route('workspace')" class="h-full">
+                    <NButton secondary round>
+                        <template #icon>
+                            <NIcon :component="IconHome" />
+                        </template>
+                        Вернуться на рабочую область
+                    </NButton>
+                </Link>
+            </NFlex>
             <NDataTable :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')" :data="patients" />
         </NFlex>
     </AppLayout>

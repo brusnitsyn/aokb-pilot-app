@@ -30,6 +30,7 @@ class DepartmentController extends Controller
         $department = Department::with('region')->find($responses['id']);
 
         Cookie::queue(Cookie::make('coordsComment', $responses['comment'] ?? null, config('session.lifetime')));
+        Cookie::queue(Cookie::make('lastCoords', json_encode($responses['coords']) ?? null, config('session.lifetime')));
         Cookie::queue(Cookie::make('myDepartment', $department->id, config('session.lifetime')));
         Cookie::queue(Cookie::make('senderDepartment', $responses['sender_department_id'] ?? null, config('session.lifetime')));
 //

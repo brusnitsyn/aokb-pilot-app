@@ -166,7 +166,7 @@ class SurveyController extends Controller
             'patient_id' => $patient->id,
             'sender_department_id' => Cookie::get('senderDepartment'),
             'from_department_id' => auth()->user()->myDepartment()->id,
-            'coords' => null,
+            'coords' => json_decode(Cookie::get('lastCoords')),
             'comment' => Cookie::get('coordsComment'),
             'to_department_id' => $medicalOrganizationId,
             'patient_score' => $patientScore,
@@ -180,6 +180,7 @@ class SurveyController extends Controller
         ]);
 
         Cookie::queue(Cookie::forget('myDepartment'));
+        Cookie::queue(Cookie::forget('lastCoords'));
 
         return redirect(route('request.result', [
             'patient_id' => $patient->id
