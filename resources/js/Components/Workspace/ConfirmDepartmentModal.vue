@@ -6,7 +6,7 @@ import {
     YandexMap, YandexMapControls,
     YandexMapDefaultFeaturesLayer,
     YandexMapDefaultMarker,
-    YandexMapDefaultSchemeLayer, YandexMapEntity, YandexMapListener, YandexMapMarker
+    YandexMapDefaultSchemeLayer, YandexMapEntity, YandexMapGeolocationControl, YandexMapListener, YandexMapMarker
 } from "vue-yandex-maps";
 
 const department = computed(() => usePage().props.auth.user.department)
@@ -203,6 +203,10 @@ const updateZoomMap = (newZoom) => {
                                         Ш: {{ centerCoordinates.coordinates[1]?.toFixed(4) }}, Д: {{ centerCoordinates.coordinates[0]?.toFixed(4) }}
                                     </div>
                                 </YandexMapEntity>
+                            </YandexMapControls>
+
+                            <YandexMapControls :settings="{ position: 'left' }">
+                                <YandexMapGeolocationControl />
                             </YandexMapControls>
 
                             <YandexMapListener :settings="{
