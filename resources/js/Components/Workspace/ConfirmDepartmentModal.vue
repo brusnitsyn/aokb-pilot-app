@@ -84,11 +84,10 @@ const onClickItem = () => {
 }
 
 const placeholder = ref('Опишите подробнее о месте эвакуации')
-const hasShowAnswers = ref(true)
+const hasShowAnswers = computed(() => (department_id.value !== 30))
 
 const hasDisabledSubmit = computed(() => {
     if (department_id.value === 30) {
-        hasShowAnswers.value = false
         if (typeof comment.value === 'undefined' || comment.value === null)
             return true
         if (comment.value.match(/^ *$/) !== null) return true
@@ -100,7 +99,6 @@ const hasDisabledSubmit = computed(() => {
 const onAfterLeave = () => {
     department_id.value = departmentId.value
     comment.value = null
-    hasShowAnswers.value = true
 }
 
 const onAfterEnter = () => {
