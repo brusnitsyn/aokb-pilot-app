@@ -37,15 +37,18 @@ const departmentActive = computed({
     },
     async set(value) {
         hasLoading.value = true
-        await axios.post(route('user.department.update'), {
+        router.post(route('user.department.update'), {
             ...value
-        }).then(() => {
-            hasShowModal.value = false
-            router.reload({
-                only: ['auth']
-            })
-        }).finally(() => {
-            hasLoading.value = false
+        }, {
+            onSuccess: () => {
+                hasShowModal.value = false
+                router.reload({
+                    only: ['auth']
+                })
+            },
+            onFinish: () => {
+                hasLoading.value = false
+            }
         })
     }
 })
