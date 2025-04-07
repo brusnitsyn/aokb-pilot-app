@@ -59,14 +59,16 @@ const rules = {
 const onSubmit = async () => {
     formRef.value?.validate(async (errors) => {
         if (!errors) {
-            await axios.post(route('user.department.update'), {
+            router.post(route('user.department.update'), {
                 id: department_id.value,
                 sender_department_id: usePage().props.auth.user.department.id,
                 comment: comment.value,
                 coords: centerCoordinates.value.coordinates
-            }).then(() => {
-                hasShow.value = false
-                router.visit(route('request.create'))
+            }, {
+                onSuccess: () => {
+                    hasShow.value = false
+                    router.visit(route('request.create'))
+                }
             })
         }
         else {
