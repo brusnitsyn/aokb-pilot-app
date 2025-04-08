@@ -1,6 +1,15 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {IconDots, IconExternalLink, IconHome, IconInfoCircle, IconMapPin, IconTag, IconTrash} from "@tabler/icons-vue";
+import {
+    IconDots,
+    IconExternalLink,
+    IconHome,
+    IconInfoCircle,
+    IconMap,
+    IconMapPin,
+    IconTag,
+    IconTrash
+} from "@tabler/icons-vue";
 import {Link, router} from "@inertiajs/vue3";
 import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip, NCountdown} from "naive-ui";
 import {useNow} from "@vueuse/core";
@@ -17,6 +26,14 @@ const rowOptions = [
         icon: renderIcon(IconExternalLink),
         onClick: (row) => {
             router.visit(route('request.result', { patient_id: row.patient_id }))
+        }
+    },
+    {
+        label: 'Посмотреть на карте',
+        key: 'show-map',
+        icon: renderIcon(IconMap),
+        onClick: (row) => {
+            router.visit(route('patientResult.show', { patientResult: row.id }))
         }
     },
     {
@@ -162,7 +179,15 @@ const columns = [
                                 class: '!max-w-[180px]'
                             },
                             {
-                                default: () => row.sender_department.name
+                                default: () => row.from_department.id !== 30 ? h(
+                                    Link,
+                                    {
+                                        href: route('patientResult.show', { patientResult: row.id })
+                                    },
+                                    {
+                                        default: () => row.sender_department.name
+                                    }
+                                ) : row.sender_department.name
                             }
                         ),
                         row.from_department.id === 30 ? h(
@@ -173,11 +198,19 @@ const columns = [
                             },
                             {
                                 trigger: () => h(
-                                    NIcon,
+                                    Link,
                                     {
-                                        class: 'text-gray-600 text-lg',
-                                        component: IconMapPin
+                                        href: route('patientResult.show', { patientResult: row.id })
                                     },
+                                    {
+                                        default: () => h(
+                                            NIcon,
+                                            {
+                                                class: 'text-gray-600 text-lg',
+                                                component: IconMapPin
+                                            },
+                                        )
+                                    }
                                 ),
                                 header: () => h(
                                     'div',
@@ -261,7 +294,17 @@ const columns = [
         key: 'countdown',
         width: 120,
         render(row) {
-            if (row.status_id === 1) return null
+            if (row.status_id === 1) return h(
+                'span',
+                {
+                    style: {
+                        fontWeight: 500
+                    }
+                },
+                {
+                    default: () => '----'
+                }
+            )
 
             const targetDate = new Date(row.updated_at) // Берём дату из строки
             const endTimestamp = targetDate.getTime() + 24 * 60 * 60 * 1000

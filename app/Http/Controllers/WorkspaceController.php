@@ -31,10 +31,17 @@ class WorkspaceController extends Controller
         $selectedDiagnosisGroup = isset($selectedDiagnosis->diagnosisGroupId) ? DiagnosisGroup::with('diagnoses')->find($selectedDiagnosis->diagnosisGroupId) : null;
         $selectedDiagnosis = isset($selectedDiagnosis->diagnosisId) ? Diagnosis::find($selectedDiagnosis->diagnosisId) : null;
 
-        if (count($userDepartments) > 1)
-            $countResults = PatientResult::whereIn('from_department_id', $userDepartments)->count();
-        else
-            $countResults = PatientResult::where('from_department_id', $userDepartments)->count();
+        $countResults = PatientResult::whereIn('from_department_id', $userDepartments)
+            ->orWhereIn('to_department_id', $userDepartments)
+            ->count();
+//        if (count($userDepartments) > 1)
+//            $countResults = PatientResult::whereIn('from_department_id', $userDepartments)
+//                ->whereIn('to_department_id', $userDepartments)
+//                ->count();
+//        else
+//            $countResults = PatientResult::whereIn('from_department_id', $userDepartments)
+//                ->whereIn('to_department_id', $userDepartments)
+//                ->count();
 
         return Inertia::render('Workspace', [
             'diagnosisGroups' => $diagnosisGroups,

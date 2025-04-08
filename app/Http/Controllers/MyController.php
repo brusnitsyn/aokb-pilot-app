@@ -28,7 +28,9 @@ class MyController extends Controller
             'from_department',
             'to_department',
             'user'
-        ])->whereIn('from_department_id', $userDepartments)->orderBy('created_at', 'desc')->get();
+        ])->whereIn('from_department_id', $userDepartments)
+            ->orWhereIn('to_department_id', $userDepartments)
+            ->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('My/Requests/Show', [
             'patients' => $patients,

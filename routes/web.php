@@ -34,6 +34,13 @@ Route::middleware([
     Route::get('/request/result', [\App\Http\Controllers\SurveyController::class, 'result'])
         ->name('request.result');
 
+    Route::prefix('patient')->group(function () {
+        Route::prefix('{patientResult}')->group(function () {
+            Route::get('/', [\App\Http\Controllers\PatientResultController::class, 'show'])
+                ->name('patientResult.show');
+        });
+    });
+
     Route::prefix('my')->group(function () {
         Route::get('/requests', [\App\Http\Controllers\MyController::class, 'requests'])
             ->name('my.request');

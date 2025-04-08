@@ -36,8 +36,8 @@ class HandleInertiaRequests extends Middleware
 
         $myDepartment = auth()->hasUser() && auth()->user()->myDepartment() !== null ? [
             'id' => auth()->user()->myDepartment()->id,
-            'name' => auth()->user()->myDepartment()->name,
-            'region' => auth()->user()->myDepartment()->region->shortName
+            'name' => !is_null(auth()->user()->myDepartment()->shortname) ? auth()->user()->myDepartment()->shortname : auth()->user()->myDepartment()->name,
+            'region' => auth()->user()->myDepartment()->region()->exists() ? auth()->user()->myDepartment()->region->shortName : null
         ] : null;
 
         return array_merge([
