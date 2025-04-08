@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
@@ -10,6 +11,7 @@ class Department extends Model
         'name',
         'address',
         'shortname',
+        'coords',
         'fias_objectid',
         'regionId',
         'is_receive'
@@ -29,5 +31,12 @@ class Department extends Model
     public function params(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(DepartmentParam::class, 'department_id', 'id');
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'coords' => AsArrayObject::class,
+        ];
     }
 }
