@@ -21,10 +21,14 @@ export const fetchUserLocation = () => {
                 console.error("Ошибка геолокации:", error.message);
             },
             { enableHighAccuracy: true }
-        );
+        )
+        return coords
     } else {
         console.error("Геолокация не поддерживается браузером");
+        return [
+            127.506377, 50.304888
+        ]
     }
-    return coords
+
     // return usePage().props.auth.user.department.coords
 }

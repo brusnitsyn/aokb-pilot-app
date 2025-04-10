@@ -13,7 +13,7 @@ import {
 import {Link, router, usePage} from "@inertiajs/vue3";
 import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip, NCountdown} from "naive-ui";
 import {useNow} from "@vueuse/core";
-import {renderIcon} from "@/Utils/helper.js";
+import {fetchUserLocation, renderIcon} from "@/Utils/helper.js";
 import {Motion} from 'motion-v'
 import {
     YandexMap,
@@ -398,7 +398,7 @@ const columns = [
 const map = shallowRef(null)
 const mapSettings = ref({
     location: {
-        center: usePage().props.auth.user.department.coords,
+        center: fetchUserLocation(),
         zoom: 10
     },
     zoomStrategy: 'zoomToCenter',
