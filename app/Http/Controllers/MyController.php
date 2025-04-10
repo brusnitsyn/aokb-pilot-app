@@ -32,6 +32,11 @@ class MyController extends Controller
             ->orWhereIn('to_department_id', $userDepartments)
             ->orderBy('created_at', 'desc')->get();
 
+        $patients->map(function ($patient) {
+            if ($patient->from_department_id !== 30)
+                $patient->coords = $patient->sender_department->coords;
+        });
+
         return Inertia::render('My/Requests/Show', [
             'patients' => $patients,
         ]);

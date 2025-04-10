@@ -24,4 +24,15 @@ class PatientResultController extends Controller
             'patientResult' => $patientResult
         ]);
     }
+
+    public function update(Request $request, PatientResult $patientResult)
+    {
+        $data = $request->validate([
+            'status_id' => 'required|exists:patient_result_statuses,id',
+        ], [
+            'status_id.required' => 'Установите новый статус',
+        ]);
+
+        $patientResult->update($data);
+    }
 }

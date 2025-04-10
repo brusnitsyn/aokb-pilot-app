@@ -3,11 +3,12 @@ import WorkspaceItem from "@/Components/Workspace/WorkspaceItem.vue";
 import {router, usePage} from "@inertiajs/vue3";
 import {Motion} from 'motion-v'
 import {
-    YandexMap, YandexMapControls,
+    YandexMap, YandexMapControlButton, YandexMapControls,
     YandexMapDefaultFeaturesLayer,
     YandexMapDefaultMarker,
     YandexMapDefaultSchemeLayer, YandexMapEntity, YandexMapGeolocationControl, YandexMapListener, YandexMapMarker
 } from "vue-yandex-maps";
+import {fetchUserLocation} from "@/Utils/helper.js";
 
 const department = computed(() => usePage().props.auth.user.department)
 const hasSetDepartment = computed(() => department.value !== null)
@@ -15,15 +16,30 @@ const hasSetDepartment = computed(() => department.value !== null)
 const hasShow = ref(false)
 const department_id = ref(null)
 const map = shallowRef(null)
+const hasAttachedPoint = ref(false)
 const centerCoordinates = ref({
     coordinates: []
 })
-const mapSettings = {
+const centerBounds = ref()
+const mapSettings = ref({
     location: {
         center: [37.617644, 55.755819],
         zoom: 10
     },
-}
+    zoomStrategy: 'zoomToCenter',
+    behaviors: [
+        'dblClick',
+        'drag',
+        'scrollZoom',
+        'mouseRotate',
+        'mouseTilt',
+        'magnifier',
+        'oneFingerZoom',
+        'panTilt',
+        'pinchRotate',
+        'pinchZoom'
+    ],
+})
 const userLocation = {}
 const formRef = ref()
 const departmentId = computed(() => {
@@ -102,45 +118,28 @@ const onAfterLeave = () => {
 }
 
 const onAfterEnter = () => {
-    fetchUserLocation()
+    mapSettings.value.location.center = fetchUserLocation()
+    userLocation.coordinates = fetchUserLocation()
+    centerCoordinates.value.coordinates = fetchUserLocation()
 }
 
-// Функция для получения геолокации через Яндекс.Карты
-const fetchUserLocation = () => {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                // Обновляем центр карты
-                mapSettings.location.center = [
-                    position.coords.longitude,
-                    position.coords.latitude,
-                ]
-
-                userLocation.coordinates = [
-                    position.coords.longitude,
-                    position.coords.latitude,
-                ]
-
-                centerCoordinates.value.coordinates = [
-                    position.coords.longitude,
-                    position.coords.latitude,
-                ]
-            },
-            (error) => {
-                console.error("Ошибка геолокации:", error.message);
-            },
-            { enableHighAccuracy: true }
-        );
-    } else {
-        console.error("Геолокация не поддерживается браузером");
-    }
-};
 const updateCenterMap = (params) => {
-    centerCoordinates.value.coordinates = params.location.center
-    console.log('Новые координаты:', params.location.center)
+    if (!hasAttachedPoint.value) {
+        centerCoordinates.value.coordinates = params.location.center
+        centerBounds.value = params.location.bounds
+        console.log('Новые координаты:', params.location.center)
+    }
+    console.log('updateCenter:', params)
 }
-const updateZoomMap = (newZoom) => {
-    console.log('Новый zoom:', newZoom)
+
+const onAttachPoint = (attach) => {
+    hasAttachedPoint.value = attach
+    if (attach) {
+        mapSettings.value.location.center = [...centerCoordinates.value.coordinates];
+        mapSettings.value.behaviors = mapSettings.value.behaviors.filter(x => x !== 'drag')
+    } else {
+        mapSettings.value.behaviors.push('drag')
+    }
 }
 </script>
 
@@ -178,15 +177,17 @@ const updateZoomMap = (newZoom) => {
                         :initial="{ opacity: 0 }"
                         :animate="{ opacity: 1 }"
                         :exit="{ opacity: 0 }">
-                    <NFormItem label="Точка эвакуации" :rule="rules.coords">
+                    <NFormItem label="Точка эвакуации" :rule="rules.coords" :feedback="hasAttachedPoint ? 'Если вы хотите изменить точку, то нажмите на Открепить точку' : 'Укажите местоположение и нажмите на Закрепить точку'">
                         <YandexMap v-model="map"
+                                   :cursor-grab="mapSettings.behaviors.includes('drag')"
                                    :settings="mapSettings"
                                    class="rounded-3xl overflow-clip border"
                                    width="100%" height="500px">
                             <YandexMapDefaultSchemeLayer />
                             <YandexMapDefaultFeaturesLayer />
 
-                            <YandexMapDefaultMarker v-if="userLocation" :settings="userLocation"/>
+                            <YandexMapDefaultMarker v-if="userLocation" :settings="userLocation" />
+
                             <!-- Центрированный маркер -->
                             <YandexMapMarker
                                 v-if="centerCoordinates.coordinates.length > 0"
@@ -203,8 +204,21 @@ const updateZoomMap = (newZoom) => {
                                 </YandexMapEntity>
                             </YandexMapControls>
 
+                            <YandexMapControls :settings="{ position: 'bottom left' }">
+                                <YandexMapEntity v-if="!hasAttachedPoint">
+                                    <button class="coordinates-display-button" @click="onAttachPoint(true)">
+                                        Закрепить точку
+                                    </button>
+                                </YandexMapEntity>
+                                <YandexMapEntity v-else>
+                                    <button class="coordinates-display-button" @click="onAttachPoint(false)">
+                                         Открепить точку
+                                    </button>
+                                </YandexMapEntity>
+                            </YandexMapControls>
+
                             <YandexMapControls :settings="{ position: 'left' }">
-                                <YandexMapGeolocationControl />
+                                <YandexMapGeolocationControl v-if="!hasAttachedPoint" />
                             </YandexMapControls>
 
                             <YandexMapListener :settings="{
@@ -237,10 +251,10 @@ const updateZoomMap = (newZoom) => {
 }
 
 .coordinates-display {
-    background: white;
-    padding: 8px 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    @apply bg-white px-4 py-2 rounded-[12px] z-50 drop-shadow;
+}
+
+.coordinates-display-button {
+    @apply bg-white px-4 py-2 rounded-[12px] z-50 drop-shadow pointer-events-auto;
 }
 </style>

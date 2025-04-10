@@ -38,6 +38,8 @@ Route::middleware([
         Route::prefix('{patientResult}')->group(function () {
             Route::get('/', [\App\Http\Controllers\PatientResultController::class, 'show'])
                 ->name('patientResult.show');
+            Route::put('/', [\App\Http\Controllers\PatientResultController::class, 'update'])
+                ->name('patientResult.update');
         });
     });
 

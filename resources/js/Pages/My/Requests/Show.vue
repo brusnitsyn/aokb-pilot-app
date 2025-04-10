@@ -5,20 +5,29 @@ import {
     IconExternalLink,
     IconHome,
     IconInfoCircle,
-    IconMap,
-    IconMapPin,
+    IconMap, IconMap2,
+    IconMapPin, IconTable,
     IconTag,
     IconTrash
 } from "@tabler/icons-vue";
-import {Link, router} from "@inertiajs/vue3";
+import {Link, router, usePage} from "@inertiajs/vue3";
 import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip, NCountdown} from "naive-ui";
 import {useNow} from "@vueuse/core";
 import {renderIcon} from "@/Utils/helper.js";
 import {Motion} from 'motion-v'
+import {
+    YandexMap,
+    YandexMapClusterer, YandexMapControls,
+    YandexMapDefaultFeaturesLayer,
+    YandexMapDefaultSchemeLayer, YandexMapGeolocationControl,
+    YandexMapMarker
+} from "vue-yandex-maps";
+import ChangeRequestStatusModal from "@/Components/Request/ChangeRequestStatusModal.vue";
 const props = defineProps({
     patients: Array
 })
 
+const currentPatientResult = ref()
 const rowOptions = [
     {
         label: 'Перейти к результатам',
@@ -41,7 +50,8 @@ const rowOptions = [
         key: 'change-status',
         icon: renderIcon(IconTag),
         onClick: (row) => {
-            window.$message.info('Пока не реализовано')
+            currentPatientResult.value = row
+            hasShowChangeRequestStatusModal.value = true
         }
     },
     {
@@ -79,6 +89,7 @@ const rowOptions = [
 ]
 
 const now = useNow()
+const hasShowChangeRequestStatusModal = ref(false)
 const columns = [
     {
         title: '№ запроса',
@@ -215,7 +226,7 @@ const columns = [
                                 header: () => h(
                                     'div',
                                     {},
-                                    `${row.from_department.name}`
+                                    `${row.sender_department.coords[1]?.toFixed(2)}, ${row.sender_department.coords[0]?.toFixed(2)}`
                                 ),
                                 default: () => h(
                                     'div',
@@ -384,6 +395,28 @@ const columns = [
     }
 ]
 
+const map = shallowRef(null)
+const mapSettings = ref({
+    location: {
+        center: usePage().props.auth.user.department.coords,
+        zoom: 10
+    },
+    zoomStrategy: 'zoomToCenter',
+    behaviors: [
+        'dblClick',
+        'drag',
+        'scrollZoom',
+        'mouseRotate',
+        'mouseTilt',
+        'magnifier',
+        'oneFingerZoom',
+        'panTilt',
+        'pinchRotate',
+        'pinchZoom'
+    ],
+})
+const hasShowMapPreview = ref(false)
+
 const formatTime = (ms) => {
     const absMs = Math.abs(ms)
     const hours = Math.floor(absMs / (1000 * 60 * 60))
@@ -394,13 +427,12 @@ const formatTime = (ms) => {
     return `${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 }
 
-
 const shouldShowTimerColumn = computed(() => props.patients.some(item => item.status_id !== 1))
 </script>
 
 <template>
     <AppLayout title="Запросы МО">
-        <NFlex align="center" class="w-full">
+        <NFlex vertical align="start" justify="start" class="w-full h-full">
             <NFlex align="center" justify="space-between" class="w-full">
                 <Link :href="route('workspace')" class="h-full">
                     <NButton secondary round>
@@ -410,15 +442,64 @@ const shouldShowTimerColumn = computed(() => props.patients.some(item => item.st
                         Вернуться на рабочую область
                     </NButton>
                 </Link>
+                <NButton secondary round @click="hasShowMapPreview = !hasShowMapPreview">
+                    <template #icon>
+                        <NIcon v-if="!hasShowMapPreview" :component="IconMap2" />
+                        <NIcon v-else :component="IconTable" />
+                    </template>
+                    {{ !hasShowMapPreview ? 'Карта' : 'Таблица' }}
+                </NButton>
             </NFlex>
-            <NDataTable :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')" :data="patients" />
+            <NDataTable v-if="!hasShowMapPreview" :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')" :data="patients" />
+            <YandexMap v-else
+                       v-model="map"
+                       cursor-grab
+                       :settings="mapSettings"
+                       height="100%"
+                       class="rounded-3xl overflow-clip border shadow-sm">
+                <YandexMapDefaultSchemeLayer />
+                <YandexMapDefaultFeaturesLayer />
+
+                <YandexMapClusterer zoom-on-cluster-click
+                                    :grid-size="200">
+                    <YandexMapMarker v-for="patient in patients"
+                                     :settings="{coordinates: patient.coords, hideOutsideViewport: true}">
+                        <div class="center-marker"></div>
+                    </YandexMapMarker>
+                    <template #cluster="{ length }">
+                        <div class="cluster">
+                            {{ length }}
+                        </div>
+                    </template>
+                </YandexMapClusterer>
+
+                <YandexMapControls :settings="{ position: 'left' }">
+                    <YandexMapGeolocationControl />
+                </YandexMapControls>
+
+            </YandexMap>
         </NFlex>
+        <ChangeRequestStatusModal v-model:show="hasShowChangeRequestStatusModal" :patient-result="currentPatientResult" />
     </AppLayout>
 </template>
 
 <style>
-/* Принудительно переопределяем стиль строки */
-.expired-row {
-    --n-merged-td-color: rgba(255, 0, 0, 0.2) !important;
+.center-marker {
+    width: 20px;
+    height: 20px;
+    background-color: #EC6608;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(236, 102, 8, 0.5);
+    transform: translate(-50%, -50%);
+}
+
+.cluster {
+    @apply py-1.5 px-3 text-white font-medium;
+    background-color: #EC6608;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(236, 102, 8, 0.5);
+    transform: translate(-50%, -50%);
 }
 </style>
