@@ -24,7 +24,9 @@ const rules = {
 }
 const onAfterEnter = async () => {
     hasLoading.value = true
-    await axios.get(route('api.requests.statuses', null, true)).then(({data}) => {
+    await axios.get(route('api.requests.statuses', {
+        current_status_id: props.patientResult.status_id
+    }, true)).then(({data}) => {
         statuses.value = data.statuses.map(item => {
             return {
                 label: item.name,

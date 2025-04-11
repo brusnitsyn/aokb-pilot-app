@@ -9,7 +9,11 @@ class RequestController extends Controller
 {
     public function statuses(Request $request)
     {
-        $statuses = PatientResultStatus::all();
+        $notInclude = [1];
+        if ($request->input('current_status_id')) {
+            $notInclude[] = [$request->input('current_status_id')];
+        }
+        $statuses = PatientResultStatus::whereNotIn('id', $notInclude)->get();
         return response()->json([
             'statuses' => $statuses
         ]);
