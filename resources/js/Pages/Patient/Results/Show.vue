@@ -1,25 +1,22 @@
 <script setup>
-import {
-    YandexMap,
-    YandexMapDefaultFeaturesLayer,
-    YandexMapDefaultMarker,
-    YandexMapDefaultSchemeLayer
-} from "vue-yandex-maps";
+import { Motion } from 'motion-v'
 import AppLayout from "@/Layouts/AppLayout.vue";
 import {IconInfoCircle, IconTag} from "@tabler/icons-vue";
 import AppBackButton from "@/Components/App/AppBackButton.vue";
 import ChangeRequestStatusModal from "@/Components/Request/ChangeRequestStatusModal.vue";
+import AppMap from "@/Components/App/AppMap.vue";
+import {formatTime, renderTime} from "../../../Utils/helper.js";
 
 const props = defineProps({
     patientResult: Object
 })
 
-const map = shallowRef(null)
 const requestCoords = computed(() => {
     if (props.patientResult.from_department_id === 30) return props.patientResult.coords
 
     return props.patientResult.sender_department.coords
 })
+
 const mapSettings = {
     location: {
         center: requestCoords.value,
@@ -27,6 +24,14 @@ const mapSettings = {
     },
     zoomStrategy: 'zoomToCenter',
 }
+const markers = [
+    {
+        settings: {
+            coordinates: requestCoords.value
+        }
+    }
+]
+
 const hasShowChangeRequestStatusModal = ref(false)
 </script>
 
@@ -89,6 +94,16 @@ const hasShowChangeRequestStatusModal = ref(false)
                                         </NGi>
                                     </NGrid>
                                 </NListItem>
+                                <NListItem>
+                                    <NGrid cols="5" class="px-1.5">
+                                        <NGi span="2">
+                                            Время эвакуации
+                                        </NGi>
+                                        <NGi span="3" class="font-medium">
+                                            <component :is="renderTime(patientResult.status_id, patientResult.status_changed_at, patientResult.last_status_at)" />
+                                        </NGi>
+                                    </NGrid>
+                                </NListItem>
                                 <NListItem v-if="patientResult.comment">
                                     <NGrid cols="5" class="px-1.5">
                                         <NGi span="2">
@@ -113,17 +128,7 @@ const hasShowChangeRequestStatusModal = ref(false)
                 </div>
             </NGi>
             <NGi span="6">
-                <YandexMap v-model="map"
-                           cursor-grab
-                           :settings="mapSettings"
-                           class="rounded-3xl overflow-clip border shadow-sm">
-                    <YandexMapDefaultSchemeLayer />
-                    <YandexMapDefaultFeaturesLayer />
-
-                    <YandexMapDefaultMarker :settings="{
-                        coordinates: requestCoords
-                    }" />
-                </YandexMap>
+                <AppMap :settings="mapSettings" :markers="markers" />
             </NGi>
         </NGrid>
         <ChangeRequestStatusModal v-model:show="hasShowChangeRequestStatusModal" :patient-result="patientResult" />
