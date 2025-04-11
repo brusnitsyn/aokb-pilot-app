@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Observers\PatientResultObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy(PatientResultObserver::class)]
 class PatientResult extends Model
 {
     protected $fillable = [
@@ -22,7 +25,9 @@ class PatientResult extends Model
         'scenario_id',
         'scenario_score',
         'status_id',
-        'user_id'
+        'user_id',
+        'last_status_at',
+        'status_changed_at'
     ];
 
     public function sender_department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
