@@ -13,7 +13,7 @@ import {
 import {Link, router, usePage} from "@inertiajs/vue3";
 import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip, NCountdown} from "naive-ui";
 import {useNow} from "@vueuse/core";
-import {fetchUserLocation, renderIcon} from "@/Utils/helper.js";
+import {fetchUserLocation, renderIcon, renderTime} from "@/Utils/helper.js";
 import {Motion} from 'motion-v'
 import {
     YandexMap,
@@ -305,50 +305,7 @@ const columns = [
         key: 'countdown',
         width: 120,
         render(row) {
-            if (row.status_id === 1) return h(
-                'span',
-                {
-                    style: {
-                        fontWeight: 500
-                    }
-                },
-                {
-                    default: () => '----'
-                }
-            )
-
-            const targetDate = new Date(row.updated_at) // Берём дату из строки
-            const endTimestamp = targetDate.getTime() + 24 * 60 * 60 * 1000
-            const timeLeft = endTimestamp - now.value
-            const isExpired = timeLeft <= 0
-            const hoursLeft = timeLeft / (1000 * 60 * 60)
-
-            if (hoursLeft <= -48) {
-                return h(Motion, {
-                    initial: { opacity: 1 },
-                    animate: {
-                        opacity: [0.2, 1],
-                        transition: {
-                            duration: 1.0,
-                            repeat: Infinity,
-                            repeatType: 'mirror',
-                            ease: 'easeInOut'
-                        }
-                    }
-                }, () => h('span', {
-                    style: {
-                        color: '#d03050',
-                        fontWeight: 500
-                    }
-                }, '-48:00:00'))
-            }
-
-            return h('span', {
-                style: {
-                    color: isExpired ? '#d03050' : '#18a058',
-                    fontWeight: 500
-                }
-            }, formatTime(timeLeft))
+            return h(renderTime(row.status_id, row.status_changed_at, row.last_status_at))
         }
     },
     {
