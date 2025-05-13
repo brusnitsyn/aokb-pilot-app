@@ -2,6 +2,8 @@
 
 namespace App\Observers;
 
+use App\Events\PatientResultCreated;
+use App\Events\PatientResultUpdated;
 use App\Models\PatientResult;
 use Illuminate\Support\Carbon;
 
@@ -18,7 +20,7 @@ class PatientResultObserver
      */
     public function created(PatientResult $patientResult): void
     {
-        //
+        broadcast(new PatientResultCreated($patientResult))->toOthers();
     }
 
     public function updating(PatientResult $patientResult): void
@@ -35,7 +37,7 @@ class PatientResultObserver
      */
     public function updated(PatientResult $patientResult): void
     {
-        //
+        broadcast(new PatientResultUpdated($patientResult))->toOthers();
     }
 
     /**

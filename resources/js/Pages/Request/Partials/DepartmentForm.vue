@@ -65,7 +65,7 @@ const onNext = async () => {
         :exit="{ y: 100, opacity: 0 }">
         <NCard class="!rounded-3xl drop-shadow-sm">
             <template #header>
-                В какую медицинскую организацию транспортировать?
+                В какую медицинскую организацию необходима транспортировка?
             </template>
             <template #cover>
                 <NProgress

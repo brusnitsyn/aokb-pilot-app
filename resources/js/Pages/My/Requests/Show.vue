@@ -12,20 +12,23 @@ import {
 } from "@tabler/icons-vue";
 import {Link, router, usePage} from "@inertiajs/vue3";
 import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip, NCountdown} from "naive-ui";
-import {useNow} from "@vueuse/core";
+import {useLocalStorage, useNow} from "@vueuse/core";
 import {fetchUserLocation, renderIcon, renderTime} from "@/Utils/helper.js";
 import {Motion} from 'motion-v'
 import {
     YandexMap,
     YandexMapClusterer, YandexMapControls,
-    YandexMapDefaultFeaturesLayer,
-    YandexMapDefaultSchemeLayer, YandexMapGeolocationControl,
+    YandexMapDefaultFeaturesLayer, YandexMapDefaultSatelliteLayer,
+    YandexMapDefaultSchemeLayer, YandexMapEntity, YandexMapGeolocationControl,
     YandexMapMarker
 } from "vue-yandex-maps";
 import ChangeRequestStatusModal from "@/Components/Request/ChangeRequestStatusModal.vue";
+import AppBackButton from "@/Components/App/AppBackButton.vue";
+import MapView from "@/Pages/My/Requests/Partials/MapView.vue";
 const props = defineProps({
     patients: Array
 })
+const pageProps = usePage().props
 
 const currentPatientResult = ref()
 const rowOptions = [
@@ -88,7 +91,6 @@ const rowOptions = [
     }
 ]
 
-const now = useNow()
 const hasShowChangeRequestStatusModal = ref(false)
 const columns = [
     {
@@ -187,7 +189,7 @@ const columns = [
                         h(
                             NEllipsis,
                             {
-                                class: '!max-w-[180px]'
+                                class: '!max-w-[160px]'
                             },
                             {
                                 default: () => row.from_department.id !== 30 ? h(
@@ -327,6 +329,7 @@ const columns = [
     },
     {
         key: 'actions',
+        width: 48,
         render(row) {
             return h(
                 NFlex,
@@ -352,11 +355,20 @@ const columns = [
     }
 ]
 
-const map = shallowRef(null)
+const results = ref([...props.patients.map(item => {
+    return {
+        ...item,
+        isNew: false,
+        isActive: false
+    }
+})])
+const map = shallowRef()
 const mapSettings = ref({
     location: {
-        center: fetchUserLocation(),
-        zoom: 10
+        center: [
+            127.366460, 52.586606
+        ],
+        zoom: 7
     },
     zoomStrategy: 'zoomToCenter',
     behaviors: [
@@ -372,34 +384,89 @@ const mapSettings = ref({
         'pinchZoom'
     ],
 })
-const hasShowMapPreview = ref(false)
+const previewMode = useLocalStorage('previewMode', 'table')
+const hasShowRequest = ref(false)
+const showedRequest = ref(null)
+const hasShowSatelliteLayer = ref(false)
+const hasShowMapPreview = computed(() => previewMode.value === 'map')
+const shouldShowTimerColumn = computed(() => results.value.some(item => item.status_id !== 1))
 
-const formatTime = (ms) => {
-    const absMs = Math.abs(ms)
-    const hours = Math.floor(absMs / (1000 * 60 * 60))
-    const minutes = Math.floor((absMs % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((absMs % (1000 * 60)) / 1000)
-
-    const sign = ms <= 0 ? '-' : ''
-    return `${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+const onChangePreviewMode = () => {
+    if (previewMode.value === 'table')
+        previewMode.value = 'map'
+    else
+        previewMode.value = 'table'
 }
 
-const shouldShowTimerColumn = computed(() => props.patients.some(item => item.status_id !== 1))
+const onShowRequest = (patientResult) => {
+    hasShowRequest.value = true
+    mapSettings.value.location.center = patientResult.coords
+    mapSettings.value.location.zoom = 16
+    showedRequest.value = patientResult
+
+    results.value = results.value.map(item => {
+        return {
+            ...item,
+            isActive: false
+        }
+    })
+    const result = results.value.find(item => item.id === patientResult.id)
+    result.isActive = true
+}
+
+const onResetRequest = () => {
+    hasShowRequest.value = false
+    mapSettings.value.location.center = [127.366460, 52.586606]
+    mapSettings.value.location.zoom = 7
+    showedRequest.value = null
+}
+
+const onChangeLayer = () => {
+    if (hasShowSatelliteLayer.value) {
+        hasShowSatelliteLayer.value = false
+    } else {
+        hasShowSatelliteLayer.value = true
+    }
+}
+
+onMounted(() => {
+    window.Echo.private(`${import.meta.env.VITE_REVERB_APP}.department.${pageProps.auth.user.department.id}`)
+        .listen('PatientResultCreated', (data) => {
+            const result = {
+                ...data,
+                isNew: true,
+                isActive: false
+            }
+            results.value.unshift(result)
+        })
+        .listen('PatientResultUpdated', (data) => {
+            const result = {
+                ...data,
+                isNew: false,
+                isActive: false,
+                isUpdated: true
+            }
+            const patientResultIndex = results.value.findIndex((item) => item.id === data.id)
+            results.value[patientResultIndex] = result
+        })
+})
 </script>
 
 <template>
     <AppLayout title="Запросы МО">
         <NFlex vertical align="start" justify="start" class="w-full h-full">
             <NFlex align="center" justify="space-between" class="w-full">
-                <Link :href="route('workspace')" class="h-full">
-                    <NButton secondary round>
-                        <template #icon>
-                            <NIcon :component="IconHome" />
-                        </template>
-                        Вернуться на рабочую область
-                    </NButton>
-                </Link>
-                <NButton secondary round @click="hasShowMapPreview = !hasShowMapPreview">
+                <NSpace align="center">
+                    <Link :href="route('workspace')" class="h-full">
+                        <NButton secondary round>
+                            <template #icon>
+                                <NIcon :component="IconHome" />
+                            </template>
+                            Вернуться на рабочую область
+                        </NButton>
+                    </Link>
+                </NSpace>
+                <NButton secondary round @click="onChangePreviewMode">
                     <template #icon>
                         <NIcon v-if="!hasShowMapPreview" :component="IconMap2" />
                         <NIcon v-else :component="IconTable" />
@@ -407,34 +474,12 @@ const shouldShowTimerColumn = computed(() => props.patients.some(item => item.st
                     {{ !hasShowMapPreview ? 'Карта' : 'Таблица' }}
                 </NButton>
             </NFlex>
-            <NDataTable v-if="!hasShowMapPreview" :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')" :data="patients" />
-            <YandexMap v-else
-                       v-model="map"
-                       cursor-grab
-                       :settings="mapSettings"
-                       height="100%"
-                       class="rounded-3xl overflow-clip border shadow-sm">
-                <YandexMapDefaultSchemeLayer />
-                <YandexMapDefaultFeaturesLayer />
-
-                <YandexMapClusterer zoom-on-cluster-click
-                                    :grid-size="200">
-                    <YandexMapMarker v-for="patient in patients"
-                                     :settings="{coordinates: patient.coords, hideOutsideViewport: true}">
-                        <div class="center-marker"></div>
-                    </YandexMapMarker>
-                    <template #cluster="{ length }">
-                        <div class="cluster">
-                            {{ length }}
-                        </div>
-                    </template>
-                </YandexMapClusterer>
-
-                <YandexMapControls :settings="{ position: 'left' }">
-                    <YandexMapGeolocationControl />
-                </YandexMapControls>
-
-            </YandexMap>
+            <NDataTable v-if="!hasShowMapPreview"
+                        max-height="calc(100vh - 298px)"
+                        min-height="calc(100vh - 298px)"
+                        :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')"
+                        :data="results" />
+            <MapView v-else v-model:results="results" :extended-menu-options="rowOptions" />
         </NFlex>
         <ChangeRequestStatusModal v-model:show="hasShowChangeRequestStatusModal" :patient-result="currentPatientResult" />
     </AppLayout>
@@ -442,8 +487,8 @@ const shouldShowTimerColumn = computed(() => props.patients.some(item => item.st
 
 <style>
 .center-marker {
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
     background-color: #EC6608;
     border: 3px solid white;
     border-radius: 50%;
@@ -452,11 +497,10 @@ const shouldShowTimerColumn = computed(() => props.patients.some(item => item.st
 }
 
 .cluster {
-    @apply py-1.5 px-3 text-white font-medium;
+    @apply w-10 h-10 text-white font-medium flex items-center justify-center;
     background-color: #EC6608;
     border: 3px solid white;
     border-radius: 50%;
     box-shadow: 0 0 10px rgba(236, 102, 8, 0.5);
-    transform: translate(-50%, -50%);
 }
 </style>

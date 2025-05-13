@@ -14,6 +14,7 @@ defineProps({
 
 const user = usePage().props.auth.user
 const departments = ref(usePage().props.departments)
+const logReverb = ref()
 
 const mobileMenuCollapsed = ref(false);
 const renderIcon = (icon) => {
@@ -39,6 +40,18 @@ const switchToTeam = (team) => {
 const logout = () => {
     router.post(route('logout'));
 };
+
+onMounted(() => {
+    if (user.department === null) return
+    window.Echo.private(`${import.meta.env.VITE_REVERB_APP}.department.${user.department.id}`)
+        .listen('PatientResultCreated', (data) => {
+            logReverb.value = data
+            window.$notify.info({
+                title: `Новый запрос: ${data.patient.number}`,
+                content: 'Ваша медицинская организация создала запрос.\nВы можете проверить его .'
+            })
+        })
+})
 
 </script>
 
@@ -66,10 +79,10 @@ const logout = () => {
                     </NFlex>
                 </NFlex>
             </NLayoutHeader>
-            <NLayout has-sider position="absolute" class="!bg-gray-50" style="top: 73px; bottom: 54px">
+            <NLayout has-sider position="absolute" class="!bg-gray-50" style="top: 74px; bottom: 54px">
                 <NLayout :native-scrollbar="false" content-class="p-4 lg:p-7 h-full" class="!bg-transparent h-full">
                     <Motion as="main"
-                            class="h-full"
+                            class="h-full outline-none"
                             :initial="{
                               opacity: 0,
                               y: 100
@@ -100,7 +113,7 @@ const logout = () => {
                 class="p-4 md:px-[24px]"
             >
                 &copy;
-                <Link href="https://aokb28.su">Амурская областная клиническая больница</Link>
+                <a target="_blank" href="https://aokb28.su">Амурская областная клиническая больница</a>
                 2025
             </NLayoutFooter>
         </NLayout>

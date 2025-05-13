@@ -41,6 +41,9 @@ function submit(e) {
                     remember: form.remember ? 'on' : '',
                 })).post(route('login'), {
                     onFinish: () => form.reset('password'),
+                    onError: (error) => {
+                        window.$message.error(Object.values(error)[0])
+                    }
                 });
             }
             else {

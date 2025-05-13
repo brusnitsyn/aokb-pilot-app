@@ -27,7 +27,7 @@ class DepartmentController extends Controller
     public function update(Request $request)
     {
         $responses = $request->all();
-        $department = Department::with('region')->find($responses['id']);
+        $department = Department::with('region')->find($responses['id'] ?? $responses['sender_department_id']);
 
         Cookie::queue(Cookie::make('coordsComment', $responses['comment'] ?? null, config('session.lifetime')));
         if(isset($responses['coords'])) Cookie::queue(Cookie::make('lastCoords', json_encode($responses['coords']) ?? null, config('session.lifetime')));

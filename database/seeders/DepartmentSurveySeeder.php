@@ -28,7 +28,7 @@ class DepartmentSurveySeeder extends Seeder
                 'default_answer' => 3
             ], // 1
             [
-                'text' => 'Не в полном объеме (отсутствуют позиции)',
+                'text' => 'Отсутствующее в МО оборудование',
                 'depends_on_answer_id' => 2,
                 'type' => 'multiple',
                 'requires_confirmation' => true,
@@ -64,7 +64,7 @@ class DepartmentSurveySeeder extends Seeder
                 'default_answer' => null
             ], // 5
             [
-                'text' => 'Отсутствие специалистов',
+                'text' => 'ОТСУТСТВИЕ специалистов',
                 'depends_on_answer_id' => null,
                 'type' => 'multiple',
                 'requires_confirmation' => true,
@@ -106,28 +106,28 @@ class DepartmentSurveySeeder extends Seeder
             ], // 3 Оснащение
 
             [
-                'text' => 'ЭКГ (дист)',
+                'text' => 'Дистанционная электрокардиограмма (дист. ЭКГ)',
                 'score' => 1,
                 'department_question_id' => 2,
                 'disabled_department_ids' => null,
                 'depends_diagnosis_group_ids' => [1, ]
             ], // 4 Не в полном объеме (отсутствуют позиции)
             [
-                'text' => 'УЗИ',
+                'text' => 'Аппарат ультразвукового исследования (УЗИ)',
                 'score' => 1,
                 'department_question_id' => 2,
                 'disabled_department_ids' => [2,3,4,5,6,7,8,9,10,11,12,13,19,20,21,22,23,24,25,26,27,28,29,30],
                 'depends_diagnosis_group_ids' => [1, ]
             ], // 5 Не в полном объеме (отсутствуют позиции)
             [
-                'text' => 'ЭКС',
+                'text' => 'Электрокардиостимулятор (ЭКС)',
                 'score' => 0.5,
                 'department_question_id' => 2,
                 'disabled_department_ids' => [2,3,4,5,6,7,8,9,10,11,12,13,19,20,21,22,23,24,25,26,27,28,29,30],
                 'depends_diagnosis_group_ids' => [1, ]
             ], // 6 Не в полном объеме (отсутствуют позиции)
             [
-                'text' => 'ИВЛ',
+                'text' => 'Аппарат искусственной вентиляции лёгких (ИВЛ)',
                 'score' => 1,
                 'department_question_id' => 2,
                 'disabled_department_ids' => [2,3,4,5,6,7,8,9,10,11,12,13,19,20,21,22,23,24,25,26,27,28,29,30],

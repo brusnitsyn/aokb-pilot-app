@@ -2,7 +2,7 @@
 import {ruRU, dateRuRU} from 'naive-ui'
 import NMessageContent from "@/Components/Naive/NMessageContent.vue";
 import NDialogContent from "@/Components/Naive/NDialogContent.vue";
-import NNotificationContent from "@/Components/Naive/NNotificationHelperContent.vue";
+import NNotificationContent from "@/Components/Naive/NNotificationContent.vue";
 
 const themeOverrides = {
     common: {
@@ -26,13 +26,13 @@ const themeOverrides = {
 <template>
 
     <NConfigProvider :locale="ruRU" :date-locale="dateRuRU" :theme-overrides="themeOverrides">
-        <NMessageProvider keep-alive-on-hover>
+        <NMessageProvider keep-alive-on-hover class="!rounded-3xl">
             <NMessageContent />
         </NMessageProvider>
         <NDialogProvider>
             <NDialogContent />
         </NDialogProvider>
-        <NNotificationProvider key="helper" placement="bottom-right" container-class="!min-w-xl !rounded-3xl" class="!rounded-3xl">
+        <NNotificationProvider placement="bottom-right" container-class="!min-w-xl !rounded-3xl" class="!rounded-3xl">
             <NNotificationContent />
         </NNotificationProvider>
         <slot />
@@ -41,6 +41,9 @@ const themeOverrides = {
 
 <style>
 .n-notification {
+    @apply !rounded-3xl
+}
+.n-message {
     @apply !rounded-3xl
 }
 </style>

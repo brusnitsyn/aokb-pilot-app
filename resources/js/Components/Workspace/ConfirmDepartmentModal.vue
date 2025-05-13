@@ -9,6 +9,7 @@ import {
     YandexMapDefaultSchemeLayer, YandexMapEntity, YandexMapGeolocationControl, YandexMapListener, YandexMapMarker
 } from "vue-yandex-maps";
 import {fetchUserLocation} from "@/Utils/helper.js";
+import {IconBuildingHospital, IconMapPin} from "@tabler/icons-vue";
 
 const department = computed(() => usePage().props.auth.user.department)
 const hasSetDepartment = computed(() => department.value !== null)
@@ -158,20 +159,51 @@ const onAttachPoint = (attach) => {
             @after-leave="onAfterLeave"
             @after-enter="onAfterEnter">
         <template #header>
-            <div v-if="department_id === 30" class="!text-base">
-                Транспортировка будет осуществлена по координатам
+            <div class="!text-base">
+                Локация для транспортировки
             </div>
-            <div v-else class="!text-base">
-                Транспортировка будет осуществлена из «{{ department.name }}»
-            </div>
+<!--            <div v-if="department_id === 30" class="!text-base">-->
+<!--                Транспортировка будет осуществлена по координатам-->
+<!--            </div>-->
+<!--            <div v-else class="!text-base">-->
+<!--                Транспортировка будет осуществлена из «{{ department.name }}»-->
+<!--            </div>-->
         </template>
         <NSpace vertical :size="24">
             <NForm ref="formRef" model="" @submit.prevent="onSubmit">
                 <NFormItemGi v-if="hasShowAnswers" :show-label="false" :show-feedback="false">
-                    <NRadioGroup v-model:value="department_id" class="flex flex-row gap-x-2 items-center justify-center w-full">
-                        <NRadio :value="departmentId" label="Да" />
-                        <NRadio :value="30" label="Нет" />
-                    </NRadioGroup>
+                    <NGrid cols="2" x-gap="8">
+                        <NGi>
+                            <NEl tag="button" type="submit" class="text-start inline-flex items-start rounded-3xl border px-4 py-3 shadow h-full cursor-pointer transition-all hover:border-[var(--primary-color)]">
+                                <NSpace vertical>
+                                    <NFlex align="center" :size="8" :wrap="false">
+                                        <NIcon :component="IconBuildingHospital" class="text-2xl" />
+                                        <span class="font-medium leading-5">{{ department.name }}</span>
+                                    </NFlex>
+                                    <div class="leading-5 text-gray-500">
+                                        Выберите этот пункт, если транспортировка будет осуществлена из «{{ department.name }}»
+                                    </div>
+                                </NSpace>
+                            </NEl>
+                        </NGi>
+                        <NGi>
+                            <NEl tag="button" @click="department_id = 30" class="text-start inline-flex items-start rounded-3xl border px-4 py-3 shadow h-full cursor-pointer transition-all hover:border-[var(--primary-color)]">
+                                <NSpace vertical>
+                                    <NFlex align="center" :size="8">
+                                        <NIcon :component="IconMapPin" class="text-2xl" />
+                                        <span class="font-medium">Координаты</span>
+                                    </NFlex>
+                                    <div class="leading-5 text-gray-500">
+                                        Выберите этот пункт, если транспортировка будет осуществлена по координатам
+                                    </div>
+                                </NSpace>
+                            </NEl>
+                        </NGi>
+                    </NGrid>
+<!--                    <NRadioGroup v-model:value="department_id" class="flex flex-row gap-x-2 items-center justify-center w-full">-->
+<!--                        <NRadioButton :value="departmentId" label="Да" />-->
+<!--                        <NRadioButton :value="30" label="Нет" />-->
+<!--                    </NRadioGroup>-->
                 </NFormItemGi>
                 <Motion v-if="department_id === 30"
                         :initial="{ opacity: 0 }"
@@ -229,10 +261,10 @@ const onAttachPoint = (attach) => {
                     <NFormItemGi label="Комментарий" :rule="rules.comment" class="mt-2">
                         <NInput class="rounded-2xl px-1" type="textarea" v-model:value="comment" :placeholder="placeholder" @focus="placeholder = ''" @blur="placeholder = 'Опишите подробнее о месте эвакуации'" :resizable="false"  />
                     </NFormItemGi>
+                    <NButton type="primary" round size="large" block attr-type="submit" class="mt-4" :disabled="hasDisabledSubmit">
+                        Далее
+                    </NButton>
                 </Motion>
-                <NButton type="primary" round size="large" block attr-type="submit" class="mt-3" :disabled="hasDisabledSubmit">
-                    Далее
-                </NButton>
             </NForm>
 
         </NSpace>

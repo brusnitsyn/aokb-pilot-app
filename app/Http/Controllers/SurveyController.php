@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PatientResultCreated;
 use App\Models\Answer;
 use App\Models\Department;
 use App\Models\DepartmentAnswer;
@@ -45,10 +46,11 @@ class SurveyController extends Controller
                 $query->with('dependsDiagnosisGroup')->whereHas('dependsDiagnosisGroup', function ($query) use ($selectedDiagnosisGroupId) {
                     $query->where('diagnosis_group_id', $selectedDiagnosisGroupId);
                 })->whereJsonDoesntContain('disabled_department_ids', $selectedDepartmentId)
-                ->orderBy('text', 'asc');
+                ->orderBy('text');
             },
             'answers.departments'
-        ])->get();
+        ])->orderBy('id')
+            ->get();
 
         $departments = DepartmentDiagnosisGroup::with('department')
             ->whereNot('department_id', $selectedDepartmentId)

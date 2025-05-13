@@ -77,7 +77,7 @@ const onSubmit = async () => {
         :exit="{ y: 100, opacity: 0 }">
         <NCard class="!rounded-3xl drop-shadow-sm">
             <template #header>
-                Установка диагноза пациента
+                Диагноз пациента
             </template>
             <template #cover>
                 <NProgress

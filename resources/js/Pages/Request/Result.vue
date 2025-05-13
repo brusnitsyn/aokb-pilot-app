@@ -16,7 +16,7 @@ const page = usePage()
 const responsesAnswers = ref([])
 onMounted(() => {
     if (props.patientResult.status_id === 1) {
-        window.$notifyHelper.info({
+        window.$notify.info({
             title: 'Статус запроса',
             content: 'Ваш запрос создан, но не отправлен.\nПроверьте результат и подтвердите запрос.'
         })
@@ -78,38 +78,74 @@ const navigateToWorkspace = () => {
     <AppLayout :title="`Результаты запроса ${patientResult.patient.number}`">
         <NGrid cols="3" x-gap="32">
             <NGi>
-                <NCard class="!rounded-3xl drop-shadow-sm">
-                    <template #header>
-                        <div class="uppercase flex flex-row justify-center">
-                            Чек-лист
-                        </div>
-                    </template>
-                    <NList>
-                        <NListItem v-for="response in patientQuestions">
-                            <NSpace vertical :size="2" v-if="Array.isArray(response.answer)">
-                                <div>
-                                    {{ response.question.text }}
-                                </div>
-                                <NFlex wrap size="small">
-                                    <NTag v-for="answer in response.answer"
-                                          round
+                <NSpace vertical :size="32">
+                    <NCard class="!rounded-3xl drop-shadow-sm">
+                        <template #header>
+                            <div class="uppercase flex flex-row justify-center">
+                                Диагноз
+                            </div>
+                        </template>
+                        <NList>
+                            <NListItem>
+                                <NFlex justify="space-between" align="center">
+                                    <div>
+                                        Код
+                                    </div>
+                                    <NTag round
                                           type="primary">
-                                        {{ answer.text }}
+                                        {{ patientResult.patient.diagnosis.code }}
                                     </NTag>
                                 </NFlex>
-                            </NSpace>
-                            <NFlex v-else justify="space-between" align="center">
-                                <div>
-                                    {{ response.question.text }}
-                                </div>
-                                <NTag round
-                                      type="primary">
-                                    {{ response.answer.text }}
-                                </NTag>
-                            </NFlex>
-                        </NListItem>
-                    </NList>
-                </NCard>
+                            </NListItem>
+                            <NListItem>
+                                <NFlex justify="space-between" align="center">
+                                    <div>
+                                        Наименование
+                                    </div>
+                                    <NTag round
+                                          type="primary">
+                                        <NEllipsis style="max-width: 300px">
+                                            {{ patientResult.patient.diagnosis.name }}
+                                        </NEllipsis>
+                                    </NTag>
+                                </NFlex>
+                            </NListItem>
+                        </NList>
+                    </NCard>
+
+                    <NCard class="!rounded-3xl drop-shadow-sm">
+                        <template #header>
+                            <div class="uppercase flex flex-row justify-center">
+                                Состояние пациента
+                            </div>
+                        </template>
+                        <NList>
+                            <NListItem v-for="response in patientQuestions">
+                                <NSpace vertical :size="2" v-if="Array.isArray(response.answer)">
+                                    <div>
+                                        {{ response.question.text }}
+                                    </div>
+                                    <NFlex wrap size="small">
+                                        <NTag v-for="answer in response.answer"
+                                              round
+                                              type="primary">
+                                            {{ answer.text }}
+                                        </NTag>
+                                    </NFlex>
+                                </NSpace>
+                                <NFlex v-else justify="space-between" align="center">
+                                    <div>
+                                        {{ response.question.text }}
+                                    </div>
+                                    <NTag round
+                                          type="primary">
+                                        {{ response.answer.text }}
+                                    </NTag>
+                                </NFlex>
+                            </NListItem>
+                        </NList>
+                    </NCard>
+                </NSpace>
             </NGi>
 
             <NGi>
@@ -140,19 +176,19 @@ const navigateToWorkspace = () => {
                         <template #header>
                             Ранжирование баллов
                         </template>
-                        <template #header-extra>
-                            <NTag type="error" round class="!px-4">
-                                <NSpace align="center" :size="4">
-                                    <span class="leading-4">Общее кол-во:</span>
-                                    <span class="text-base font-medium">
-                                        <NNumberAnimation :from="0.0" :to="totalScore" :precision="1" locale="en-US" :duration="1000" />
-                                    </span>
-                                </NSpace>
-                            </NTag>
-                        </template>
-                        <NGrid cols="4" x-gap="6" y-gap="6">
+                        <NGrid cols="5" x-gap="6" y-gap="6">
+                            <NGi span="2">
+                                <NTag type="error" round class="!w-full !h-full flex items-center justify-center !rounded-3xl !py-3">
+                                    <NSpace vertical align="center" :size="4">
+                                        <span>Общее кол-во</span>
+                                        <span class="!text-2xl font-medium">
+                                            <NNumberAnimation :from="0.0" :to="totalScore" :precision="1" locale="en-US" :duration="1000" />
+                                        </span>
+                                    </NSpace>
+                                </NTag>
+                            </NGi>
                             <NGi>
-                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl" type="info" round>
+                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl !py-3" type="info" round>
                                     <NSpace vertical align="center" :size="4">
                                         <span>Опрос</span>
                                         <span class="!text-2xl">
@@ -162,7 +198,7 @@ const navigateToWorkspace = () => {
                                 </NTag>
                             </NGi>
                             <NGi>
-                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl" type="info" round>
+                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl !py-3" type="info" round>
                                     <NSpace vertical align="center" :size="4">
                                         <span>МО</span>
                                         <span class="!text-2xl">
@@ -172,7 +208,7 @@ const navigateToWorkspace = () => {
                                 </NTag>
                             </NGi>
                             <NGi>
-                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl" type="info" round>
+                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl !py-3" type="info" round>
                                     <NSpace vertical align="center" :size="4">
                                         <span>Сценарий</span>
                                         <span class="!text-2xl">
@@ -181,16 +217,16 @@ const navigateToWorkspace = () => {
                                     </NSpace>
                                 </NTag>
                             </NGi>
-                            <NGi>
-                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl !py-3" type="primary" round>
-                                    <NSpace vertical align="center" :size="4">
-                                        <span>Код диагноза</span>
-                                        <span class="!text-2xl">
-                                            {{ patientResult.patient.diagnosis.code }}
-                                        </span>
-                                    </NSpace>
-                                </NTag>
-                            </NGi>
+<!--                            <NGi>-->
+<!--                                <NTag class="!w-full !h-full flex items-center justify-center !rounded-3xl !py-3" type="primary" round>-->
+<!--                                    <NSpace vertical align="center" :size="4">-->
+<!--                                        <span>Код диагноза</span>-->
+<!--                                        <span class="!text-2xl">-->
+<!--                                            {{ patientResult.patient.diagnosis.code }}-->
+<!--                                        </span>-->
+<!--                                    </NSpace>-->
+<!--                                </NTag>-->
+<!--                            </NGi>-->
                         </NGrid>
                     </NCard>
 

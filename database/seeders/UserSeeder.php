@@ -20,8 +20,9 @@ class UserSeeder extends Seeder
         User::truncate();
 
         $users = [
-            [ 'name' => 'Отдел АСУиТТ', 'email' => 'asu@amurokb.ru', 'login' => 'admin', 'password' => Hash::make('asu'), 'role_id' => 1 ],
-            [ 'name' => 'Каргополов А.И.', 'email' => 'kargopolov@amurokb.ru', 'login' => 'демоврач', 'password' => Hash::make('asu'), 'role_id' => 2 ],
+            [ 'name' => 'Отдел АСУиТТ', 'email' => 'asu@amurokb.ru', 'login' => 'admin', 'password' => Hash::make('tcCyA96ex7;4n%hR'), 'role_id' => 1 ],
+            [ 'name' => 'Каргополов А.И.', 'email' => 'kargopolov@amurokb.ru', 'login' => 'демоврач', 'password' => Hash::make('V6K7ydv*&3uEbgDM'), 'role_id' => 2 ],
+            [ 'name' => 'Каргополов А.И.', 'email' => 'kargopolov@amurokb.ru', 'login' => 'oks', 'password' => Hash::make('dw8W9RNj$;UCKEsM'), 'role_id' => 2 ],
         ];
 
         $departments = Department::all();
