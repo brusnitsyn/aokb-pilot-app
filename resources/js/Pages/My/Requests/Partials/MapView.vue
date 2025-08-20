@@ -10,10 +10,13 @@ import {
 } from "vue-yandex-maps";
 import {NButton, NDropdown, NFlex, NIcon, NTag, NTime} from "naive-ui";
 import {usePage} from "@inertiajs/vue3";
+import {usePagination} from "@/Composables/usePagination.js";
+import {useDebounceFn} from "@vueuse/core";
 
 const props = defineProps({
     extendedMenuOptions: Array
 })
+const emits = defineEmits(['handleScroll'])
 const results = defineModel('results')
 const pageProps = usePage().props
 
@@ -58,6 +61,12 @@ const onShowRequest = (patientResult) => {
     result.isActive = true
 }
 
+// Обработчик скролла
+const handleScroll = (e) => {
+    emits('handleScroll', e)
+}
+const debounceHandleScroll = useDebounceFn(handleScroll, 300)
+
 const onResetRequest = () => {
     hasShowRequest.value = false
     mapSettings.value.location.center = [127.366460, 52.586606]
@@ -69,104 +78,41 @@ const onResetRequest = () => {
 <template>
     <NGrid cols="8" x-gap="16" class="min-h-[calc(100vh-226px)] max-h-[calc(100vh-226px)] overflow-hidden">
         <NGi span="2">
-            <div class="bg-white rounded-3xl border shadow-sm min-h-[calc(100vh-226px)] max-h-[calc(100vh-226px)] overflow-hidden">
-                <NTabs type="segment" animated>
-                    <NTabPane name="my-requests" tab="Запросы из МО">
-                        <NSpace vertical>
-                            <NFlex class="pt-2 pb-2 px-4">
-                                <NInput round size="large" />
-                            </NFlex>
-                            <NScrollbar class="min-h-[calc(100vh-360px)] max-h-[calc(100vh-360px)]">
-                                <NList hoverable>
-                                    <NListItem v-for="patientResult in results"
-                                               class="relative"
-                                               @click="onShowRequest(patientResult)">
-                                        <div v-show="patientResult.isActive"
-                                             class="absolute left-0 inset-y-0 w-1 bg-orange-500 rounded-r-3xl" />
-                                        <NSpace vertical>
-                                            <NSpace vertical :size="2">
-                                                <NFlex align="center" justify="space-between">
-                                                    <NSpace align="center">
-                                                        <NTag v-if="patientResult.isNew" round size="small" type="info">
-                                                            НОВЫЙ
-                                                        </NTag>
-                                                        <NTag round size="small" :type="patientResult.status.type ?? 'default'">
-                                                            {{ patientResult.status.name }}
-                                                        </NTag>
-                                                        <span class="font-medium">
-                                                            Запрос №{{ patientResult.patient.number }}
-                                                        </span>
-                                                    </NSpace>
-                                                    <NDropdown placement="bottom-end"
-                                                               trigger="click"
-                                                               :options="extendedMenuOptions" @select="(key, option) => option.onClick(patientResult)">
-                                                        <NButton text class="text-xl">
-                                                            <NIcon :component="IconDots" />
-                                                        </NButton>
-                                                    </NDropdown>
-                                                </NFlex>
-                                            </NSpace>
+            <div class="bg-white py-6 rounded-3xl border shadow-sm min-h-[calc(100vh-226px)] max-h-[calc(100vh-450px)] overflow-hidden">
+                <NScrollbar class="min-h-[calc(100vh-298px)] max-h-[calc(100vh-280px)]" @scroll="debounceHandleScroll">
+                    <NList hoverable>
+                        <NListItem v-for="patientResult in results"
+                                   class="relative"
+                                   @click="onShowRequest(patientResult)">
+                            <div v-show="patientResult.isActive"
+                                 class="absolute left-0 inset-y-0 w-1 bg-orange-500 rounded-r-3xl" />
+                            <NSpace vertical>
+                                <NSpace vertical :size="2">
+                                    <NFlex align="center" justify="space-between">
+                                        <NSpace vertical :size="0">
+                                            <NTag v-if="patientResult.isNew" round size="small" type="info">
+                                                НОВЫЙ
+                                            </NTag>
+                                            <NTag round size="small" :type="patientResult.status.type ?? 'default'">
+                                                {{ patientResult.status.name }}
+                                            </NTag>
+                                            <span class="font-medium">
+                                                Запрос №{{ patientResult.patient.number }}
+                                            </span>
                                         </NSpace>
-                                    </NListItem>
-                                </NList>
-                            </NScrollbar>
-                        </NSpace>
-                    </NTabPane>
-                    <NTabPane :disabled="!pageProps.auth.user.department.is_received" name="sender-requests">
-                        <template #tab>
-                            <NFlex align="center" size="small">
-                                Запросы в МО
-                                <NPopover v-if="!pageProps.auth.user.department.is_received">
-                                    <template #trigger>
-                                        <div class="flex items-center justify-center cursor-help">
-                                            <NIcon :component="IconLock" class="text-base" />
-                                        </div>
-                                    </template>
-                                    Ваша МО не является принимающей
-                                </NPopover>
-                            </NFlex>
-                        </template>
-                        <NSpace vertical>
-                            <NFlex class="pt-2 pb-2 px-4">
-                                <NInput round size="large" />
-                            </NFlex>
-                            <NScrollbar class="min-h-[calc(100vh-298px)] max-h-[calc(100vh-298px)]">
-                                <NList hoverable>
-                                    <NListItem v-for="patientResult in results"
-                                               class="relative"
-                                               @click="onShowRequest(patientResult)">
-                                        <div v-show="patientResult.isActive"
-                                             class="absolute left-0 inset-y-0 w-1 bg-orange-500 rounded-r-3xl" />
-                                        <NSpace vertical>
-                                            <NSpace vertical :size="2">
-                                                <NFlex align="center" justify="space-between">
-                                                    <NSpace align="center">
-                                                        <NTag v-if="patientResult.isNew" round size="small" type="info">
-                                                            НОВЫЙ
-                                                        </NTag>
-                                                        <NTag round size="small" :type="patientResult.status.type ?? 'default'">
-                                                            {{ patientResult.status.name }}
-                                                        </NTag>
-                                                        <span class="font-medium">
-                                                    Запрос №{{ patientResult.patient.number }}
-                                                </span>
-                                                    </NSpace>
-                                                    <NDropdown placement="bottom-end"
-                                                               trigger="click"
-                                                               :options="extendedMenuOptions" @select="(key, option) => option.onClick(patientResult)">
-                                                        <NButton text class="text-xl">
-                                                            <NIcon :component="IconDots" />
-                                                        </NButton>
-                                                    </NDropdown>
-                                                </NFlex>
-                                            </NSpace>
-                                        </NSpace>
-                                    </NListItem>
-                                </NList>
-                            </NScrollbar>
-                        </NSpace>
-                    </NTabPane>
-                </NTabs>
+                                        <NDropdown placement="bottom-end"
+                                                   trigger="click"
+                                                   :options="extendedMenuOptions" @select="(key, option) => option.onClick(patientResult)">
+                                            <NButton text class="text-xl">
+                                                <NIcon :component="IconDots" />
+                                            </NButton>
+                                        </NDropdown>
+                                    </NFlex>
+                                </NSpace>
+                            </NSpace>
+                        </NListItem>
+                    </NList>
+                </NScrollbar>
             </div>
 
         </NGi>
@@ -241,6 +187,23 @@ const onResetRequest = () => {
 </template>
 
 <style scoped>
+.center-marker {
+    width: 28px;
+    height: 28px;
+    background-color: #EC6608;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(236, 102, 8, 0.5);
+    transform: translate(-50%, -50%);
+}
+.cluster {
+    @apply w-10 h-10 text-white font-medium flex items-center justify-center;
+    background-color: #EC6608;
+    border: 3px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(236, 102, 8, 0.5);
+}
+
 :deep(.n-tabs-rail) {
     @apply !rounded-3xl;
 }

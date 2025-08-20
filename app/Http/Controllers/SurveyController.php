@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\PatientResultCreated;
+use App\Facades\Patient as PatientFacade;
 use App\Models\Answer;
 use App\Models\Department;
 use App\Models\DepartmentAnswer;
@@ -16,6 +17,7 @@ use App\Models\Question;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class SurveyController extends Controller
@@ -163,6 +165,17 @@ class SurveyController extends Controller
             ]
         );
 
+        $fromDepartment = auth()->user()->myDepartment()->id;
+        $fromCoords = $fromDepartment === 30 ? json_decode(Cookie::get('lastCoords')) : Department::find($fromDepartment)->coords;
+        $toCoords = Department::find($medicalOrganizationId)->coords;
+
+        $distance = PatientFacade::calculateDistance(
+            $fromCoords[0],
+            $fromCoords[1],
+            $toCoords[0],
+            $toCoords[1],
+        );
+
         // Сохранение результата
         $patientResult = PatientResult::create([
             'patient_id' => $patient->id,
@@ -178,7 +191,8 @@ class SurveyController extends Controller
             'department_responses' => $organizationResponses,
             'scenario_id' => $scenarioId,
             'scenario_score' => $scenarioScore,
-            'user_id' => auth()->id()
+            'user_id' => auth()->id(),
+            'distance' => $distance,
         ]);
 
         Cookie::queue(Cookie::forget('myDepartment'));

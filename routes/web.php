@@ -50,4 +50,15 @@ Route::middleware([
         Route::post('/requests/update', [\App\Http\Controllers\MyController::class, 'update'])
             ->name('my.request.update');
     });
+
+    Route::prefix('ai')->group(function () {
+        Route::get('/generate', [\App\Http\Controllers\Ai\GigaChatController::class, 'generate']);
+        Route::get('/resume', [\App\Http\Controllers\Ai\GigaChatController::class, 'resumePatient'])->name('ai.resume');
+    });
+
+    Route::prefix('calculate')->group(function () {
+        Route::prefix('evacuation')->group(function () {
+            Route::get('/route', [\App\Http\Controllers\CalculateController::class, 'calculateEvacuation']);
+        });
+    });
 });

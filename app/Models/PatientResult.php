@@ -27,7 +27,8 @@ class PatientResult extends Model
         'status_id',
         'user_id',
         'last_status_at',
-        'status_changed_at'
+        'status_changed_at',
+        'distance'
     ];
 
     public function sender_department(): \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -63,6 +64,72 @@ class PatientResult extends Model
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getQuestionsWithAnswers()
+    {
+        // Декодируем JSON из БД
+        $questionAnswerPairs = $this->patient_responses->toArray();
+
+        // Получаем ID вопросов и ответов
+        $questionIds = array_keys($questionAnswerPairs);
+        $answerIds = array_values($questionAnswerPairs);
+
+        // Загружаем вопросы и ответы одним запросом (оптимизация)
+        $questions = Question::whereIn('id', $questionIds)->pluck('text', 'id');
+        $answers = Answer::whereIn('id', $answerIds)->pluck('text', 'id');
+
+        // Собираем результат: [ "Текст вопроса" => "Текст ответа" ]
+        $result = [];
+        foreach ($questionAnswerPairs as $questionId => $answerId) {
+            $questionText = $questions[$questionId] ?? 'Вопрос не найден';
+            $answerText = $answers[$answerId] ?? 'Ответ не найден';
+            $result[$questionText] = $answerText;
+        }
+
+        return $result;
+    }
+
+    public function getQuestionsWithAnswersDepartment()
+    {
+        // Декодируем JSON из БД
+        $questionAnswerPairs = $this->department_responses->toArray();
+
+        // Получаем ID вопросов и ответов
+        $questionIds = [];
+        $answerIds = [];
+
+        foreach ($questionAnswerPairs as $questionId => $answerIdOrArray) {
+            $questionIds[] = $questionId;
+
+            if (is_array($answerIdOrArray)) {
+                $answerIds = array_merge($answerIds, $answerIdOrArray);
+            } else {
+                $answerIds[] = $answerIdOrArray;
+            }
+        }
+
+        // Загружаем вопросы и ответы одним запросом (оптимизация)
+        $questions = DepartmentQuestion::whereIn('id', $questionIds)->pluck('text', 'id');
+        $answers = DepartmentAnswer::whereIn('id', $answerIds)->pluck('text', 'id');
+
+        // Собираем результат: [ "Текст вопроса" => "Текст ответа" ]
+        $result = [];
+        foreach ($questionAnswerPairs as $questionId => $answerIdOrArray) {
+            $questionText = $questions[$questionId] ?? 'Вопрос не найден';
+
+            if (is_array($answerIdOrArray)) {
+                $answerTexts = [];
+                foreach ($answerIdOrArray as $answerId) {
+                    $answerTexts[] = $answers[$answerId] ?? 'Ответ не найден';
+                }
+                $result[$questionText] = implode(', ', $answerTexts);
+            } else {
+                $result[$questionText] = $answers[$answerIdOrArray] ?? 'Ответ не найден';
+            }
+        }
+
+        return $result;
     }
 
     protected function casts(): array

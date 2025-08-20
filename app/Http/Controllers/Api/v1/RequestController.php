@@ -1,22 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\v1;
 
-use App\Facades\Weather;
+use App\Http\Controllers\Controller;
 use App\Models\PatientResult;
 use App\Models\UserDepartment;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
-use Inertia\Inertia;
 
-class MyController extends Controller
+class RequestController extends Controller
 {
-    public function requests(Request $request)
+    public function index()
     {
-        $department = json_decode($request->cookie('activeDepartment'));
-
         $userDepartments = UserDepartment::where('user_id', auth()->user()->id)
             ->get()
             ->map(function ($item) {
@@ -39,16 +36,18 @@ class MyController extends Controller
         $patients->map(function ($patient) {
             if ($patient->from_department_id !== 30)
                 $patient->coords = $patient->sender_department->coords;
-
-//            $weather = Weather::weatherCachedByCoordinate($patient->coords[1], $patient->coords[0]);
-//            $patient->weather = $weather;
         });
 
         $patients = $this->paginate($patients);
 
-        return Inertia::render('My/Requests/Show', [
-            'patients' => [...$patients->items()],
-            'lastPage' => $patients->lastPage(),
+        return response()->json([
+            'data' => array_values($patients->items()),
+            'meta' => [
+                'current_page' => $patients->currentPage(),
+                'last_page' => $patients->lastPage(),
+                'per_page' => $patients->perPage(),
+                'total' => $patients->total(),
+            ]
         ]);
     }
 
@@ -57,18 +56,5 @@ class MyController extends Controller
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
         $items = $items instanceof Collection ? $items : Collection::make($items);
         return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
-    }
-
-    public function update(Request $request)
-    {
-        $patientResultId = $request->input('patient_result_id');
-
-        $patientResult = PatientResult::find($patientResultId);
-
-        $patientResult->update([
-            'status_id' => 2
-        ]);
-
-        return redirect(route('my.request'));
     }
 }

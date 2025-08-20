@@ -162,12 +162,6 @@ const onAttachPoint = (attach) => {
             <div class="!text-base">
                 Локация для транспортировки
             </div>
-<!--            <div v-if="department_id === 30" class="!text-base">-->
-<!--                Транспортировка будет осуществлена по координатам-->
-<!--            </div>-->
-<!--            <div v-else class="!text-base">-->
-<!--                Транспортировка будет осуществлена из «{{ department.name }}»-->
-<!--            </div>-->
         </template>
         <NSpace vertical :size="24">
             <NForm ref="formRef" model="" @submit.prevent="onSubmit">
@@ -200,24 +194,25 @@ const onAttachPoint = (attach) => {
                             </NEl>
                         </NGi>
                     </NGrid>
-<!--                    <NRadioGroup v-model:value="department_id" class="flex flex-row gap-x-2 items-center justify-center w-full">-->
-<!--                        <NRadioButton :value="departmentId" label="Да" />-->
-<!--                        <NRadioButton :value="30" label="Нет" />-->
-<!--                    </NRadioGroup>-->
                 </NFormItemGi>
                 <Motion v-if="department_id === 30"
                         :initial="{ opacity: 0 }"
                         :animate="{ opacity: 1 }"
                         :exit="{ opacity: 0 }">
-                    <NFormItem label="Точка эвакуации" :rule="rules.coords" :feedback="hasAttachedPoint ? 'Если вы хотите изменить точку, то нажмите на Открепить точку' : 'Укажите местоположение и нажмите на Закрепить точку'">
+                    <NFormItem label="Точка эвакуации"
+                               :rule="rules.coords"
+                               :feedback="hasAttachedPoint ? 'Если вы хотите изменить точку, то нажмите на Открепить точку' : 'Укажите местоположение и нажмите на Закрепить точку'">
+                        <!-- Главный компонент для отображения карты -->
                         <YandexMap v-model="map"
                                    :cursor-grab="mapSettings.behaviors.includes('drag')"
                                    :settings="mapSettings"
                                    class="rounded-3xl overflow-clip border"
                                    width="100%" height="500px">
+                            <!-- Стандартные слои -->
                             <YandexMapDefaultSchemeLayer />
                             <YandexMapDefaultFeaturesLayer />
 
+                            <!-- Маркер с текущей локацией пользователя -->
                             <YandexMapDefaultMarker v-if="userLocation" :settings="userLocation" />
 
                             <!-- Центрированный маркер -->
@@ -228,14 +223,17 @@ const onAttachPoint = (attach) => {
                                 <div class="center-marker"></div>
                             </YandexMapMarker>
 
+                            <!-- Контроллер с отображением ширины и долготы -->
                             <YandexMapControls :settings="{ position: 'top left' }">
                                 <YandexMapEntity>
                                     <div class="coordinates-display">
-                                        Ш: {{ centerCoordinates.coordinates[1]?.toFixed(4) }}, Д: {{ centerCoordinates.coordinates[0]?.toFixed(4) }}
+                                        Ш: {{ centerCoordinates.coordinates[1]?.toFixed(4) }},
+                                        Д: {{ centerCoordinates.coordinates[0]?.toFixed(4) }}
                                     </div>
                                 </YandexMapEntity>
                             </YandexMapControls>
 
+                            <!-- Контроллер кнопки Закрепить/Открепить точку -->
                             <YandexMapControls :settings="{ position: 'bottom left' }">
                                 <YandexMapEntity v-if="!hasAttachedPoint">
                                     <button class="coordinates-display-button" @click="onAttachPoint(true)">
@@ -249,10 +247,12 @@ const onAttachPoint = (attach) => {
                                 </YandexMapEntity>
                             </YandexMapControls>
 
+                            <!-- Контроллер кнопки Мое местоположение -->
                             <YandexMapControls :settings="{ position: 'left' }">
                                 <YandexMapGeolocationControl v-if="!hasAttachedPoint" />
                             </YandexMapControls>
 
+                            <!-- Слушатель событий карты (скролл, зум и т.д.) -->
                             <YandexMapListener :settings="{
                                 onUpdate: updateCenterMap
                             }" />

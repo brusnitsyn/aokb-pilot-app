@@ -19,4 +19,12 @@ Route::prefix('v1')->group(function () {
                ->name('api.requests.statuses');
        });
     });
+
+    Route::prefix('my')->group(function () {
+        Route::middleware([
+            'auth:sanctum',
+            'web',
+            config('jetstream.auth_session'),
+        ])->get('requests', [\App\Http\Controllers\Api\v1\RequestController::class, 'index'])->name('api.my.requests');
+    });
 });

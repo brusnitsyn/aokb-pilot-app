@@ -4,29 +4,36 @@ import {
     IconDots,
     IconExternalLink,
     IconHome,
-    IconInfoCircle,
+    IconInfoCircle, IconLock,
     IconMap, IconMap2,
     IconMapPin, IconTable,
     IconTag,
     IconTrash
 } from "@tabler/icons-vue";
 import {Link, router, usePage} from "@inertiajs/vue3";
-import {NButton, NDropdown, NFlex, NIcon, NTag, NPopover, NTime, NEllipsis, NTooltip, NCountdown} from "naive-ui";
-import {useLocalStorage, useNow} from "@vueuse/core";
-import {fetchUserLocation, renderIcon, renderTime} from "@/Utils/helper.js";
-import {Motion} from 'motion-v'
 import {
-    YandexMap,
-    YandexMapClusterer, YandexMapControls,
-    YandexMapDefaultFeaturesLayer, YandexMapDefaultSatelliteLayer,
-    YandexMapDefaultSchemeLayer, YandexMapEntity, YandexMapGeolocationControl,
-    YandexMapMarker
-} from "vue-yandex-maps";
+    NButton,
+    NDropdown,
+    NFlex,
+    NIcon,
+    NTag,
+    NPopover,
+    NTime,
+    NEllipsis,
+    NTooltip,
+    NCountdown,
+    NInput
+} from "naive-ui";
+import {useDebounceFn, useLocalStorage, useNow} from "@vueuse/core";
+import {fetchUserLocation, renderIcon, renderTime} from "@/Utils/helper.js";
 import ChangeRequestStatusModal from "@/Components/Request/ChangeRequestStatusModal.vue";
 import AppBackButton from "@/Components/App/AppBackButton.vue";
 import MapView from "@/Pages/My/Requests/Partials/MapView.vue";
+import {usePagination} from "@/Composables/usePagination.js";
+
 const props = defineProps({
-    patients: Array
+    patients: Array,
+    lastPage: Number
 })
 const pageProps = usePage().props
 
@@ -97,6 +104,12 @@ const columns = [
         title: '№ запроса',
         key: 'patient.number',
         width: 100
+        // title: () => h(CustomHeader, {
+        //     title: '№ запроса',
+        //     filter: nameFilter.value,
+        //     onUpdateFilter: (val) => { nameFilter.value = val }
+        // }),
+        // key: 'patient.number'
     },
     {
         title: 'Дата поступления запроса',
@@ -354,40 +367,16 @@ const columns = [
         }
     }
 ]
-
-const results = ref([...props.patients.map(item => {
+const fetchedResults = ref([...props.patients])
+const results = computed(() => [...fetchedResults.value.map(item => {
     return {
         ...item,
         isNew: false,
         isActive: false
     }
 })])
-const map = shallowRef()
-const mapSettings = ref({
-    location: {
-        center: [
-            127.366460, 52.586606
-        ],
-        zoom: 7
-    },
-    zoomStrategy: 'zoomToCenter',
-    behaviors: [
-        'dblClick',
-        'drag',
-        'scrollZoom',
-        'mouseRotate',
-        'mouseTilt',
-        'magnifier',
-        'oneFingerZoom',
-        'panTilt',
-        'pinchRotate',
-        'pinchZoom'
-    ],
-})
 const previewMode = useLocalStorage('previewMode', 'table')
-const hasShowRequest = ref(false)
-const showedRequest = ref(null)
-const hasShowSatelliteLayer = ref(false)
+const currentTab = useLocalStorage('currentTab', 'out')
 const hasShowMapPreview = computed(() => previewMode.value === 'map')
 const shouldShowTimerColumn = computed(() => results.value.some(item => item.status_id !== 1))
 
@@ -398,38 +387,49 @@ const onChangePreviewMode = () => {
         previewMode.value = 'table'
 }
 
-const onShowRequest = (patientResult) => {
-    hasShowRequest.value = true
-    mapSettings.value.location.center = patientResult.coords
-    mapSettings.value.location.zoom = 16
-    showedRequest.value = patientResult
+// const onShowRequest = (patientResult) => {
+//     hasShowRequest.value = true
+//     mapSettings.value.location.center = patientResult.coords
+//     mapSettings.value.location.zoom = 16
+//     showedRequest.value = patientResult
+//
+//     results.value = results.value.map(item => {
+//         return {
+//             ...item,
+//             isActive: false
+//         }
+//     })
+//     const result = results.value.find(item => item.id === patientResult.id)
+//     result.isActive = true
+// }
 
-    results.value = results.value.map(item => {
-        return {
-            ...item,
-            isActive: false
-        }
-    })
-    const result = results.value.find(item => item.id === patientResult.id)
-    result.isActive = true
+const currentPage = ref(2)
+const loadingMore = ref(false)
+
+const loadMoreData = async () => {
+    if (loadingMore.value) return
+
+    const {items, loadMore, currentPage: page} = usePagination('api.my.requests')
+    await loadMore(currentPage.value)
+    currentPage.value = page.value
+    fetchedResults.value = [...fetchedResults.value, ...items.value]
 }
 
-const onResetRequest = () => {
-    hasShowRequest.value = false
-    mapSettings.value.location.center = [127.366460, 52.586606]
-    mapSettings.value.location.zoom = 7
-    showedRequest.value = null
-}
+// Обработчик скролла
+const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target
+    const scrollPosition = scrollHeight - (scrollTop + clientHeight)
 
-const onChangeLayer = () => {
-    if (hasShowSatelliteLayer.value) {
-        hasShowSatelliteLayer.value = false
-    } else {
-        hasShowSatelliteLayer.value = true
+    if (props.lastPage < currentPage.value) return
+    if (scrollPosition < 200 && !loadingMore.value) {
+        loadMoreData()
     }
 }
 
+const debounceHandleScroll = useDebounceFn(handleScroll, 300)
+
 onMounted(() => {
+    // WebSockets
     window.Echo.private(`${import.meta.env.VITE_REVERB_APP}.department.${pageProps.auth.user.department.id}`)
         .listen('PatientResultCreated', (data) => {
             const result = {
@@ -449,6 +449,8 @@ onMounted(() => {
             const patientResultIndex = results.value.findIndex((item) => item.id === data.id)
             results.value[patientResultIndex] = result
         })
+
+
 })
 </script>
 
@@ -465,6 +467,26 @@ onMounted(() => {
                             Вернуться на рабочую область
                         </NButton>
                     </Link>
+                    <NTabs v-model:value="currentTab" type="segment" pane-wrapper-class="hidden" class="w-[280px]" animated>
+                        <NTabPane name="out" tab="Запросы из МО">
+
+                        </NTabPane>
+                        <NTabPane :disabled="!pageProps.auth.user.department.is_received" name="in" tab="Запросы в МО">
+                            <template #tab>
+                                <NFlex align="center" size="small">
+                                    Запросы в МО
+                                    <NPopover v-if="!pageProps.auth.user.department.is_received">
+                                        <template #trigger>
+                                            <div class="flex items-center justify-center cursor-help">
+                                                <NIcon :component="IconLock" class="text-base" />
+                                            </div>
+                                        </template>
+                                        Ваша МО не является принимающей
+                                    </NPopover>
+                                </NFlex>
+                            </template>
+                        </NTabPane>
+                    </NTabs>
                 </NSpace>
                 <NButton secondary round @click="onChangePreviewMode">
                     <template #icon>
@@ -474,33 +496,37 @@ onMounted(() => {
                     {{ !hasShowMapPreview ? 'Карта' : 'Таблица' }}
                 </NButton>
             </NFlex>
-            <NDataTable v-if="!hasShowMapPreview"
-                        max-height="calc(100vh - 298px)"
-                        min-height="calc(100vh - 298px)"
-                        :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')"
-                        :data="results" />
-            <MapView v-else v-model:results="results" :extended-menu-options="rowOptions" />
+
+            <template v-if="!hasShowMapPreview">
+                <NDataTable v-if="currentTab === 'out'"
+                            max-height="calc(100vh - 298px)"
+                            @scroll="debounceHandleScroll"
+                            min-height="calc(100vh - 298px)"
+                            :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')"
+                            :data="results" />
+
+                <NDataTable v-else
+                            max-height="calc(100vh - 298px)"
+                            @scroll="debounceHandleScroll"
+                            min-height="calc(100vh - 298px)"
+                            :columns="shouldShowTimerColumn ? columns : columns.filter(c => c.key !== 'countdown')"
+                            :data="results" />
+            </template>
+
+            <template v-else>
+                <MapView v-model:results="results" :extended-menu-options="rowOptions" @handle-scroll="handleScroll" />
+            </template>
+
         </NFlex>
         <ChangeRequestStatusModal v-model:show="hasShowChangeRequestStatusModal" :patient-result="currentPatientResult" />
     </AppLayout>
 </template>
 
-<style>
-.center-marker {
-    width: 28px;
-    height: 28px;
-    background-color: #EC6608;
-    border: 3px solid white;
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(236, 102, 8, 0.5);
-    transform: translate(-50%, -50%);
+<style scoped>
+:deep(.n-tabs-rail) {
+    @apply !rounded-3xl;
 }
-
-.cluster {
-    @apply w-10 h-10 text-white font-medium flex items-center justify-center;
-    background-color: #EC6608;
-    border: 3px solid white;
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(236, 102, 8, 0.5);
+:deep(.n-tabs-capsule) {
+    @apply !rounded-3xl;
 }
 </style>

@@ -38,6 +38,11 @@ class Patient extends Model
         'snils',
     ];
 
+    public function results()
+    {
+        return $this->hasMany(PatientResult::class);
+    }
+
     public function diagnosis()
     {
         return $this->belongsTo(Diagnosis::class);

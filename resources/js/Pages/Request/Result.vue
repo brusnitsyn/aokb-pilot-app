@@ -1,9 +1,10 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import {IconCheck, IconInfoCircleFilled, IconListDetails} from "@tabler/icons-vue";
+import {IconBlockquote, IconCheck, IconInfoCircleFilled, IconListDetails} from "@tabler/icons-vue";
 import {NButton, NIcon, NTag} from "naive-ui";
 import {Link, router, usePage} from "@inertiajs/vue3";
 import SelectedParams from "@/Components/Result/SelectedParams.vue";
+import GenerateReport from "@/Pages/Request/Partials/Result/GenerateReport.vue";
 
 const props = defineProps({
     totalScore: [String, Number],
@@ -72,6 +73,7 @@ const navigateToWorkspace = () => {
     else
         router.visit(route('my.request'))
 }
+const isShowReport = ref(false)
 </script>
 
 <template>
@@ -154,12 +156,20 @@ const navigateToWorkspace = () => {
                         <NButton @click="navigateToWorkspace"
                                  secondary
                                  round
-                                 size="large"
-                                 block>
+                                 size="large">
                             <template #icon>
                                 <NIcon :component="IconListDetails" />
                             </template>
                             Перейти к запросам МО
+                        </NButton>
+                        <NButton @click="isShowReport = true"
+                                 secondary
+                                 round
+                                 size="large">
+                            <template #icon>
+                                <NIcon :component="IconBlockquote" />
+                            </template>
+                            Резюмировать
                         </NButton>
                     </NButtonGroup>
 
@@ -248,54 +258,57 @@ const navigateToWorkspace = () => {
             </NGi>
 
             <NGi>
-                <NCard class="!rounded-3xl drop-shadow-sm">
-                    <template #header>
-                        <div class="uppercase flex flex-row justify-center">
-                            Параметры МО
-                        </div>
-                    </template>
-                    <NTabs type="segment" animated>
-                        <NTabPane name="responses" tab="Изменяемые">
-                            <NList>
-                                <NListItem v-for="response in responsesAnswers">
-                                    <NFlex v-if="Array.isArray(response.answer)" justify="space-between" align="center">
-                                        <div>
-                                            {{ response.question.text }}
-                                        </div>
-                                        <NFlex wrap size="small">
-                                            <SelectedParams :max="2" :params="response.answer" />
+                <NSpace vertical :size="32">
+                    <NCard class="!rounded-3xl drop-shadow-sm">
+                        <template #header>
+                            <div class="uppercase flex flex-row justify-center">
+                                Параметры МО
+                            </div>
+                        </template>
+                        <NTabs type="segment" animated>
+                            <NTabPane name="responses" tab="Изменяемые">
+                                <NList>
+                                    <NListItem v-for="response in responsesAnswers">
+                                        <NFlex v-if="Array.isArray(response.answer)" justify="space-between" align="center">
+                                            <div>
+                                                {{ response.question.text }}
+                                            </div>
+                                            <NFlex wrap size="small">
+                                                <SelectedParams :max="2" :params="response.answer" />
+                                            </NFlex>
                                         </NFlex>
-                                    </NFlex>
-                                    <NFlex v-else justify="space-between" align="center">
-                                        <div>
-                                            {{ response.question.text }}
-                                        </div>
-                                        <NTag round
-                                              type="primary">
-                                            {{ response.answer.text }}
-                                        </NTag>
-                                    </NFlex>
-                                </NListItem>
-                            </NList>
-                        </NTabPane>
-                        <NTabPane name="params" tab="Неизменяемые">
-                            <NList v-if="patientResult.from_department.params.length > 0">
-                                <NListItem v-for="param in patientResult.from_department.params">
-                                    <NFlex justify="space-between" align="center">
-                                        <div>
-                                            {{ param.param.name }}
-                                        </div>
-                                        <NTag round
-                                              type="primary">
-                                            {{ param.param_value.value_name }}
-                                        </NTag>
-                                    </NFlex>
-                                </NListItem>
-                            </NList>
-                            <NEmpty v-else />
-                        </NTabPane>
-                    </NTabs>
-                </NCard>
+                                        <NFlex v-else justify="space-between" align="center">
+                                            <div>
+                                                {{ response.question.text }}
+                                            </div>
+                                            <NTag round
+                                                  type="primary">
+                                                {{ response.answer.text }}
+                                            </NTag>
+                                        </NFlex>
+                                    </NListItem>
+                                </NList>
+                            </NTabPane>
+                            <NTabPane name="params" tab="Неизменяемые">
+                                <NList v-if="patientResult.from_department.params.length > 0">
+                                    <NListItem v-for="param in patientResult.from_department.params">
+                                        <NFlex justify="space-between" align="center">
+                                            <div>
+                                                {{ param.param.name }}
+                                            </div>
+                                            <NTag round
+                                                  type="primary">
+                                                {{ param.param_value.value_name }}
+                                            </NTag>
+                                        </NFlex>
+                                    </NListItem>
+                                </NList>
+                                <NEmpty v-else />
+                            </NTabPane>
+                        </NTabs>
+                    </NCard>
+                    <GenerateReport v-model:show="isShowReport" />
+                </NSpace>
             </NGi>
         </NGrid>
     </AppLayout>
