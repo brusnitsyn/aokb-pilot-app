@@ -251,6 +251,7 @@ $departmentInfo
 
         $appToken = config('gigachat.token');
         $promise = Http::async()
+            ->timeout(300)
             ->withHeaders([
                 'Content-Type' => 'application/x-www-form-urlencoded',
                 'Accept' => 'application/json',
