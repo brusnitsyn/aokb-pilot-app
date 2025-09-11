@@ -29,6 +29,13 @@ class DepartmentParam extends Model
         return $this->belongsTo(ParamValue::class, 'param_value_id');
     }
 
+    public function toParameterValueArray(): array
+    {
+        return [
+            $this->param->name => $this->paramValue->value_name // "{$this->paramValue->value_name} (+{$this->paramValue->score})"
+        ];
+    }
+
     protected function casts(): array
     {
         return [

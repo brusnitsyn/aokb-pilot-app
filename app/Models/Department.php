@@ -33,6 +33,13 @@ class Department extends Model
         return $this->hasMany(DepartmentParam::class, 'department_id', 'id');
     }
 
+    public function paramsMapping()
+    {
+        return $this->params->mapWithKeys(function ($param) {
+            return [$param->param->name => $param->paramValue->value_name];
+        })->toArray();
+    }
+
     protected function casts(): array
     {
         return [
