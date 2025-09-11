@@ -47,6 +47,9 @@ Route::middleware([
         Route::get('/requests', [\App\Http\Controllers\MyController::class, 'requests'])
             ->name('my.request');
 
+        Route::get('/export', [\App\Http\Controllers\MyController::class, 'export'])
+            ->name('my.export');
+
         Route::post('/requests/update', [\App\Http\Controllers\MyController::class, 'update'])
             ->name('my.request.update');
     });

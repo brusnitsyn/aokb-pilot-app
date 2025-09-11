@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AllDataExport;
 use App\Facades\Weather;
 use App\Models\PatientResult;
 use App\Models\UserDepartment;
@@ -10,6 +11,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MyController extends Controller
 {
@@ -70,5 +72,10 @@ class MyController extends Controller
         ]);
 
         return redirect(route('my.request'));
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new AllDataExport(), 'Регистр пилот.xlsx');
     }
 }

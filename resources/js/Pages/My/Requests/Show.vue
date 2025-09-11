@@ -2,7 +2,7 @@
 import AppLayout from "@/Layouts/AppLayout.vue";
 import {
     IconDots,
-    IconExternalLink,
+    IconExternalLink, IconFileExcel,
     IconHome,
     IconInfoCircle, IconLock,
     IconMap, IconMap2,
@@ -488,13 +488,21 @@ onMounted(() => {
                         </NTabPane>
                     </NTabs>
                 </NSpace>
-                <NButton secondary round @click="onChangePreviewMode">
-                    <template #icon>
-                        <NIcon v-if="!hasShowMapPreview" :component="IconMap2" />
-                        <NIcon v-else :component="IconTable" />
-                    </template>
-                    {{ !hasShowMapPreview ? 'Карта' : 'Таблица' }}
-                </NButton>
+                <NButtonGroup>
+                    <NButton tag="a" :href="route('my.export', {}, true)" target="_blank" secondary round>
+                        <template #icon>
+                            <NIcon :component="IconFileExcel" />
+                        </template>
+                        Экспорт в Excel
+                    </NButton>
+                    <NButton secondary round @click="onChangePreviewMode">
+                        <template #icon>
+                            <NIcon v-if="!hasShowMapPreview" :component="IconMap2" />
+                            <NIcon v-else :component="IconTable" />
+                        </template>
+                        {{ !hasShowMapPreview ? 'Карта' : 'Таблица' }}
+                    </NButton>
+                </NButtonGroup>
             </NFlex>
 
             <template v-if="!hasShowMapPreview">
