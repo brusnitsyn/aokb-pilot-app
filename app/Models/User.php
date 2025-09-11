@@ -80,7 +80,7 @@ class User extends Authenticatable
             : Cookie::get('senderDepartment');
 
         if ($myDepartmentId === null && $this->role->slug === 'ROLE_ADMIN')
-            return null;
+            return $this->departments->first();
 
         if ($this->role->scopes->contains('name',  '=', config('permissions.HAS_CHANGE_DEPARTMENT')))
             return isset($myDepartmentId)
