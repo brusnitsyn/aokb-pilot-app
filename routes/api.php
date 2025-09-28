@@ -20,6 +20,17 @@ Route::prefix('v1')->group(function () {
        });
     });
 
+    Route::prefix('user')->group(function () {
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Api\v1\AuthController::class, 'user']);
+            Route::post('/logout', [\App\Http\Controllers\Api\v1\AuthController::class, 'logout']);
+        });
+    });
+
+    Route::prefix('auth')->group(function () {
+        Route::post('/login', [\App\Http\Controllers\Api\v1\AuthController::class, 'login']);
+    });
+
     Route::prefix('my')->group(function () {
         Route::middleware([
             'auth:sanctum',
