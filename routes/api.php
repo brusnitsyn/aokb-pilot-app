@@ -31,6 +31,10 @@ Route::prefix('v1')->group(function () {
         Route::post('/login', [\App\Http\Controllers\Api\v1\AuthController::class, 'login']);
     });
 
+    Route::prefix('survey')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\v1\SurveyController::class, 'show']);
+    });
+
     Route::prefix('my')->group(function () {
         Route::middleware([
             'auth:sanctum',
