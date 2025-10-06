@@ -18,6 +18,10 @@ Route::prefix('v1')->group(function () {
            Route::get('/', [\App\Http\Controllers\RequestController::class, 'statuses'])
                ->name('api.requests.statuses');
        });
+
+       Route::get('/', [\App\Http\Controllers\Api\v1\RequestController::class, 'index'])
+           ->middleware('auth:sanctum')
+           ->name('api.requests.index');
     });
 
     Route::prefix('user')->group(function () {
