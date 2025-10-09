@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Models\Answer;
+use App\Models\DepartmentQuestion;
+use App\Models\Patient;
 use App\Models\PatientResult;
+use App\Models\Question;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ResultController extends Controller
 {
@@ -18,19 +23,53 @@ class ResultController extends Controller
 
         $patientResult = PatientResult::find($patientResultId);
 
-        $patientResult = $patientResult->load([
-            'patient.diagnosis',
-            'scenario',
-            'status',
-            'sender_department',
+        $patient = $patientResult->patient;
+        $diagnosisGroupId = $patient->diagnosis->diagnosis_group_id;
+
+        $patientResult = PatientResult::with([
             'from_department',
             'to_department',
-            'user'
+            'scenario',
+            'patient.diagnosis',
+            'status',
+            'from_department.params' => function ($query) use ($diagnosisGroupId) {
+                $query->whereJsonContains('depends_diagnosis_group_ids', $diagnosisGroupId);
+            },
+            'from_department.params.param',
+            'from_department.params.paramValue' => function ($query) use ($diagnosisGroupId) {
+                $query->whereJsonContains('depends_diagnosis_group_ids', $diagnosisGroupId);
+            },
+        ])->where('patient_id', $patient->id)->first();
+
+        $departmentQuestions = DepartmentQuestion::with('answers.departments')
+            ->whereHas('dependsDiagnosisGroup', function ($query) use ($diagnosisGroupId) {
+                $query->where('diagnosis_group_id', $diagnosisGroupId);
+            })
+            ->get();
+
+        $questionResponses = $patientResult->patient_responses;
+
+        $patientQuestions = [];
+        foreach ($questionResponses as $questionId => $answerId) {
+            $question = Question::find($questionId);
+            $answer  = Answer::find($answerId);
+            $patientQuestions[] = ['question' => $question, 'answer' => $answer];
+        }
+
+//        return Inertia::render('Request/Result', [
+//            'totalScore' => $patientResult->total_score,
+//            'patientResult' => $patientResult,
+//            'departmentQuestions' => $departmentQuestions,
+//            'senderDepartment' => auth()->user()->departments->first(),
+//            'patientQuestions' => $patientQuestions,
+//        ]);
+
+        return response()->json([
+            'totalScore' => $patientResult->total_score,
+            'patientResult' => $patientResult,
+            'departmentQuestions' => $departmentQuestions,
+            'senderDepartment' => auth()->user()->departments->first(),
+            'patientQuestions' => $patientQuestions,
         ]);
-
-        $patientResult['patient_responses'] = $patientResult->getQuestionsWithAnswers();
-        $patientResult['department_responses'] = $patientResult->getQuestionsWithAnswersDepartment();
-
-        return response()->json($patientResult);
     }
 }
