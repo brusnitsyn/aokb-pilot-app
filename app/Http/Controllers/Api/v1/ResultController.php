@@ -28,6 +28,9 @@ class ResultController extends Controller
             'user'
         ]);
 
+        $patientResult['patient_responses'] = $patientResult->getQuestionsWithAnswers();
+        $patientResult['department_responses'] = $patientResult->getQuestionsWithAnswersDepartment();
+
         return response()->json($patientResult);
     }
 }
