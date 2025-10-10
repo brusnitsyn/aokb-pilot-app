@@ -72,4 +72,21 @@ class ResultController extends Controller
             'patientQuestions' => $patientQuestions,
         ]);
     }
+
+    public function updateStatus(Request $request)
+    {
+        $data = $request->validate([
+            'status_id' => 'required|exists:patient_result_statuses,id',
+            'patient_result_id' => 'required|exists:patient_results,id',
+        ], [
+            'status_id.required' => 'Установите новый статус',
+            'patient_result_id.required' => 'Укажите ИД результата для обновления статуса',
+        ]);
+
+        $patientResult = PatientResult::find($data['patient_result_id']);
+
+        $patientResult->update([
+            'status_id' => $data['status_id'],
+        ]);
+    }
 }

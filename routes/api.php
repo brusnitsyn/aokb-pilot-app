@@ -22,6 +22,8 @@ Route::prefix('v1')->group(function () {
        Route::prefix('result')->group(function () {
            Route::get('/', [\App\Http\Controllers\Api\v1\ResultController::class, 'show'])
                ->middleware('auth:sanctum');
+           Route::put('/status', [\App\Http\Controllers\Api\v1\ResultController::class, 'updateStatus'])
+               ->middleware('auth:sanctum');
        });
 
        Route::get('/', [\App\Http\Controllers\Api\v1\RequestController::class, 'index'])
