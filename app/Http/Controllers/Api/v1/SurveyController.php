@@ -24,15 +24,17 @@ class SurveyController extends Controller
     {
         $diagnosisGroups = DiagnosisGroup::with('diagnoses')->get();
         $diagnoses = Diagnosis::all(); // Получаем все диагнозы
-        $selectedDiagnosis = $request->get('select_diagnosis'); // Входит diagnosis_group_id и diagnosis_id
+        $selectedDiagnosisGroupId = $request->query('diagnosis_group_id'); // Входит diagnosis_group_id и diagnosis_id
+        $selectedDiagnosisId = $request->query('diagnosis_id'); // Входит diagnosis_group_id и diagnosis_id
 //        $myDepartmentId = json_decode(\request()->cookie('myDepartment'));
 
-        $selectedDiagnosisGroupId = isset($selectedDiagnosis->diagnosis_group_id)
-            ? DiagnosisGroup::find($selectedDiagnosis->diagnosis_group_id)->id
+        $selectedDiagnosisGroupId = isset($selectedDiagnosisGroupId)
+            ? DiagnosisGroup::find($selectedDiagnosisGroupId)->id
             : null; // Выбранная группа диагнозов
-        $selectedDiagnosisId = isset($selectedDiagnosis->diagnosis_id)
-            ? Diagnosis::find($selectedDiagnosis->diagnosis_id)->id
+        $selectedDiagnosisId = isset($selectedDiagnosisId)
+            ? Diagnosis::find($selectedDiagnosisId)->id
             : null; // Выбранный диагноз
+
         $selectedDepartmentId = auth()->user()->myDepartment()->id;
 
         // Вопросы для пациента (фильтруем по диагнозу)
