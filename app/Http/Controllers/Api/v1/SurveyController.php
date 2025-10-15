@@ -81,7 +81,7 @@ class SurveyController extends Controller
             'diagnosis_id' => 'required|exists:diagnoses,id',
             'medical_organization_id' => 'required|exists:departments,id',
             'patient_responses' => 'required|array',
-            'organization_responses' => 'required|array',
+            'department_responses' => 'required|array',
         ]);
 
         $patient = $data['patient'];
