@@ -45,6 +45,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('survey')->group(function () {
         Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [\App\Http\Controllers\Api\v1\SurveyController::class, 'show']);
+            Route::post('/', [\App\Http\Controllers\Api\v1\SurveyController::class, 'store']);
         });
 
     });
