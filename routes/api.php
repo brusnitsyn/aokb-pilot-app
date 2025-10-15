@@ -24,6 +24,8 @@ Route::prefix('v1')->group(function () {
                ->middleware('auth:sanctum');
            Route::put('/status', [\App\Http\Controllers\Api\v1\ResultController::class, 'updateStatus'])
                ->middleware('auth:sanctum');
+           Route::delete('/', [\App\Http\Controllers\Api\v1\ResultController::class, 'delete'])
+               ->middleware('auth:sanctum');
        });
 
        Route::get('/', [\App\Http\Controllers\Api\v1\RequestController::class, 'index'])

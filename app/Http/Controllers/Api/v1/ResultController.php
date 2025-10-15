@@ -89,4 +89,16 @@ class ResultController extends Controller
             'status_id' => $data['status_id'],
         ]);
     }
+
+    public function delete(Request $request)
+    {
+        $data = $request->validate([
+            'patient_result_id'
+        ]);
+
+        $patientResult = PatientResult::find($data['patient_result_id'])->delete();
+        return response()->json([
+            'status' => 'deleted',
+        ]);
+    }
 }
