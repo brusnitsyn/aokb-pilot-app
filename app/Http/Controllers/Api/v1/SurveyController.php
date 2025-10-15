@@ -72,4 +72,131 @@ class SurveyController extends Controller
             'departments' => $departments
         ]);
     }
+
+    public function store(Request $request)
+    {
+        // Валидация входных данных
+        $data = $request->validate([
+            'patient' => 'required|array',
+            'diagnosis_id' => 'required|exists:diagnoses,id',
+            'medical_organization_id' => 'required|exists:departments,id',
+            'patient_responses' => 'required|array',
+            'organization_responses' => 'required|array',
+        ]);
+
+        $patient = $data['patient'];
+        $selectedDiagnosisId = $data['diagnosis_id'];
+        $patientResponses = $data['patient_responses'];
+        $organizationResponses = $data['department_responses'];
+        $medicalOrganizationId = $data['medical_organization_id'];
+
+        // Определение диагноза
+        $diagnosis = Diagnosis::find($selectedDiagnosisId);
+
+        // Сценарий
+        $scenarioId = null;
+        $scenarioScore = 0.0; // Баллы сценария
+        // Подсчет баллов пациента
+        $patientScore = 0;
+        foreach ($patientResponses as $questionId => $answerIds) {
+            if (is_array($answerIds)) {
+                foreach ($answerIds as $answerId) {
+                    $answer = Answer::find($answerId);
+                    if ($answer) {
+                        $patientScore += $answer->score;
+                    }
+                }
+            } else {
+                $answer = Answer::find($answerIds)->load(['scenario']);
+                // Обработка ответа со сценарием
+                if (!is_null($answer->scenario)) {
+                    $scenarioId = $answer->scenario->id;
+                    $scenarioScore = $answer->scenario->score;
+                }
+                $patientScore += $answer->score;
+            }
+        }
+
+        // Подсчет баллов медицинской организации (ответы на вопросы)
+        $organizationScore = 0;
+        foreach ($organizationResponses as $questionId => $answerIds) {
+            if (is_array($answerIds)) {
+                foreach ($answerIds as $answerId) {
+                    $answer = DepartmentAnswer::find($answerId);
+                    if ($answer) {
+                        $score = $answer->score;
+                        $organizationScore += $score;
+                    }
+                }
+            } else {
+                $answer = DepartmentAnswer::find($answerIds);
+                if ($answer) {
+                    $score = $answer->score;
+                    $organizationScore += $score;
+                }
+            }
+        }
+
+        // Добавляем фиксированные баллы медицинской организации
+        $department = Department::find(auth()->user()->myDepartment()->id)->load('params');
+        $departmentParams = $department->params()
+            ->whereJsonContains('depends_diagnosis_group_ids', [$selectedDiagnosisId])
+            ->whereHas('paramValue', function ($query) use ($selectedDiagnosisId) {
+                $query->whereJsonContains('depends_diagnosis_group_ids', [$selectedDiagnosisId]);
+            })->get();
+        foreach ($departmentParams as $param) {
+            $organizationScore += $param->paramValue->score;
+        }
+
+        // Общий результат
+        $totalScore = $patientScore + $organizationScore + $scenarioScore;
+
+        // Создание пациента
+        $patient = Patient::create(
+            [
+                'first_name' => $patient['first_name'],
+                'last_name' => $patient['last_name'],
+                'middle_name' => $patient['middle_name'],
+                'date_birth' => $patient['date_birth'],
+                'snils' => $patient['snils'],
+                'total_score' => $totalScore,
+                'diagnosis_id' => $diagnosis->id,
+            ]
+        );
+
+        $fromDepartment = auth()->user()->myDepartment()->id;
+        $fromCoords = $fromDepartment === 30 ? json_decode(Cookie::get('lastCoords')) : Department::find($fromDepartment)->coords;
+        $toCoords = Department::find($medicalOrganizationId)->coords;
+
+        $distance = PatientFacade::calculateDistance(
+            $fromCoords[0],
+            $fromCoords[1],
+            $toCoords[0],
+            $toCoords[1],
+        );
+
+        // Сохранение результата
+        $patientResult = PatientResult::create([
+            'patient_id' => $patient->id,
+            'sender_department_id' => Cookie::get('senderDepartment'),
+            'from_department_id' => auth()->user()->myDepartment()->id,
+            'coords' => json_decode(Cookie::get('lastCoords')),
+            'comment' => Cookie::get('coordsComment'),
+            'to_department_id' => $medicalOrganizationId,
+            'patient_score' => $patientScore,
+            'department_score' => $organizationScore,
+            'total_score' => $totalScore,
+            'patient_responses' => $patientResponses,
+            'department_responses' => $organizationResponses,
+            'scenario_id' => $scenarioId,
+            'scenario_score' => $scenarioScore,
+            'user_id' => auth()->id(),
+            'distance' => $distance,
+        ]);
+
+        return response()->json([
+            'status' => 'created',
+            'patient_result_id' => $patientResult->id,
+        ]);
+    }
 }
