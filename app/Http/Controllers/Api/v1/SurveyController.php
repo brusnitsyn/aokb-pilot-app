@@ -80,6 +80,7 @@ class SurveyController extends Controller
             'patient' => 'required|array',
             'diagnosis_id' => 'required|exists:diagnoses,id',
             'medical_organization_id' => 'required|exists:departments,id',
+            'from_department_id' => 'required|exists:departments,id',
             'patient_responses' => 'required|array',
             'department_responses' => 'required|array',
         ]);
@@ -178,7 +179,7 @@ class SurveyController extends Controller
         // Сохранение результата
         $patientResult = PatientResult::create([
             'patient_id' => $patient->id,
-            'sender_department_id' => Cookie::get('senderDepartment'),
+            'sender_department_id' => $data['from_department_id'],
             'from_department_id' => auth()->user()->myDepartment()->id,
             'coords' => json_decode(Cookie::get('lastCoords')),
             'comment' => Cookie::get('coordsComment'),
