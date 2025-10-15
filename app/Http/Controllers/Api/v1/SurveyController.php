@@ -83,6 +83,8 @@ class SurveyController extends Controller
             'from_department_id' => 'required|exists:departments,id',
             'patient_responses' => 'required|array',
             'department_responses' => 'required|array',
+            'coords' => 'nullable|array',
+            'coords_comment' => 'nullable|string',
         ]);
 
         $patient = $data['patient'];
@@ -165,8 +167,8 @@ class SurveyController extends Controller
             ]
         );
 
-        $fromDepartment = auth()->user()->myDepartment()->id;
-        $fromCoords = $fromDepartment === 30 ? json_decode(Cookie::get('lastCoords')) : Department::find($fromDepartment)->coords;
+        $fromDepartmentId = $data['from_department_id'];
+        $fromCoords = $fromDepartmentId === 30 ? $data['coords'] : Department::find($fromDepartmentId)->coords;
         $toCoords = Department::find($medicalOrganizationId)->coords;
 
         $distance = PatientFacade::calculateDistance(
@@ -181,8 +183,8 @@ class SurveyController extends Controller
             'patient_id' => $patient->id,
             'sender_department_id' => $data['from_department_id'],
             'from_department_id' => auth()->user()->myDepartment()->id,
-            'coords' => json_decode(Cookie::get('lastCoords')),
-            'comment' => Cookie::get('coordsComment'),
+            'coords' => $data['coords'],
+            'comment' => $data['coords_comment'],
             'to_department_id' => $medicalOrganizationId,
             'patient_score' => $patientScore,
             'department_score' => $organizationScore,
