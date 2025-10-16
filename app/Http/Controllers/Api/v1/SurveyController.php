@@ -81,6 +81,7 @@ class SurveyController extends Controller
             'diagnosis_id' => 'required|exists:diagnoses,id',
             'medical_organization_id' => 'required|exists:departments,id',
             'from_department_id' => 'required|exists:departments,id',
+            'sender_department_id' => 'required|exists:departments,id',
             'patient_responses' => 'required|array',
             'department_responses' => 'required|array',
             'coords' => 'nullable|array',
@@ -181,8 +182,8 @@ class SurveyController extends Controller
         // Сохранение результата
         $patientResult = PatientResult::create([
             'patient_id' => $patient->id,
-            'sender_department_id' => $data['from_department_id'],
-            'from_department_id' => auth()->user()->myDepartment()->id,
+            'sender_department_id' => $data['sender_department_id'],
+            'from_department_id' => $data['from_department_id'],
             'coords' => $data['coords'],
             'comment' => $data['coords_comment'],
             'to_department_id' => $medicalOrganizationId,
